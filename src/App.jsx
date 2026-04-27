@@ -3651,7 +3651,7 @@ Return ONLY this JSON, no preamble, no markdown:
 
           {/* Output */}
           <div ref={outputRef} className="lg:col-span-2 min-w-0 scroll-mt-24">
-            <div className="lg:sticky lg:top-24 space-y-4">
+            <div className="lg:sticky lg:top-24 space-y-4 lg:max-h-[calc(100vh-7rem)] lg:overflow-y-auto lg:pr-2 scrollbar-thin">
               {/* Live Preview (desktop only, prompt tab) */}
               {tab === 'prompt' && (
                 <div data-desktop-only="true" className="hidden md:block bg-stone-50 border border-stone-300 rounded-2xl p-4">
