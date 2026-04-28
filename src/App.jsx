@@ -2820,10 +2820,13 @@ function BrahmstormApp({ onBack } = {}) {
         [navigator.userAgent, navigator.language, screen.width, screen.height, new Date().getTimezoneOffset()].join('|')
       ).slice(0, 32);
 
+      let ownerToken = '';
+      try { ownerToken = localStorage.getItem('bs:ownerToken') || ''; } catch (e) {}
+
       const res = await fetch('/api/generate', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ system, messages, max_tokens, turnstileToken, fingerprint }),
+        body: JSON.stringify({ system, messages, max_tokens, turnstileToken, fingerprint, ownerToken }),
       });
 
       // 429 = daily limit hit. Update quota state and throw a recognizable error.
