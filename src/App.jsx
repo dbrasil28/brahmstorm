@@ -3552,7 +3552,7 @@ Return ONLY this JSON, no preamble, no markdown:
         <div className="grid lg:grid-cols-5 gap-8">
           <div className="lg:col-span-3 space-y-3 min-w-0" onTouchStart={onSwipeStart} onTouchEnd={onSwipeEnd}>
             {/* Brief livre */}
-            <div className="relative rounded-2xl md:rounded-none border border-orange-500/40 bg-gradient-to-br from-orange-500/15 via-orange-500/8 to-transparent p-5 mb-2 glow-amber">
+            <div className="relative rounded-2xl border border-orange-500/40 bg-gradient-to-br from-orange-500/15 via-orange-500/8 to-transparent p-5 mb-2 glow-amber">
               <div className="flex items-center justify-between mb-1 gap-2">
                 <div className="flex items-center gap-2 min-w-0">
                   <Wand2 className="w-4 h-4 text-orange-500 flex-shrink-0" />
@@ -3581,7 +3581,7 @@ Return ONLY this JSON, no preamble, no markdown:
             </div>
 
             {/* Reference track */}
-            <div className="relative rounded-2xl md:rounded-none border border-stone-400 bg-stone-50/60 p-5 mb-2">
+            <div className="relative rounded-2xl border border-stone-400 bg-stone-50/60 p-5 mb-2">
               <div className="flex items-center justify-between mb-1 gap-2">
                 <div className="flex items-center gap-2 min-w-0">
                   <Music2 className="w-4 h-4 text-stone-700 flex-shrink-0" />
@@ -4461,7 +4461,7 @@ function Block({ keyId, label, count, max, preview = [], open, onToggle, onClear
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [mobileSheetKey, keyId, count, max, label, tClear, previewSig]);
   return (
-    <div data-section={keyId} className={`scroll-mt-24 rounded-xl border transition-colors min-w-0 overflow-hidden ${count > 0 ? 'border-orange-500/30' : 'border-stone-300'} ${className}`}>
+    <div data-section={keyId} className={`scroll-mt-24 rounded-xl border transition-colors min-w-0 overflow-hidden ${count > 0 ? 'border-orange-500/30' : 'border-stone-400/50'} ${className}`}>
       <div className="flex items-stretch">
         <button
           onClick={() => {
