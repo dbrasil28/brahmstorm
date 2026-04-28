@@ -1164,6 +1164,10 @@ const UI = {
     err_daily_limit: "daily limit reached. resets in",
     daily_limit_label: "daily limit reached",
     quota_left: "left today",
+    quota_card_remaining: "daily generations remaining",
+    quota_card_sub: "shared between prompt and lyrics generations",
+    quota_card_exhausted: "daily limit reached",
+    quota_card_resets_in: "resets in",
     toast_filled: '✓ fields filled by AI', toast_copied: '✓ copied to clipboard',
     toast_copy_fail: "couldn't copy automatically",
     open_suno: 'open Suno', open_suno_lyrics: 'open Suno · paste lyrics',
@@ -1255,6 +1259,10 @@ const UI = {
     err_daily_limit: 'Limite diário atingido. Reseta em',
     daily_limit_label: 'limite diário atingido',
     quota_left: 'restantes hoje',
+    quota_card_remaining: 'gerações diárias restantes',
+    quota_card_sub: 'compartilhadas entre prompt e letras',
+    quota_card_exhausted: 'limite diário atingido',
+    quota_card_resets_in: 'reseta em',
     toast_filled: '✓ campos preenchidos pela IA', toast_copied: '✓ copiado',
     toast_copy_fail: 'não foi possível copiar',
     open_suno: 'abrir Suno', open_suno_lyrics: 'abrir Suno · colar letra',
@@ -1352,6 +1360,10 @@ const UI = {
     err_daily_limit: 'Límite diario alcanzado. Se reinicia en',
     daily_limit_label: 'límite diario alcanzado',
     quota_left: 'restantes hoy',
+    quota_card_remaining: 'generaciones diarias restantes',
+    quota_card_sub: 'compartidas entre prompt y letras',
+    quota_card_exhausted: 'límite diario alcanzado',
+    quota_card_resets_in: 'se reinicia en',
     toast_filled: '✓ campos rellenados', toast_copied: '✓ copiado',
     toast_copy_fail: 'no se pudo copiar',
     open_suno: 'abrir Suno', open_suno_lyrics: 'abrir Suno · pegar letra',
@@ -1435,6 +1447,10 @@ const UI = {
     err_daily_limit: 'Limite quotidienne atteinte. Réinitialisation dans',
     daily_limit_label: 'limite quotidienne atteinte',
     quota_left: 'restants aujourd\'hui',
+    quota_card_remaining: 'générations quotidiennes restantes',
+    quota_card_sub: 'partagées entre prompts et paroles',
+    quota_card_exhausted: 'limite quotidienne atteinte',
+    quota_card_resets_in: 'réinitialisation dans',
     toast_filled: '✓ champs remplis', toast_copied: '✓ copié',
     toast_copy_fail: 'impossible de copier',
     open_suno: 'ouvrir Suno', open_suno_lyrics: 'ouvrir Suno · coller paroles',
@@ -2820,6 +2836,10 @@ function BrahmstormApp({ onBack } = {}) {
         [navigator.userAgent, navigator.language, screen.width, screen.height, new Date().getTimezoneOffset()].join('|')
       ).slice(0, 32);
 
+      // Owner bypass: read token from localStorage if set.
+      // To enable: in browser console, run:
+      //   localStorage.setItem('bs:ownerToken', 'your-secret-token-here')
+      // To disable: localStorage.removeItem('bs:ownerToken')
       let ownerToken = '';
       try { ownerToken = localStorage.getItem('bs:ownerToken') || ''; } catch (e) {}
 
@@ -3489,6 +3509,46 @@ Return ONLY this JSON, no preamble, no markdown:
         onOpen={(id) => setOpenBlocks({ [id]: true })} />
 
       <main className="relative z-10 px-5 md:px-10 py-8 md:py-10 pb-24 md:pb-10 max-w-[1400px] mx-auto">
+        {/* Daily quota card — hidden for owner (unlimited), shown to everyone else.
+            Becomes a soft red tint when 0 generations remain. */}
+        {(() => {
+          const isOwnerLocal = quota && quota.owner;
+          if (isOwnerLocal) return null;
+          const used = quota && typeof quota.used === 'number' ? quota.used : 0;
+          const limit = quota && typeof quota.limit === 'number' ? quota.limit : 5;
+          const remaining = Math.max(0, limit - used);
+          const exhausted = remaining === 0 && quota !== null;
+          // tickClock is referenced so the timer re-evaluates each minute
+          const _ = tickClock;
+          const cardBg = exhausted
+            ? 'bg-red-500/10 border-red-500/30'
+            : 'bg-orange-500/8 border-orange-500/30';
+          const accent = exhausted ? 'text-red-700' : 'text-orange-700';
+          return (
+            <div className={`mb-6 rounded-xl border ${cardBg} px-4 py-3 flex items-center justify-between gap-4 flex-wrap`}>
+              <div className="flex items-center gap-3 min-w-0">
+                {exhausted ? (
+                  <AlertTriangle className={`w-4 h-4 flex-shrink-0 ${accent}`} />
+                ) : (
+                  <Sparkles className={`w-4 h-4 flex-shrink-0 ${accent}`} />
+                )}
+                <div className="min-w-0">
+                  <div className={`font-mono text-[11px] uppercase tracking-[0.2em] ${accent}`} style={{ fontWeight: 600 }}>
+                    {exhausted
+                      ? (t.quota_card_exhausted || 'daily limit reached')
+                      : `${remaining} / ${limit} ${t.quota_card_remaining || 'generations remaining today'}`}
+                  </div>
+                  <div className="font-display italic text-sm text-stone-600 mt-0.5 wrap-any">
+                    {exhausted
+                      ? <>{t.quota_card_resets_in || 'resets in'} <strong className="font-mono not-italic">{formatTimeUntilReset(msUntilNextUTCMidnight())}</strong></>
+                      : (t.quota_card_sub || 'shared between prompt and lyrics generations')}
+                  </div>
+                </div>
+              </div>
+            </div>
+          );
+        })()}
+
         <div className="grid lg:grid-cols-5 gap-8">
           <div className="lg:col-span-3 space-y-3 min-w-0" onTouchStart={onSwipeStart} onTouchEnd={onSwipeEnd}>
             {/* Brief livre */}
@@ -3576,7 +3636,7 @@ Return ONLY this JSON, no preamble, no markdown:
 
             {/* Quick-start presets (prompt tab only) */}
             {tab === 'prompt' && (
-              <div className="rounded-xl md:rounded-none border border-stone-300 bg-white/40 p-4 mb-2">
+              <div className="rounded-xl border border-stone-300 bg-white/40 p-4 mb-2">
                 <div className="flex items-center gap-2 mb-3 flex-wrap">
                   <Flame className="w-4 h-4 text-orange-500 flex-shrink-0" />
                   <div className="font-mono text-[11px] uppercase tracking-[0.2em] text-stone-700">{t.presets_title}</div>
@@ -3917,7 +3977,7 @@ Return ONLY this JSON, no preamble, no markdown:
                         const vLen = v.prompt?.length || 0;
                         const vOver = vLen > LIMITE_PROMPT;
                         return (
-                          <div key={i} className="rounded-xl md:rounded-none border border-stone-300 bg-stone-50/60 p-4">
+                          <div key={i} className="rounded-xl border border-stone-300 bg-stone-50/60 p-4">
                             <div className="flex items-baseline justify-between mb-2 gap-3">
                               <div className="font-display italic text-base text-orange-700 min-w-0 wrap-any" style={{ fontWeight: 600 }}>{v.titulo}</div>
                               <div className={`font-mono text-[9px] uppercase tracking-widest flex-shrink-0 ${vOver ? 'text-red-600' : 'text-stone-400'}`}>v{i + 1} · {vLen}c</div>
@@ -4003,7 +4063,7 @@ Return ONLY this JSON, no preamble, no markdown:
                         const linhas = tr.letra.split('\n').filter(l => l.trim() && !l.trim().startsWith('[')).length;
                         const excedeLimite = tr.letra.length > LIMITE_LETRA;
                         return (
-                          <div key={i} className="rounded-xl md:rounded-none border border-stone-300 bg-stone-50/80 overflow-hidden">
+                          <div key={i} className="rounded-xl border border-stone-300 bg-stone-50/80 overflow-hidden">
                             <button onClick={() => setLetrasAlbumExpanded(p => ({ ...p, [i]: !p[i] }))}
                               className="w-full flex items-center justify-between gap-3 px-4 py-3 hover:bg-stone-200/40 transition-colors text-left active:bg-stone-200/80">
                               <div className="flex items-center gap-3 min-w-0 flex-1">
@@ -4053,7 +4113,7 @@ Return ONLY this JSON, no preamble, no markdown:
                     </div>
                   )}
 
-                  <div className="rounded-xl md:rounded-none border border-stone-300 bg-stone-50/80 relative overflow-hidden">
+                  <div className="rounded-xl border border-stone-300 bg-stone-50/80 relative overflow-hidden">
                     <div className="bg-stone-200 border-b border-stone-300 px-4 py-2 flex items-center justify-between gap-2">
                       <div className="font-mono text-[10px] uppercase tracking-widest text-stone-500">lyrics · Suno</div>
                       {letraGerada && (() => {
@@ -4168,7 +4228,7 @@ Return ONLY this JSON, no preamble, no markdown:
                 const origIdx = drawerView === 'historico' ? historico.indexOf(f) : favoritos.indexOf(f);
                 const keyId = drawerView === 'historico' ? `h${origIdx}` : `f${origIdx}`;
                 return (
-                  <div key={`${drawerView}-${origIdx}-${idx}`} className="rounded-xl md:rounded-none border border-stone-300 bg-stone-50/60 p-3 min-w-0">
+                  <div key={`${drawerView}-${origIdx}-${idx}`} className="rounded-xl border border-stone-300 bg-stone-50/60 p-3 min-w-0">
                     <div className="flex items-center justify-between mb-2 gap-2">
                       <div className="flex items-center gap-2 min-w-0 flex-1">
                         <span className={`font-mono text-[9px] uppercase tracking-widest px-1.5 py-0.5 border flex-shrink-0 ${f.tipo === 'letra' ? 'border-orange-500/40 text-orange-700' : 'border-stone-400 text-stone-600'}`}>{f.tipo}</span>
@@ -4401,7 +4461,7 @@ function Block({ keyId, label, count, max, preview = [], open, onToggle, onClear
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [mobileSheetKey, keyId, count, max, label, tClear, previewSig]);
   return (
-    <div data-section={keyId} className={`scroll-mt-24 rounded-xl md:rounded-none border transition-colors min-w-0 overflow-hidden ${count > 0 ? 'border-orange-500/30' : 'border-stone-300'} ${className}`}>
+    <div data-section={keyId} className={`scroll-mt-24 rounded-xl border transition-colors min-w-0 overflow-hidden ${count > 0 ? 'border-orange-500/30' : 'border-stone-300'} ${className}`}>
       <div className="flex items-stretch">
         <button
           onClick={() => {
