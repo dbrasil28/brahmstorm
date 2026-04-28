@@ -1115,6 +1115,8 @@ const UI = {
     limit_hint: 'Suno works best with focus. Deselect to swap.',
     presets_title: 'quick starts',
     presets_sub: 'tap a vibe to fill the blocks',
+    presets_browse_all: 'browse all',
+    presets_modal_title: 'all quick starts',
     shortcuts_title: 'keyboard shortcuts',
     shortcuts_close: 'press esc or ? to close',
     shortcuts_btn: 'shortcuts',
@@ -1159,6 +1161,9 @@ const UI = {
     err_variants: "couldn't generate variations. try again.",
     err_letra: "couldn't generate lyrics. try again.",
     err_interpret: "couldn't interpret. try rephrasing or being more specific.",
+    err_daily_limit: "daily limit reached. resets in",
+    daily_limit_label: "daily limit reached",
+    quota_left: "left today",
     toast_filled: '✓ fields filled by AI', toast_copied: '✓ copied to clipboard',
     toast_copy_fail: "couldn't copy automatically",
     open_suno: 'open Suno', open_suno_lyrics: 'open Suno · paste lyrics',
@@ -1201,6 +1206,8 @@ const UI = {
     limit_hint: 'Suno funciona melhor com foco. Desmarque pra trocar.',
     presets_title: 'partidas rápidas',
     presets_sub: 'toque uma vibe pra preencher os blocos',
+    presets_browse_all: 'ver todas',
+    presets_modal_title: 'todas as partidas',
     shortcuts_title: 'atalhos de teclado',
     shortcuts_close: 'aperte esc ou ? para fechar',
     shortcuts_btn: 'atalhos',
@@ -1245,6 +1252,9 @@ const UI = {
     err_variants: 'Não consegui gerar variações. Tenta de novo.',
     err_letra: 'Não consegui gerar a letra. Tenta de novo.',
     err_interpret: 'Não consegui interpretar. Tenta reformular.',
+    err_daily_limit: 'Limite diário atingido. Reseta em',
+    daily_limit_label: 'limite diário atingido',
+    quota_left: 'restantes hoje',
     toast_filled: '✓ campos preenchidos pela IA', toast_copied: '✓ copiado',
     toast_copy_fail: 'não foi possível copiar',
     open_suno: 'abrir Suno', open_suno_lyrics: 'abrir Suno · colar letra',
@@ -1294,6 +1304,8 @@ const UI = {
     limit_hint: 'Suno funciona mejor con foco. Quita uno para cambiar.',
     presets_title: 'inicios rápidos',
     presets_sub: 'toca un vibe para llenar los bloques',
+    presets_browse_all: 'ver todos',
+    presets_modal_title: 'todos los inicios',
     shortcuts_title: 'atajos de teclado',
     shortcuts_close: 'pulsa esc o ? para cerrar',
     shortcuts_btn: 'atajos',
@@ -1337,6 +1349,9 @@ const UI = {
     need_letra: 'rellena asunto, mood, estribillo o imágenes',
     err_variants: 'No pude generar variaciones.', err_letra: 'No pude generar la letra.',
     err_interpret: 'No pude interpretar. Reformula.',
+    err_daily_limit: 'Límite diario alcanzado. Se reinicia en',
+    daily_limit_label: 'límite diario alcanzado',
+    quota_left: 'restantes hoy',
     toast_filled: '✓ campos rellenados', toast_copied: '✓ copiado',
     toast_copy_fail: 'no se pudo copiar',
     open_suno: 'abrir Suno', open_suno_lyrics: 'abrir Suno · pegar letra',
@@ -1372,6 +1387,8 @@ const UI = {
     limit_hint: 'Suno fonctionne mieux avec focus. Désélectionnez pour échanger.',
     presets_title: 'départs rapides',
     presets_sub: 'touchez une vibe pour remplir les blocs',
+    presets_browse_all: 'voir tous',
+    presets_modal_title: 'tous les départs',
     shortcuts_title: 'raccourcis clavier',
     shortcuts_close: 'esc ou ? pour fermer',
     shortcuts_btn: 'raccourcis',
@@ -1415,6 +1432,9 @@ const UI = {
     need_letra: 'remplissez sujet, mood, refrain ou images',
     err_variants: 'Impossible de générer.', err_letra: 'Impossible de générer.',
     err_interpret: 'Impossible d\'interpréter.',
+    err_daily_limit: 'Limite quotidienne atteinte. Réinitialisation dans',
+    daily_limit_label: 'limite quotidienne atteinte',
+    quota_left: 'restants aujourd\'hui',
     toast_filled: '✓ champs remplis', toast_copied: '✓ copié',
     toast_copy_fail: 'impossible de copier',
     open_suno: 'ouvrir Suno', open_suno_lyrics: 'ouvrir Suno · coller paroles',
@@ -1656,24 +1676,36 @@ const INSTR_LABELS = {
 
 const VOZES_KEYS = ['crystal auto-tune','gospel choir','male-female duet','emotional falsetto','three-part harmonies',
   'cadenced rap flow','no vocals (instrumental)','reverb whispers','robotic vocoder','ethereal high female voice',
-  'angelic child voice','deep intimate male voice','raspy bar voice'];
+  'angelic child voice','deep intimate male voice','raspy bar voice',
+  'breathy intimate vocals','soulful belt','operatic soprano','smoky jazz vocals',
+  'aggressive scream','folk storyteller','melodic chant','distorted lo-fi vocals',
+  'spoken word'];
 
 const VOZES_LABELS = {
   pt: { 'crystal auto-tune':'auto-tune cristalino','gospel choir':'coro gospel','male-female duet':'dueto masculino e feminino',
     'emotional falsetto':'falsete emocionado','three-part harmonies':'harmonias em três vozes','cadenced rap flow':'rap cadenciado',
     'no vocals (instrumental)':'sem vocais','reverb whispers':'sussurros com reverb','robotic vocoder':'vocoder robótico',
     'ethereal high female voice':'voz feminina etérea','angelic child voice':'voz infantil angelical',
-    'deep intimate male voice':'voz masculina grave','raspy bar voice':'voz rouca de bar' },
+    'deep intimate male voice':'voz masculina grave','raspy bar voice':'voz rouca de bar',
+    'breathy intimate vocals':'vocal sussurrado íntimo','soulful belt':'belt soul','operatic soprano':'soprano operístico',
+    'smoky jazz vocals':'vocal jazz fumegante','aggressive scream':'scream agressivo','folk storyteller':'contador folk',
+    'melodic chant':'cântico melódico','distorted lo-fi vocals':'vocal lo-fi distorcido','spoken word':'spoken word' },
   es: { 'crystal auto-tune':'auto-tune cristalino','gospel choir':'coro gospel','male-female duet':'dúo',
     'emotional falsetto':'falsete emotivo','three-part harmonies':'armonías a tres voces','cadenced rap flow':'flow rap',
     'no vocals (instrumental)':'sin voces','reverb whispers':'susurros','robotic vocoder':'vocoder',
     'ethereal high female voice':'voz femenina etérea','angelic child voice':'voz infantil',
-    'deep intimate male voice':'voz masculina grave','raspy bar voice':'voz ronca' },
+    'deep intimate male voice':'voz masculina grave','raspy bar voice':'voz ronca',
+    'breathy intimate vocals':'voz susurrada íntima','soulful belt':'belt soul','operatic soprano':'soprano operístico',
+    'smoky jazz vocals':'voz jazz humeante','aggressive scream':'grito agresivo','folk storyteller':'narrador folk',
+    'melodic chant':'cántico melódico','distorted lo-fi vocals':'voz lo-fi distorsionada','spoken word':'palabra hablada' },
   fr: { 'crystal auto-tune':'auto-tune cristallin','gospel choir':'chœur gospel','male-female duet':'duo',
     'emotional falsetto':'fausset émotionnel','three-part harmonies':'harmonies à trois voix','cadenced rap flow':'flow rap',
     'no vocals (instrumental)':'sans voix','reverb whispers':'chuchotements','robotic vocoder':'vocodeur',
     'ethereal high female voice':'voix féminine éthérée','angelic child voice':'voix enfantine',
-    'deep intimate male voice':'voix masculine grave','raspy bar voice':'voix éraillée' },
+    'deep intimate male voice':'voix masculine grave','raspy bar voice':'voix éraillée',
+    'breathy intimate vocals':'voix soufflée intime','soulful belt':'belt soul','operatic soprano':'soprano opératique',
+    'smoky jazz vocals':'voix jazz fumée','aggressive scream':'cri agressif','folk storyteller':'conteur folk',
+    'melodic chant':'chant mélodique','distorted lo-fi vocals':'voix lo-fi distordue','spoken word':'parole parlée' },
 };
 
 const ERAS_KEYS = ['psychedelic 60s','warm analog 70s','synthesized 80s','dirty lo-fi 90s','digital 2000s',
@@ -1722,11 +1754,41 @@ const DURATION_EN = {
   duration_std:'~3 minutes (pop standard)', duration_long:'~4 minutes (long)', duration_extended:'5+ minutes (extended)',
 };
 
-const IDIOMAS_KEYS = ['Brazilian Portuguese','English','Spanish','French','Japanese','instrumental'];
+const IDIOMAS_KEYS = [
+  'Brazilian Portuguese','English','Spanish','French','Italian','German',
+  'Japanese','Korean','Mandarin Chinese','Cantonese','Hindi','Arabic',
+  'Russian','Hebrew','Turkish','Greek','Polish','Dutch',
+  'Swedish','Indonesian','Thai','Vietnamese','Tagalog','Swahili',
+  'instrumental'
+];
 const IDIOMA_LABELS = {
-  pt: { 'Brazilian Portuguese':'português brasileiro','English':'inglês','Spanish':'espanhol','French':'francês','Japanese':'japonês','instrumental':'instrumental' },
-  es: { 'Brazilian Portuguese':'portugués brasileño','English':'inglés','Spanish':'español','French':'francés','Japanese':'japonés','instrumental':'instrumental' },
-  fr: { 'Brazilian Portuguese':'portugais brésilien','English':'anglais','Spanish':'espagnol','French':'français','Japanese':'japonais','instrumental':'instrumental' },
+  pt: {
+    'Brazilian Portuguese':'português brasileiro','English':'inglês','Spanish':'espanhol','French':'francês',
+    'Italian':'italiano','German':'alemão','Japanese':'japonês','Korean':'coreano',
+    'Mandarin Chinese':'mandarim','Cantonese':'cantonês','Hindi':'híndi','Arabic':'árabe',
+    'Russian':'russo','Hebrew':'hebraico','Turkish':'turco','Greek':'grego',
+    'Polish':'polonês','Dutch':'holandês','Swedish':'sueco','Indonesian':'indonésio',
+    'Thai':'tailandês','Vietnamese':'vietnamita','Tagalog':'tagalo','Swahili':'suaíli',
+    'instrumental':'instrumental'
+  },
+  es: {
+    'Brazilian Portuguese':'portugués brasileño','English':'inglés','Spanish':'español','French':'francés',
+    'Italian':'italiano','German':'alemán','Japanese':'japonés','Korean':'coreano',
+    'Mandarin Chinese':'mandarín','Cantonese':'cantonés','Hindi':'hindi','Arabic':'árabe',
+    'Russian':'ruso','Hebrew':'hebreo','Turkish':'turco','Greek':'griego',
+    'Polish':'polaco','Dutch':'neerlandés','Swedish':'sueco','Indonesian':'indonesio',
+    'Thai':'tailandés','Vietnamese':'vietnamita','Tagalog':'tagalo','Swahili':'suajili',
+    'instrumental':'instrumental'
+  },
+  fr: {
+    'Brazilian Portuguese':'portugais brésilien','English':'anglais','Spanish':'espagnol','French':'français',
+    'Italian':'italien','German':'allemand','Japanese':'japonais','Korean':'coréen',
+    'Mandarin Chinese':'mandarin','Cantonese':'cantonais','Hindi':'hindi','Arabic':'arabe',
+    'Russian':'russe','Hebrew':'hébreu','Turkish':'turc','Greek':'grec',
+    'Polish':'polonais','Dutch':'néerlandais','Swedish':'suédois','Indonesian':'indonésien',
+    'Thai':'thaï','Vietnamese':'vietnamien','Tagalog':'tagalog','Swahili':'swahili',
+    'instrumental':'instrumental'
+  },
 };
 
 const ESTRUTURAS_KEYS = [
@@ -1792,82 +1854,127 @@ const METR_LABELS = {
 };
 
 // Quick-start presets — combinations of selections that work well together.
-// Click a chip and the relevant blocks fill instantly. Power users skip directly
-// to fine-tuning, beginners get a working starting point.
+// Organized by category so we can render a categorized picker.
+// Each preset is curated to use only vocab keys that exist in the app.
 const PRESETS = [
-  {
-    id: 'lofi-sunset',
-    label: 'Lo-fi Sunset',
-    icon: '🌅',
-    generos: ['lo-fi hip hop', 'downtempo'],
-    moods: ['contemplative', 'nostalgic'],
-    instrumentos: ['rhodes piano', 'jazz drums', 'soft bass'],
-    vozes: [],
-    eras: ['analog 70s'],
-    producoes: ['cassette warmth'],
-    tempos: ['slow'],
-  },
-  {
-    id: 'brazilian-soul',
-    label: 'Brazilian Soul',
-    icon: '🌴',
-    generos: ['bossa nova', 'samba jazz', 'MPB'],
-    moods: ['romantic', 'serene'],
-    instrumentos: ['nylon-string guitar', 'acoustic piano'],
-    vozes: ['emotional falsetto'],
-    eras: ['analog 70s'],
-    producoes: [],
-    tempos: ['medium'],
-  },
-  {
-    id: 'synthwave-drive',
-    label: 'Synthwave Drive',
-    icon: '🚗',
-    generos: ['synthwave', 'italo-disco'],
-    moods: ['nostalgic', 'urgent'],
-    instrumentos: ['analog synthesizer', 'drum machine'],
-    vozes: [],
-    eras: ['neon 80s'],
-    producoes: ['gated reverb drums'],
-    tempos: ['driving'],
-  },
-  {
-    id: 'indie-folk',
-    label: 'Indie Folk',
-    icon: '🍂',
-    generos: ['indie folk', 'americana'],
-    moods: ['melancholic', 'contemplative'],
-    instrumentos: ['acoustic guitar', 'banjo', 'fiddle'],
-    vozes: ['three-part harmonies'],
-    eras: [],
-    producoes: ['intimate room sound'],
-    tempos: ['slow'],
-  },
-  {
-    id: 'trap-brasil',
-    label: 'Trap Brasil',
-    icon: '🔥',
-    generos: ['trap', 'funk carioca'],
-    moods: ['aggressive', 'urgent'],
-    instrumentos: ['808 sub bass', 'hi-hat rolls', 'synth lead'],
-    vozes: [],
-    eras: [],
-    producoes: ['heavy auto-tune'],
-    tempos: ['driving'],
-  },
-  {
-    id: 'jazz-cafe',
-    label: 'Jazz Café',
-    icon: '☕',
-    generos: ['jazz fusion', 'soul jazz'],
-    moods: ['serene', 'romantic'],
-    instrumentos: ['upright bass', 'jazz drums', 'rhodes piano'],
-    vozes: [],
-    eras: ['analog 60s'],
-    producoes: ['live room ambience'],
-    tempos: ['medium'],
-  },
+  // ─── CINEMATIC & ATMOSPHERIC ───
+  { id: 'lofi-sunset', label: 'Lo-fi Sunset', icon: '🌅', category: 'cinematic',
+    generos: ['lo-fi hip hop', 'downtempo'], moods: ['contemplative', 'nostalgic'],
+    instrumentos: ['rhodes piano', 'jazz drums', 'soft bass'], vozes: [],
+    eras: ['analog 70s'], producoes: ['cassette warmth'], tempos: ['slow'] },
+  { id: 'noir-thriller', label: 'Noir Thriller', icon: '🎬', category: 'cinematic',
+    generos: ['cinematic orchestral', 'trip-hop'], moods: ['tense', 'dark'],
+    instrumentos: ['upright bass', 'muted trumpet', 'brushed drums'], vozes: [],
+    eras: [], producoes: ['cathedral reverb'], tempos: ['slow'] },
+  { id: 'cosmic-ambient', label: 'Cosmic Ambient', icon: '🌌', category: 'cinematic',
+    generos: ['ambient', 'dream pop'], moods: ['ethereal', 'serene'],
+    instrumentos: ['analog synthesizer', 'soft pads'], vozes: ['reverb whispers'],
+    eras: [], producoes: ['cathedral reverb'], tempos: ['slow'] },
+  { id: 'post-rock', label: 'Post-Rock Anthem', icon: '🎸', category: 'cinematic',
+    generos: ['post-rock', 'shoegaze'], moods: ['contemplative', 'hopeful'],
+    instrumentos: ['electric guitar', 'crashing drums', 'bass guitar'], vozes: [],
+    eras: [], producoes: ['wall of sound'], tempos: ['medium'] },
+  { id: 'jazz-cafe', label: 'Jazz Café', icon: '☕', category: 'cinematic',
+    generos: ['jazz fusion', 'soul jazz'], moods: ['serene', 'romantic'],
+    instrumentos: ['upright bass', 'jazz drums', 'rhodes piano'], vozes: [],
+    eras: ['analog 60s'], producoes: ['live room ambience'], tempos: ['medium'] },
+
+  // ─── BRAZILIAN ───
+  { id: 'brazilian-soul', label: 'Brazilian Soul', icon: '🌴', category: 'brazilian',
+    generos: ['bossa nova', 'samba jazz', 'MPB'], moods: ['romantic', 'serene'],
+    instrumentos: ['nylon-string guitar', 'acoustic piano'], vozes: ['emotional falsetto'],
+    eras: ['analog 70s'], producoes: [], tempos: ['medium'] },
+  { id: 'trap-brasil', label: 'Trap Brasil', icon: '🔥', category: 'brazilian',
+    generos: ['trap', 'funk carioca'], moods: ['aggressive', 'urgent'],
+    instrumentos: ['808 sub bass', 'hi-hat rolls', 'synth lead'], vozes: [],
+    eras: [], producoes: ['heavy auto-tune'], tempos: ['driving'] },
+  { id: 'samba-bar', label: 'Samba Bar', icon: '🥁', category: 'brazilian',
+    generos: ['samba', 'pagode'], moods: ['festive', 'liberating'],
+    instrumentos: ['cavaquinho', 'pandeiro', 'surdo drum'], vozes: ['three-part harmonies'],
+    eras: [], producoes: ['live room ambience'], tempos: ['medium'] },
+  { id: 'mpb-acoustic', label: 'MPB Acoustic', icon: '🎶', category: 'brazilian',
+    generos: ['MPB', 'bossa nova'], moods: ['contemplative', 'romantic'],
+    instrumentos: ['acoustic guitar', 'flute'], vozes: ['emotional falsetto'],
+    eras: ['analog 70s'], producoes: ['intimate room sound'], tempos: ['slow'] },
+  { id: 'sertanejo-pop', label: 'Sertanejo Pop', icon: '🤠', category: 'brazilian',
+    generos: ['country pop', 'pop'], moods: ['romantic', 'liberating'],
+    instrumentos: ['acoustic guitar', 'sanfona', 'modern drums'], vozes: [],
+    eras: [], producoes: ['polished pop production'], tempos: ['medium'] },
+
+  // ─── ELECTRONIC ───
+  { id: 'synthwave-drive', label: 'Synthwave Drive', icon: '🚗', category: 'electronic',
+    generos: ['synthwave', 'italo-disco'], moods: ['nostalgic', 'urgent'],
+    instrumentos: ['analog synthesizer', 'drum machine'], vozes: [],
+    eras: ['neon 80s'], producoes: ['gated reverb drums'], tempos: ['driving'] },
+  { id: 'deep-house', label: 'Deep House', icon: '🏠', category: 'electronic',
+    generos: ['deep house', 'tech house'], moods: ['hypnotic', 'liberating'],
+    instrumentos: ['analog synthesizer', '808 sub bass', 'drum machine'], vozes: [],
+    eras: [], producoes: ['club mix'], tempos: ['driving'] },
+  { id: 'dnb', label: 'Drum & Bass', icon: '⚡', category: 'electronic',
+    generos: ['drum and bass', 'jungle'], moods: ['urgent', 'euphoric'],
+    instrumentos: ['808 sub bass', 'breakbeat drums'], vozes: [],
+    eras: [], producoes: ['club mix'], tempos: ['frantic'] },
+  { id: 'techno-warehouse', label: 'Techno Warehouse', icon: '🏭', category: 'electronic',
+    generos: ['detroit techno', 'minimal techno'], moods: ['hypnotic', 'tense'],
+    instrumentos: ['analog synthesizer', 'drum machine'], vozes: [],
+    eras: [], producoes: ['warehouse reverb'], tempos: ['driving'] },
+  { id: 'chillwave', label: 'Chillwave', icon: '🌊', category: 'electronic',
+    generos: ['chillwave', 'dream pop'], moods: ['nostalgic', 'dreamlike'],
+    instrumentos: ['analog synthesizer', 'soft pads', 'drum machine'], vozes: ['reverb whispers'],
+    eras: ['neon 80s'], producoes: ['cassette warmth'], tempos: ['medium'] },
+
+  // ─── ACOUSTIC & FOLK ───
+  { id: 'indie-folk', label: 'Indie Folk', icon: '🍂', category: 'acoustic',
+    generos: ['indie folk', 'americana'], moods: ['melancholic', 'contemplative'],
+    instrumentos: ['acoustic guitar', 'banjo', 'fiddle'], vozes: ['three-part harmonies'],
+    eras: [], producoes: ['intimate room sound'], tempos: ['slow'] },
+  { id: 'americana', label: 'Americana', icon: '🌾', category: 'acoustic',
+    generos: ['americana', 'country folk'], moods: ['contemplative', 'hopeful'],
+    instrumentos: ['acoustic guitar', 'pedal steel', 'upright bass'], vozes: ['three-part harmonies'],
+    eras: [], producoes: ['analog tape'], tempos: ['medium'] },
+  { id: 'singer-songwriter', label: 'Singer-Songwriter', icon: '🎤', category: 'acoustic',
+    generos: ['indie folk', 'singer-songwriter'], moods: ['melancholic', 'contemplative'],
+    instrumentos: ['acoustic guitar', 'piano'], vozes: ['emotional falsetto'],
+    eras: [], producoes: ['intimate room sound'], tempos: ['slow'] },
+  { id: 'celtic-folk', label: 'Celtic Folk', icon: '🍀', category: 'acoustic',
+    generos: ['celtic', 'folk'], moods: ['hopeful', 'liberating'],
+    instrumentos: ['fiddle', 'tin whistle', 'bodhrán'], vozes: ['three-part harmonies'],
+    eras: [], producoes: ['live room ambience'], tempos: ['medium'] },
+
+  // ─── URBAN & POP ───
+  { id: 'neo-soul', label: 'Neo-Soul', icon: '💜', category: 'urban',
+    generos: ['neo-soul', 'r&b'], moods: ['romantic', 'sensual'],
+    instrumentos: ['rhodes piano', 'soft bass', 'jazz drums'], vozes: ['emotional falsetto'],
+    eras: [], producoes: ['warm analog'], tempos: ['medium'] },
+  { id: 'rb-slow', label: 'R&B Slow Jam', icon: '🌙', category: 'urban',
+    generos: ['r&b', 'contemporary r&b'], moods: ['sensual', 'romantic'],
+    instrumentos: ['analog synthesizer', '808 sub bass'], vozes: ['emotional falsetto'],
+    eras: [], producoes: ['polished pop production'], tempos: ['slow'] },
+  { id: 'boom-bap', label: 'Hip-Hop Boom-Bap', icon: '🎧', category: 'urban',
+    generos: ['boom bap', 'hip hop'], moods: ['contemplative', 'aggressive'],
+    instrumentos: ['sampled drums', 'jazz piano sample', '808 sub bass'], vozes: [],
+    eras: ['analog 90s'], producoes: ['vinyl crackle'], tempos: ['medium'] },
+  { id: 'drill', label: 'Drill', icon: '🌐', category: 'urban',
+    generos: ['drill', 'trap'], moods: ['aggressive', 'tense'],
+    instrumentos: ['808 sub bass', 'hi-hat rolls', 'sliding bass'], vozes: [],
+    eras: [], producoes: ['dark mix'], tempos: ['driving'] },
+  { id: 'pop-anthem', label: 'Pop Anthem', icon: '✨', category: 'urban',
+    generos: ['pop', 'electropop'], moods: ['euphoric', 'liberating'],
+    instrumentos: ['analog synthesizer', 'modern drums', 'electric guitar'], vozes: [],
+    eras: [], producoes: ['polished pop production'], tempos: ['driving'] },
 ];
+
+// Featured presets shown inline on the main view (most universal vibes)
+const FEATURED_PRESET_IDS = ['lofi-sunset', 'brazilian-soul', 'synthwave-drive', 'indie-folk'];
+
+// Categories with display labels per language
+const PRESET_CATEGORIES = {
+  cinematic: { en: 'Cinematic', pt: 'Cinemático', es: 'Cinemático', fr: 'Cinématographique' },
+  brazilian: { en: 'Brazilian', pt: 'Brasileiro', es: 'Brasileño', fr: 'Brésilien' },
+  electronic: { en: 'Electronic', pt: 'Eletrônico', es: 'Electrónico', fr: 'Électronique' },
+  acoustic: { en: 'Acoustic & Folk', pt: 'Acústico & Folk', es: 'Acústico & Folk', fr: 'Acoustique & Folk' },
+  urban: { en: 'Urban & Pop', pt: 'Urbano & Pop', es: 'Urbano & Pop', fr: 'Urbain & Pop' },
+};
 
 // Soft caps per category — based on Suno best practices.
 // Prompts with more than these tend to dilute or be ignored by Suno.
@@ -2393,6 +2500,7 @@ function BrahmstormApp({ onBack } = {}) {
 
   // Modal state for keyboard shortcuts help (shown when user presses ?)
   const [shortcutsOpen, setShortcutsOpen] = useState(false);
+  const [presetsModalOpen, setPresetsModalOpen] = useState(false);
 
   // Keyboard shortcuts (desktop power users)
   useEffect(() => {
@@ -2508,9 +2616,11 @@ function BrahmstormApp({ onBack } = {}) {
     setProducoes((preset.producoes || []).filter(x => PRODUCOES_KEYS.includes(x)).slice(0, MULTI_LIMITS.producoes));
     setTempos((preset.tempos || []).filter(x => TEMPO_KEYS_FLAT.includes(x)).slice(0, 1));
     setOpenBlocks(prev => ({ ...prev, genero: true, mood: true, instr: true }));
-    if (typeof window !== 'undefined' && window.innerWidth < 768 && blocksRef.current) {
+    if (typeof window !== 'undefined' && blocksRef.current) {
       requestAnimationFrame(() => {
-        blocksRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        const HEADER_OFFSET = window.innerWidth < 768 ? 24 : 132;
+        const top = blocksRef.current.getBoundingClientRect().top + window.scrollY - HEADER_OFFSET;
+        window.scrollTo({ top, behavior: 'smooth' });
       });
     }
   };
@@ -2655,17 +2765,41 @@ function BrahmstormApp({ onBack } = {}) {
   // ─────────────────────────────────────────────────────────────────
   // chamarAI — single entry point for all AI calls.
   // In dev (no /api/generate available), falls back to direct Anthropic API.
+  // ─────────────────────────────────────────────────────────────────
+  // Quota state — reflects the user's daily generation budget (5/day).
+  // Updated by chamarAI() after each call based on the _quota field
+  // returned by /api/generate. In dev (localhost), quota is null.
+  // ─────────────────────────────────────────────────────────────────
+  const [quota, setQuota] = useState(null); // { used, limit, remaining } | null
+
+  // Helper: format ms remaining until next UTC midnight as "Xh Ym"
+  const msUntilNextUTCMidnight = () => {
+    const now = new Date();
+    const next = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate() + 1, 0, 0, 0, 0));
+    return next.getTime() - now.getTime();
+  };
+  const formatTimeUntilReset = (ms) => {
+    if (ms <= 0) return '0m';
+    const h = Math.floor(ms / (60 * 60 * 1000));
+    const m = Math.floor((ms % (60 * 60 * 1000)) / (60 * 1000));
+    return h > 0 ? `${h}h ${m}m` : `${m}m`;
+  };
+  // Tick every minute so the countdown stays fresh while the user is on the page
+  const [tickClock, setTickClock] = useState(0);
+  useEffect(() => {
+    const id = setInterval(() => setTickClock(t => t + 1), 60 * 1000);
+    return () => clearInterval(id);
+  }, []);
+
+  // ─────────────────────────────────────────────────────────────────
+  // chamarAI — single entry point for all AI calls.
+  // In dev (no /api/generate available), falls back to direct Anthropic API.
   // In production, calls our serverless proxy with Turnstile + fingerprint.
   // ─────────────────────────────────────────────────────────────────
   const chamarAI = async ({ system, messages, max_tokens = 1500 }) => {
-    // Determine if we have a backend proxy available.
-    // In production (Vercel), /api/generate exists. In Vite dev, it does NOT
-    // (unless you run vercel dev). We detect by trying the proxy first; if it
-    // 404s, we fall back to direct Anthropic (only works if window.claude.complete is available — Claude artifact env).
     const useProxy = typeof window !== 'undefined' && window.location.hostname !== 'localhost';
 
     if (useProxy) {
-      // PRODUCTION: route through our serverless function
       let turnstileToken = '';
       try {
         if (window.turnstile && import.meta.env.VITE_TURNSTILE_SITE_KEY) {
@@ -2675,7 +2809,6 @@ function BrahmstormApp({ onBack } = {}) {
               callback: (token) => resolve(token),
               'error-callback': () => reject(new Error('turnstile-failed')),
             });
-            // Fallback if invisible Turnstile takes too long
             setTimeout(() => resolve(''), 5000);
           });
         }
@@ -2683,7 +2816,6 @@ function BrahmstormApp({ onBack } = {}) {
         console.warn('Turnstile failed', e);
       }
 
-      // Simple fingerprint: stable enough across sessions, doesn't need a library
       const fingerprint = btoa(
         [navigator.userAgent, navigator.language, screen.width, screen.height, new Date().getTimezoneOffset()].join('|')
       ).slice(0, 32);
@@ -2693,14 +2825,30 @@ function BrahmstormApp({ onBack } = {}) {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ system, messages, max_tokens, turnstileToken, fingerprint }),
       });
+
+      // 429 = daily limit hit. Update quota state and throw a recognizable error.
+      if (res.status === 429) {
+        const err = await res.json().catch(() => ({}));
+        if (typeof err.used === 'number' && typeof err.limit === 'number') {
+          setQuota({ used: err.used, limit: err.limit, remaining: 0 });
+        }
+        const error = new Error('daily_limit');
+        error.code = 'daily_limit';
+        throw error;
+      }
+
       if (!res.ok) {
         const err = await res.json().catch(() => ({}));
         throw new Error(err.error || `request_failed_${res.status}`);
       }
-      return await res.json();
+
+      const data = await res.json();
+      // Update quota tracker from the server's response
+      if (data._quota) setQuota(data._quota);
+      return data;
     }
 
-    // DEV / artifact env: call Anthropic directly (the artifact env injects auth automatically)
+    // DEV / artifact env: call Anthropic directly
     const res = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -2708,6 +2856,27 @@ function BrahmstormApp({ onBack } = {}) {
     });
     if (!res.ok) throw new Error(`anthropic_${res.status}`);
     return await res.json();
+  };
+
+  // Centralized error message mapper. Recognizes daily_limit and shows
+  // the proper localized message; falls back to a generic error otherwise.
+  const handleAIError = (err, fallbackKey = 'err_variants') => {
+    if (err && err.code === 'daily_limit') {
+      setErrorMsg(t.err_daily_limit);
+      return;
+    }
+    setErrorMsg(t[fallbackKey] || t.err_variants);
+  };
+
+  // Quota-aware button state. Returns label + whether button should be disabled.
+  // - When quota exhausted: disabled, shows "DAILY LIMIT REACHED"
+  // - When generating: shows the loading phase
+  // - Otherwise: shows the action label + remaining counter "(4/5)" if known
+  const isQuotaExhausted = quota && quota.remaining !== undefined && quota.remaining <= 0;
+  const getQuotaSuffix = () => {
+    if (!quota || quota.limit === undefined) return '';
+    const remaining = Math.max(0, quota.limit - quota.used);
+    return ` · ${remaining}/${quota.limit}`;
   };
 
   const preencherPromptComIA = async () => {
@@ -2748,13 +2917,15 @@ Return ONLY JSON, no markdown:
       setOpenBlocks(prev => ({ ...prev, genero: true, mood: true, instr: true }));
       mostrarToast(t.toast_filled);
       // Scroll user to the now-filled blocks (mobile only — desktop already shows them)
-      if (typeof window !== 'undefined' && window.innerWidth < 768 && blocksRef.current) {
+      if (typeof window !== 'undefined' && blocksRef.current) {
         requestAnimationFrame(() => {
-          blocksRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          const HEADER_OFFSET = window.innerWidth < 768 ? 24 : 132;
+          const top = blocksRef.current.getBoundingClientRect().top + window.scrollY - HEADER_OFFSET;
+          window.scrollTo({ top, behavior: 'smooth' });
         });
       }
-    } catch (_) {
-      setErrorMsg(t.err_interpret);
+    } catch (err) {
+      handleAIError(err, 'err_interpret');
     } finally {
       setLoadingPreencher(false);
     }
@@ -2812,13 +2983,15 @@ Return ONLY JSON:
       setOpenBlocks(prev => ({ ...prev, ltema: true, lmood: true, refrao: true, elem: true, ltam: true }));
       mostrarToast(t.toast_filled);
       // Scroll user to the now-filled blocks (mobile only)
-      if (typeof window !== 'undefined' && window.innerWidth < 768 && blocksRef.current) {
+      if (typeof window !== 'undefined' && blocksRef.current) {
         requestAnimationFrame(() => {
-          blocksRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          const HEADER_OFFSET = window.innerWidth < 768 ? 24 : 132;
+          const top = blocksRef.current.getBoundingClientRect().top + window.scrollY - HEADER_OFFSET;
+          window.scrollTo({ top, behavior: 'smooth' });
         });
       }
-    } catch (_) {
-      setErrorMsg(t.err_interpret);
+    } catch (err) {
+      handleAIError(err, 'err_interpret');
     } finally {
       setLoadingPreencher(false);
     }
@@ -2943,8 +3116,8 @@ Return ONLY JSON:
       setAiVariants(variantes);
       // log every variation to history
       variantes.forEach(v => adicionarAoHistorico(v.prompt, 'prompt', v.titulo));
-    } catch (_) {
-      setErrorMsg(t.err_variants);
+    } catch (err) {
+      handleAIError(err, 'err_variants');
     } finally {
       stopPhases();
       setLoadingPrompt(false); setLoadingKind(null);
@@ -2981,8 +3154,8 @@ Return ONLY JSON:
       const variantes = p.variacoes || [];
       setAiVariants(variantes);
       variantes.forEach(v => adicionarAoHistorico(v.prompt, 'prompt', v.titulo));
-    } catch (_) {
-      setErrorMsg(t.err_variants);
+    } catch (err) {
+      handleAIError(err, 'err_variants');
     } finally {
       stopPhases();
       setLoadingPrompt(false); setLoadingKind(null);
@@ -3049,8 +3222,8 @@ Return ONLY the formatted lyrics, copy-paste-ready for Suno.`;
       const limpa = sanitizarLetra(txt);
       setLetraGerada(limpa);
       adicionarAoHistorico(limpa, 'letra', tema || 'Lyrics');
-    } catch (_) {
-      setErrorMsg(t.err_letra);
+    } catch (err) {
+      handleAIError(err, 'err_letra');
     } finally {
       stopPhases();
       setLoadingLetra(false); setLoadingKind(null);
@@ -3138,8 +3311,8 @@ Return ONLY this JSON, no preamble, no markdown:
       if (tracks.length > 0) setLetrasAlbumExpanded({ 0: true });
       // log each track to history
       tracks.forEach((tr, i) => adicionarAoHistorico(tr.letra, 'letra', tr.titulo || `Track ${i+1}`));
-    } catch (_) {
-      setErrorMsg(t.err_letra);
+    } catch (err) {
+      handleAIError(err, 'err_letra');
     } finally {
       stopPhases();
       setLoadingLetra(false); setLoadingKind(null);
@@ -3407,13 +3580,17 @@ Return ONLY this JSON, no preamble, no markdown:
                   <div className="font-mono text-[10px] uppercase tracking-[0.15em] text-stone-400 italic">· {t.presets_sub}</div>
                 </div>
                 <div className="flex flex-wrap gap-2">
-                  {PRESETS.map(p => (
+                  {PRESETS.filter(p => FEATURED_PRESET_IDS.includes(p.id)).map(p => (
                     <button key={p.id} onClick={() => applyPreset(p)}
                       className="font-mono text-[11px] uppercase tracking-[0.15em] px-3 py-2 rounded-lg border border-stone-300 text-stone-700 btn-fill-orange transition-all active:scale-[0.97] flex items-center gap-2">
                       <span className="text-base leading-none">{p.icon}</span>
                       <span>{p.label}</span>
                     </button>
                   ))}
+                  <button onClick={() => setPresetsModalOpen(true)}
+                    className="font-mono text-[11px] uppercase tracking-[0.15em] px-3 py-2 rounded-lg border border-orange-500/40 bg-orange-500/5 text-orange-700 btn-fill-orange transition-all active:scale-[0.97] flex items-center gap-2">
+                    <span>{t.presets_browse_all || 'browse all'} ({PRESETS.length}) →</span>
+                  </button>
                 </div>
               </div>
             )}
@@ -3683,20 +3860,26 @@ Return ONLY this JSON, no preamble, no markdown:
               )}
               {tab === 'prompt' && (
                 <>
-                  <button onClick={gerarPrompts} disabled={loadingPrompt || !podeGerarPrompt}
-                    className={`w-full bg-orange-500 hover:bg-orange-400 disabled:bg-stone-300 disabled:text-stone-500 text-stone-900 font-mono text-xs uppercase tracking-[0.2em] px-4 py-4 rounded-xl flex items-center justify-center gap-3 transition-all active:scale-[0.98] disabled:shadow-none disabled:cursor-not-allowed ${loadingKind === 'variations' ? 'glow-pulse' : 'glow-amber'}`}>
-                    {loadingKind === 'variations' ? <><Loader2 className="w-4 h-4 animate-spin" /> {loadingPhase || t.out_forging}</> : <><Sparkles className="w-4 h-4" /> {t.out_generate_prompt}</>}
+                  <button onClick={gerarPrompts} disabled={loadingPrompt || !podeGerarPrompt || isQuotaExhausted}
+                    className={`w-full bg-orange-500 hover:bg-orange-400 disabled:bg-stone-300 disabled:text-stone-500 text-stone-900 font-mono text-xs uppercase tracking-[0.2em] px-4 py-4 rounded-xl flex items-center justify-center gap-3 transition-all active:scale-[0.98] disabled:shadow-none disabled:cursor-not-allowed ${loadingKind === 'variations' && !isQuotaExhausted ? 'glow-pulse' : isQuotaExhausted ? '' : 'glow-amber'}`}>
+                    {isQuotaExhausted
+                      ? <>{t.daily_limit_label.toUpperCase()}</>
+                      : loadingKind === 'variations'
+                        ? <><Loader2 className="w-4 h-4 animate-spin" /> {loadingPhase || t.out_forging}</>
+                        : <><Sparkles className="w-4 h-4" /> {t.out_generate_prompt}{getQuotaSuffix()}</>}
                   </button>
-                  <button onClick={gerarAlbum} disabled={loadingPrompt || !podeGerarPrompt}
+                  <button onClick={gerarAlbum} disabled={loadingPrompt || !podeGerarPrompt || isQuotaExhausted}
                     className="w-full bg-stone-900 hover:bg-stone-800 disabled:bg-stone-300 disabled:text-stone-500 text-stone-50 px-4 py-3 rounded-xl flex flex-col items-center justify-center gap-0.5 transition-all active:scale-[0.98] disabled:cursor-not-allowed">
-                    {loadingKind === 'album' ? (
+                    {isQuotaExhausted ? (
+                      <span className="font-mono text-xs uppercase tracking-[0.2em]">{t.daily_limit_label.toUpperCase()}</span>
+                    ) : loadingKind === 'album' ? (
                       <span className="font-mono text-xs uppercase tracking-[0.2em] flex items-center gap-2">
                         <Loader2 className="w-4 h-4 animate-spin" /> {loadingPhase || t.out_forging}
                       </span>
                     ) : (
                       <>
                         <span className="font-mono text-xs uppercase tracking-[0.2em] flex items-center gap-2">
-                          <Disc3 className="w-4 h-4" /> {t.out_generate_album}
+                          <Disc3 className="w-4 h-4" /> {t.out_generate_album}{getQuotaSuffix()}
                         </span>
                         <span className="font-mono text-[9px] uppercase tracking-[0.2em] text-stone-400">
                           {t.out_album_sub}
@@ -3709,7 +3892,18 @@ Return ONLY this JSON, no preamble, no markdown:
                       <span className="font-mono text-[10px] uppercase tracking-widest text-stone-500">{t.need_prompt}</span>
                     </div>
                   )}
-                  {errorMsg && errorMsg !== t.err_interpret && <p className="font-mono text-[11px] text-red-600 text-center">{errorMsg}</p>}
+                  {errorMsg && errorMsg !== t.err_interpret && (
+                    <div className="font-mono text-[11px] text-red-600 text-center flex items-center justify-center gap-2">
+                      {errorMsg === t.err_daily_limit ? (
+                        <>
+                          <AlertTriangle className="w-3 h-3 flex-shrink-0" />
+                          <span>{errorMsg} <strong className="font-mono">{formatTimeUntilReset(msUntilNextUTCMidnight() - tickClock * 0)}</strong></span>
+                        </>
+                      ) : (
+                        <p>{errorMsg}</p>
+                      )}
+                    </div>
+                  )}
 
                   {aiVariants.length > 0 && (
                     <div className="space-y-3 pt-2">
@@ -3750,20 +3944,26 @@ Return ONLY this JSON, no preamble, no markdown:
 
               {tab === 'letra' && (
                 <>
-                  <button onClick={gerarLetra} disabled={loadingLetra || !podeGerarLetra}
-                    className={`w-full bg-orange-500 hover:bg-orange-400 disabled:bg-stone-300 disabled:text-stone-500 text-stone-900 font-mono text-xs uppercase tracking-[0.2em] px-4 py-4 rounded-xl flex items-center justify-center gap-3 transition-all active:scale-[0.98] disabled:shadow-none disabled:cursor-not-allowed ${loadingKind === 'letra' ? 'glow-pulse' : 'glow-amber'}`}>
-                    {loadingKind === 'letra' ? <><Loader2 className="w-4 h-4 animate-spin" /> {loadingPhase || t.out_writing}</> : <><Sparkles className="w-4 h-4" /> {t.out_generate_letra}</>}
+                  <button onClick={gerarLetra} disabled={loadingLetra || !podeGerarLetra || isQuotaExhausted}
+                    className={`w-full bg-orange-500 hover:bg-orange-400 disabled:bg-stone-300 disabled:text-stone-500 text-stone-900 font-mono text-xs uppercase tracking-[0.2em] px-4 py-4 rounded-xl flex items-center justify-center gap-3 transition-all active:scale-[0.98] disabled:shadow-none disabled:cursor-not-allowed ${loadingKind === 'letra' && !isQuotaExhausted ? 'glow-pulse' : isQuotaExhausted ? '' : 'glow-amber'}`}>
+                    {isQuotaExhausted
+                      ? <>{t.daily_limit_label.toUpperCase()}</>
+                      : loadingKind === 'letra'
+                        ? <><Loader2 className="w-4 h-4 animate-spin" /> {loadingPhase || t.out_writing}</>
+                        : <><Sparkles className="w-4 h-4" /> {t.out_generate_letra}{getQuotaSuffix()}</>}
                   </button>
-                  <button onClick={gerarLetrasAlbum} disabled={loadingLetra || !podeGerarLetra}
+                  <button onClick={gerarLetrasAlbum} disabled={loadingLetra || !podeGerarLetra || isQuotaExhausted}
                     className="w-full bg-stone-900 hover:bg-stone-800 disabled:bg-stone-300 disabled:text-stone-500 text-stone-50 px-4 py-3 rounded-xl flex flex-col items-center justify-center gap-0.5 transition-all active:scale-[0.98] disabled:cursor-not-allowed">
-                    {loadingKind === 'letrasAlbum' ? (
+                    {isQuotaExhausted ? (
+                      <span className="font-mono text-xs uppercase tracking-[0.2em]">{t.daily_limit_label.toUpperCase()}</span>
+                    ) : loadingKind === 'letrasAlbum' ? (
                       <span className="font-mono text-xs uppercase tracking-[0.2em] flex items-center gap-2">
                         <Loader2 className="w-4 h-4 animate-spin" /> {loadingPhase || t.out_writing}
                       </span>
                     ) : (
                       <>
                         <span className="font-mono text-xs uppercase tracking-[0.2em] flex items-center gap-2">
-                          <Disc3 className="w-4 h-4" /> {t.out_generate_album_letras}
+                          <Disc3 className="w-4 h-4" /> {t.out_generate_album_letras}{getQuotaSuffix()}
                         </span>
                         <span className="font-mono text-[9px] uppercase tracking-[0.2em] text-stone-400">
                           {t.out_album_letras_sub}
@@ -3776,7 +3976,18 @@ Return ONLY this JSON, no preamble, no markdown:
                       <span className="font-mono text-[10px] uppercase tracking-widest text-stone-500">{t.need_letra}</span>
                     </div>
                   )}
-                  {errorMsg && errorMsg !== t.err_interpret && <p className="font-mono text-[11px] text-red-600 text-center">{errorMsg}</p>}
+                  {errorMsg && errorMsg !== t.err_interpret && (
+                    <div className="font-mono text-[11px] text-red-600 text-center flex items-center justify-center gap-2">
+                      {errorMsg === t.err_daily_limit ? (
+                        <>
+                          <AlertTriangle className="w-3 h-3 flex-shrink-0" />
+                          <span>{errorMsg} <strong className="font-mono">{formatTimeUntilReset(msUntilNextUTCMidnight() - tickClock * 0)}</strong></span>
+                        </>
+                      ) : (
+                        <p>{errorMsg}</p>
+                      )}
+                    </div>
+                  )}
 
                   {letrasAlbum.length > 0 && (
                     <div className="space-y-3 pt-2">
@@ -4073,6 +4284,50 @@ Return ONLY this JSON, no preamble, no markdown:
                 </button>
               </div>
             )}
+          </div>
+        </div>
+      )}
+
+      {/* Quick-starts modal — categorized picker for all 25+ presets */}
+      {presetsModalOpen && (
+        <div className="fixed inset-0 z-[88] flex items-end md:items-center justify-center" onClick={() => setPresetsModalOpen(false)}>
+          <div className="absolute inset-0 bg-stone-950/70" style={{ backdropFilter: 'blur(8px)', WebkitBackdropFilter: 'blur(8px)' }} />
+          <div onClick={e => e.stopPropagation()}
+            className="relative w-full md:max-w-3xl md:mx-6 bg-stone-100 rounded-t-3xl md:rounded-2xl shadow-2xl border-t md:border border-stone-300 overflow-hidden flex flex-col"
+            style={{ maxHeight: '85dvh' }}>
+            <div className="flex justify-center pt-2 pb-1 flex-shrink-0 md:hidden"><div className="w-10 h-1 rounded-full bg-stone-400/60" /></div>
+            <div className="flex items-center justify-between gap-3 px-5 py-3 border-b border-stone-300 flex-shrink-0">
+              <div className="flex items-center gap-2 min-w-0">
+                <Flame className="w-4 h-4 text-orange-500 flex-shrink-0" />
+                <span className="font-display italic text-xl md:text-2xl text-stone-900 truncate" style={{ fontWeight: 700 }}>{t.presets_modal_title}</span>
+              </div>
+              <button onClick={() => setPresetsModalOpen(false)}
+                className="font-mono text-[11px] uppercase tracking-widest px-3 py-1.5 rounded-md bg-stone-900 text-stone-50 hover:bg-stone-800 transition-all active:scale-95 flex-shrink-0">
+                {t.sheet_done}
+              </button>
+            </div>
+            <div className="overflow-y-auto scrollbar-thin px-5 py-4 flex-1 min-h-0">
+              {Object.entries(PRESET_CATEGORIES).map(([catId, catLabels]) => {
+                const catPresets = PRESETS.filter(p => p.category === catId);
+                if (catPresets.length === 0) return null;
+                return (
+                  <div key={catId} className="mb-5 last:mb-0">
+                    <div className="font-mono text-[10px] uppercase tracking-[0.25em] text-orange-700 mb-2 pb-1 border-b border-stone-300">
+                      {catLabels[lang] || catLabels.en}
+                    </div>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2">
+                      {catPresets.map(p => (
+                        <button key={p.id} onClick={() => { applyPreset(p); setPresetsModalOpen(false); }}
+                          className="font-mono text-[11px] uppercase tracking-[0.15em] px-3 py-3 rounded-lg border border-stone-300 bg-white text-stone-700 btn-fill-orange transition-all active:scale-[0.97] flex items-center gap-2 text-left">
+                          <span className="text-lg leading-none flex-shrink-0">{p.icon}</span>
+                          <span className="truncate">{p.label}</span>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
           </div>
         </div>
       )}
