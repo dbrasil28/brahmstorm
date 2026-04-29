@@ -1191,6 +1191,9 @@ const UI = {
     quota_card_sub: "shared between prompt and lyrics generations",
     quota_card_exhausted: "daily limit reached",
     quota_card_resets_in: "resets in",
+    song_title: 'song title',
+    previous_lyrics: 'previous lyrics',
+    previous_show: 'show',
     toast_filled: '✓ fields filled by AI', toast_copied: '✓ copied to clipboard',
     toast_copy_fail: "couldn't copy automatically",
     open_suno: 'open Suno', open_suno_lyrics: 'open Suno · paste lyrics',
@@ -1295,6 +1298,9 @@ const UI = {
     quota_card_sub: 'compartilhadas entre prompt e letras',
     quota_card_exhausted: 'limite diário atingido',
     quota_card_resets_in: 'reseta em',
+    song_title: 'título da música',
+    previous_lyrics: 'letras anteriores',
+    previous_show: 'mostrar',
     toast_filled: '✓ campos preenchidos pela IA', toast_copied: '✓ copiado',
     toast_copy_fail: 'não foi possível copiar',
     open_suno: 'abrir Suno', open_suno_lyrics: 'abrir Suno · colar letra',
@@ -1405,6 +1411,9 @@ const UI = {
     quota_card_sub: 'compartidas entre prompt y letras',
     quota_card_exhausted: 'límite diario alcanzado',
     quota_card_resets_in: 'se reinicia en',
+    song_title: 'título de la canción',
+    previous_lyrics: 'letras anteriores',
+    previous_show: 'mostrar',
     toast_filled: '✓ campos rellenados', toast_copied: '✓ copiado',
     toast_copy_fail: 'no se pudo copiar',
     open_suno: 'abrir Suno', open_suno_lyrics: 'abrir Suno · pegar letra',
@@ -1501,6 +1510,9 @@ const UI = {
     quota_card_sub: 'partagées entre prompts et paroles',
     quota_card_exhausted: 'limite quotidienne atteinte',
     quota_card_resets_in: 'réinitialisation dans',
+    song_title: 'titre de la chanson',
+    previous_lyrics: 'paroles précédentes',
+    previous_show: 'voir',
     toast_filled: '✓ champs remplis', toast_copied: '✓ copié',
     toast_copy_fail: 'impossible de copier',
     open_suno: 'ouvrir Suno', open_suno_lyrics: 'ouvrir Suno · coller paroles',
@@ -2530,6 +2542,8 @@ function BrahmstormApp({ onBack } = {}) {
   const [aiVariants, setAiVariants] = useState([]);
   const [aiVariantsKind, setAiVariantsKind] = useState('variations');
   const [letraGerada, setLetraGerada] = useState('');
+  const [letraTitulo, setLetraTitulo] = useState('');
+  const [letrasHistorico, setLetrasHistorico] = useState([]);
   const [letrasAlbum, setLetrasAlbum] = useState([]);
   const [letrasAlbumExpanded, setLetrasAlbumExpanded] = useState({});
   const [loadingPrompt, setLoadingPrompt] = useState(false);
@@ -3035,7 +3049,7 @@ Return ONLY JSON, no markdown:
       setVozes((p.vozes || []).filter(x => VOZES_KEYS.includes(x)));
       setEras((p.eras || []).filter(x => ERAS_KEYS.includes(x)));
       setProducoes((p.producoes || []).filter(x => PRODUCOES_KEYS.includes(x)));
-      setTempos((p.tempos || []).filter(x => TEMPO_KEYS_FLAT.includes(x)));
+      setTempos((p.tempos || []).filter(x => TEMPO_KEYS_FLAT.includes(x)).slice(0, 1));
       if (p.tema) setTema(p.tema);
       setOpenBlocks(prev => ({ ...prev, genero: true, mood: true, instr: true }));
       setProducerTab('producer');
@@ -3090,11 +3104,11 @@ Return ONLY JSON:
       setGeneros((p.generos || []).filter(x => GENEROS_FLAT.includes(x)));
       setMoods((p.moods || []).filter(x => MOODS_KEYS.includes(x)));
       setEras((p.eras || []).filter(x => ERAS_KEYS.includes(x)));
-      setPerspectivas((p.perspectivas || []).filter(x => PERSP_KEYS.includes(x)));
-      setEstruturas((p.estruturas || []).filter(x => ESTRUTURAS_KEYS.includes(x)));
-      setRimas((p.rimas || []).filter(x => RIMAS_KEYS.includes(x)));
+      setPerspectivas((p.perspectivas || []).filter(x => PERSP_KEYS.includes(x)).slice(0, 1));
+      setEstruturas((p.estruturas || []).filter(x => ESTRUTURAS_KEYS.includes(x)).slice(0, 1));
+      setRimas((p.rimas || []).filter(x => RIMAS_KEYS.includes(x)).slice(0, 1));
       setDuracoes((p.duracoes || []).filter(x => DURACOES_KEYS.includes(x)));
-      setMetricas((p.metricas || []).filter(x => METRICAS_KEYS.includes(x)));
+      setMetricas((p.metricas || []).filter(x => METRICAS_KEYS.includes(x)).slice(0, 1));
       const idsOk = (p.idiomas || []).filter(x => IDIOMAS_KEYS.includes(x));
       setIdiomas(idsOk);
       if (p.tema) setTema(p.tema);
@@ -3193,14 +3207,14 @@ Return ONLY this JSON, no preamble:
       if (Array.isArray(f.vozes))        setVozes(f.vozes.filter(x => VOZES_KEYS.includes(x)));
       if (Array.isArray(f.eras))         setEras(f.eras.filter(x => ERAS_KEYS.includes(x)));
       if (Array.isArray(f.producoes))    setProducoes(f.producoes.filter(x => PRODUCOES_KEYS.includes(x)));
-      if (Array.isArray(f.tempos))       setTempos(f.tempos.filter(x => TEMPO_KEYS_FLAT.includes(x)));
+      if (Array.isArray(f.tempos))       setTempos(f.tempos.filter(x => TEMPO_KEYS_FLAT.includes(x)).slice(0, 1));
       if (isLyricsTab && Array.isArray(f.duracoes))  setDuracoes(f.duracoes.filter(x => DURACOES_KEYS.includes(x)));
-      if (isLyricsTab && Array.isArray(f.idiomas))   setIdiomas(f.idiomas.filter(x => IDIOMAS_KEYS.includes(x)));
+      if (isLyricsTab && Array.isArray(f.idiomas))   setIdiomas(f.idiomas.filter(x => IDIOMAS_KEYS.includes(x)).slice(0, 1));
       if (isLyricsTab) {
-        if (Array.isArray(f.perspectivas)) setPerspectivas(f.perspectivas.filter(x => PERSP_KEYS.includes(x)));
-        if (Array.isArray(f.estruturas))   setEstruturas(f.estruturas.filter(x => ESTRUTURAS_KEYS.includes(x)));
-        if (Array.isArray(f.rimas))        setRimas(f.rimas.filter(x => RIMAS_KEYS.includes(x)));
-        if (Array.isArray(f.metricas))     setMetricas(f.metricas.filter(x => METRICAS_KEYS.includes(x)));
+        if (Array.isArray(f.perspectivas)) setPerspectivas(f.perspectivas.filter(x => PERSP_KEYS.includes(x)).slice(0, 1));
+        if (Array.isArray(f.estruturas))   setEstruturas(f.estruturas.filter(x => ESTRUTURAS_KEYS.includes(x)).slice(0, 1));
+        if (Array.isArray(f.rimas))        setRimas(f.rimas.filter(x => RIMAS_KEYS.includes(x)).slice(0, 1));
+        if (Array.isArray(f.metricas))     setMetricas(f.metricas.filter(x => METRICAS_KEYS.includes(x)).slice(0, 1));
       }
 
       setRefResult({ confidence: conf, kind: tipo, message: parsed.message || '' });
@@ -3217,7 +3231,7 @@ Return ONLY this JSON, no preamble:
     const preencherComIA = tab === 'prompt' ? preencherPromptComIA : preencherLetraComIA;
 
   const gerarPrompts = async () => {
-    setLoadingPrompt(true); setLoadingKind('variations'); setErrorMsg(''); setAiVariants([]); setAiVariantsKind('variations');
+    setLoadingPrompt(true); setLoadingKind('variations'); setErrorMsg(''); setAiVariantsKind('variations');
     const stopPhases = startPhaseCycle(t.phases_prompt);
     try {
       const brief = `You are a Suno AI prompt expert. Generate 3 CREATIVE and SPECIFIC prompt variations IN ENGLISH (Suno works best in English), each with a different angle.
@@ -3238,7 +3252,7 @@ Return ONLY JSON:
       const txt = (data.content || []).filter(b => b.type === 'text').map(b => b.text).join('\n');
       const p = JSON.parse(txt.replace(/```json|```/g, '').trim());
       const variantes = p.variacoes || [];
-      setAiVariants(variantes);
+      setAiVariants(prev => [...variantes, ...prev]);
       // log every variation to history
       variantes.forEach(v => adicionarAoHistorico(v.prompt, 'prompt', v.titulo));
     } catch (err) {
@@ -3250,7 +3264,7 @@ Return ONLY JSON:
   };
 
   const gerarAlbum = async () => {
-    setLoadingPrompt(true); setLoadingKind('album'); setErrorMsg(''); setAiVariants([]); setAiVariantsKind('album');
+    setLoadingPrompt(true); setLoadingKind('album'); setErrorMsg(''); setAiVariantsKind('album');
     const stopPhases = startPhaseCycle(t.phases_album);
     try {
       const brief = `You are a music director designing a 5-track cohesive EP/album. All tracks share the same SONIC UNIVERSE (genre, vocals, production, era) but each track has a distinct emotional arc, BPM, and lyrical theme — like tracks 1-5 of a real album.
@@ -3277,7 +3291,7 @@ Return ONLY JSON:
       const txt = (data.content || []).filter(b => b.type === 'text').map(b => b.text).join('\n');
       const p = JSON.parse(txt.replace(/```json|```/g, '').trim());
       const variantes = p.variacoes || [];
-      setAiVariants(variantes);
+      setAiVariants(prev => [...variantes, ...prev]);
       variantes.forEach(v => adicionarAoHistorico(v.prompt, 'prompt', v.titulo));
     } catch (err) {
       handleAIError(err, 'err_variants');
@@ -3341,12 +3355,24 @@ MANDATORY:
 9. NO TEXT before first [Intro] or [Verse 1]. No comments, no preamble.
 10. First line MUST start with [.
 
-Return ONLY the formatted lyrics, copy-paste-ready for Suno.`;
+Return ONLY the formatted lyrics, copy-paste-ready for Suno.
+
+━━━ TITLE ━━━
+Before the lyrics, output a single line:
+TITLE: [Song Title]
+
+Then a blank line, then the lyrics starting with [Intro] or [Verse 1].
+The TITLE line is for our app to display the song name — it will not be sent to Suno.`;
       const data = await chamarAI({ messages: [{ role: 'user', content: brief }], max_tokens: 2000 });
       const txt = (data.content || []).filter(b => b.type === 'text').map(b => b.text).join('\n');
-      const limpa = sanitizarLetra(txt);
+      const titleMatch = txt.match(/^\s*TITLE:\s*(.+?)\s*$/im);
+      const songTitle = titleMatch ? titleMatch[1].trim() : (tema || 'Untitled');
+      const lyricsBody = txt.replace(/^\s*TITLE:\s*.+$/im, '').trim();
+      const limpa = sanitizarLetra(lyricsBody);
       setLetraGerada(limpa);
-      adicionarAoHistorico(limpa, 'letra', tema || 'Lyrics');
+      setLetraTitulo(songTitle);
+      setLetrasHistorico(prev => [{ titulo: songTitle, letra: limpa, ts: Date.now() }, ...prev]);
+      adicionarAoHistorico(limpa, 'letra', songTitle);
     } catch (err) {
       handleAIError(err, 'err_letra');
     } finally {
@@ -3363,14 +3389,26 @@ Return ONLY the formatted lyrics, copy-paste-ready for Suno.`;
     try {
       const brief = `You are a songwriter writing the LYRICS for a 5-track cohesive EP. The user has set a sonic universe and a thematic core. Write 5 ORIGINAL songs that share the same emotional/conceptual world but explore DIFFERENT facets of it — like an album narrative arc.
 
-━━━ NARRATIVE ARC (think of it like a 5-act story) ━━━
-Track 1 — OPENING: establish the world, set the emotional baseline
-Track 2 — INTRODUCTION: deepen the story, introduce conflict or desire
-Track 3 — TURNING POINT: a confession, revelation, or emotional peak
-Track 4 — DESCENT: aftermath, doubt, vulnerability
-Track 5 — CLOSING: resolution, acceptance, fade or rebirth
+━━━ CRITICAL: VARY THE SUBJECT MATTER ━━━
+The 5 tracks must NOT repeat the same topic. They share the same UNIVERSE but each song looks at it from a DIFFERENT angle, character, time period, or perspective.
 
-Each track has a clear ROLE in the arc. The titles should hint at this role.
+Example: if the central theme is "a father protects his family":
+  ✅ Track 1: father's daily routine of vigilance
+  ✅ Track 2: a memory from his own childhood
+  ✅ Track 3: the day he realized he couldn't protect everyone
+  ✅ Track 4: his daughter watching him grow old
+  ✅ Track 5: him now teaching a grandchild
+
+  ❌ AVOID: 5 songs all about the same topic with the same hook idea repeated.
+
+━━━ NARRATIVE ARC (think of it like a 5-act story) ━━━
+Track 1 — OPENING: establish the world, set the emotional baseline. Subject A.
+Track 2 — INTRODUCTION: deepen the story, introduce a related but DIFFERENT conflict. Subject B.
+Track 3 — TURNING POINT: shift perspective or time. Subject C, NOT a rephrase of A or B.
+Track 4 — DESCENT: aftermath, doubt, OR completely different angle. Subject D.
+Track 5 — CLOSING: resolution. Subject E that loops back to A but with new meaning.
+
+Each track must have a UNIQUE subject within the shared universe. Each chorus must have a DIFFERENT central image — DO NOT reuse the same metaphor or hook idea across tracks.
 
 ━━━ SIZE PER TRACK ━━━
 Target size: ${tc.id}
@@ -3841,8 +3879,17 @@ Return ONLY this JSON, no preamble, no markdown:
 
                 <Block mobileSheetKey={mobileSheetKey} setMobileSheetKey={setMobileSheetKey} setMobileSheetData={setMobileSheetData} className={advancedBlockClass} keyId="voz" label={t.lbl_vocals} count={vozes.length} max={MULTI_LIMITS.vozes} limitHint={t.limit_hint} preview={vozes.map(k => getVozLabel(k, lang))}
                   open={openBlocks.voz} onToggle={toggleBlock} onClear={() => setVozes([])} tClear={t.block_clear} tOpen={t.block_open}>
-                  <ListSelect options={sortByLabel(VOZES_KEYS, getVozLabel, lang)} values={vozes}
-                    onToggle={(k) => toggleItem(vozes, setVozes, k, MULTI_LIMITS.vozes)} getLabel={(k) => getVozLabel(k, lang)} />
+                  {Object.entries(VOZES_CATS_KEYS).map(([catKey, items]) => (
+                    <div key={catKey} className="mb-5 last:mb-0">
+                      <div className="font-mono text-[10px] uppercase tracking-[0.2em] text-orange-700/80 mb-2 pb-1 border-b border-stone-300">
+                        {VOZES_CAT_LABELS[lang]?.[catKey] || VOZES_CAT_LABELS.en[catKey]}
+                      </div>
+                      <div className="grid grid-cols-1 gap-1 min-w-0">
+                        <ListSelect options={sortByLabel(items, getVozLabel, lang)} values={vozes}
+                          onToggle={(k) => toggleItem(vozes, setVozes, k, MULTI_LIMITS.vozes)} getLabel={(k) => getVozLabel(k, lang)} />
+                      </div>
+                    </div>
+                  ))}
                 </Block>
 
                 <Block mobileSheetKey={mobileSheetKey} setMobileSheetKey={setMobileSheetKey} setMobileSheetData={setMobileSheetData} className={advancedBlockClass} keyId="era" label={t.lbl_era} count={eras.length} max={MULTI_LIMITS.eras} limitHint={t.limit_hint} preview={eras.map(k => getEraLabel(k, lang))}
