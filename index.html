@@ -72,9 +72,13 @@
       ]
     }
     </script>
+
+    <!-- Cloudflare Turnstile (anti-bot) -->
+    <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
   </head>
   <body>
     <div id="root"></div>
+    <div id="turnstile-container" style="position:fixed;bottom:1rem;right:1rem;z-index:9999"></div>
     <script type="module" src="/src/main.jsx"></script>
   </body>
 </html>

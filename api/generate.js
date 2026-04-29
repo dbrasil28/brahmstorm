@@ -1,9 +1,18 @@
-// api/generate.js — Vercel Function with Redis rate limit + owner bypass
+// api/generate.js — Vercel Function with Redis rate limit + owner bypass + Turnstile
 //
 // Defense layers:
 //   ✓ Server-side proxy (key never reaches frontend)
 //   ✓ Rate limit per IP via Upstash Redis (5/day, resets at midnight UTC)
 //   ✓ Owner token bypass (your personal account skips the limit)
+//   ✓ Cloudflare Turnstile bot validation
+//
+// Required environment variables (set in Vercel dashboard):
+//   ANTHROPIC_API_KEY        — your Anthropic key
+//   UPSTASH_REDIS_REST_URL   — Upstash Redis REST URL
+//   UPSTASH_REDIS_REST_TOKEN — Upstash Redis REST token
+//   DAILY_LIMIT              — generations per day (defaults to 5)
+//   OWNER_TOKEN              — secret token that bypasses rate limit
+//   TURNSTILE_SECRET_KEY     — Cloudflare Turnstile secret key
 
 import { Redis } from '@upstash/redis';
 
@@ -23,6 +32,27 @@ function getUTCDateKey() {
   return new Date().toISOString().slice(0, 10);
 }
 
+async function verifyTurnstile(token, ip) {
+  const secret = process.env.TURNSTILE_SECRET_KEY;
+  if (!secret) {
+    console.warn('TURNSTILE_SECRET_KEY not set — skipping verification (dev mode)');
+    return { success: true, skipped: true };
+  }
+  if (!token) return { success: false, reason: 'missing-token' };
+  try {
+    const res = await fetch('https://challenges.cloudflare.com/turnstile/v0/siteverify', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: new URLSearchParams({ secret, response: token, remoteip: ip }),
+    });
+    const data = await res.json();
+    return { success: !!data.success, reason: data['error-codes']?.[0] };
+  } catch (e) {
+    console.error('Turnstile verify failed:', e);
+    return { success: false, reason: 'verify-failed' };
+  }
+}
+
 export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
@@ -31,7 +61,7 @@ export default async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
 
   try {
-    const { messages, system, max_tokens, model, ownerToken } = req.body || {};
+    const { messages, system, max_tokens, model, ownerToken, turnstileToken } = req.body || {};
 
     if (!messages || !Array.isArray(messages)) {
       return res.status(400).json({ error: 'messages array required' });
@@ -42,8 +72,20 @@ export default async function handler(req, res) {
       ownerToken.length === expectedOwnerToken.length &&
       ownerToken === expectedOwnerToken;
 
-    let count = 0;
     const ip = getClientIP(req);
+
+    // Turnstile validation (skip for owner — they're trusted)
+    if (!isOwner) {
+      const turnstile = await verifyTurnstile(turnstileToken, ip);
+      if (!turnstile.success && !turnstile.skipped) {
+        return res.status(403).json({
+          error: 'verification_failed',
+          reason: turnstile.reason || 'unknown',
+        });
+      }
+    }
+
+    let count = 0;
     const dateKey = getUTCDateKey();
     const counterKey = `bs:gen:${dateKey}:${ip}`;
 
