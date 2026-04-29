@@ -1194,6 +1194,12 @@ const UI = {
     song_title: 'song title',
     previous_lyrics: 'previous lyrics',
     previous_show: 'show',
+    gen_count_singular: 'generation',
+    gen_count_plural: 'generations',
+    gen_kind_album: 'EP · 5 tracks',
+    gen_kind_variations: 'variations',
+    clear_all: 'clear all',
+    older_hidden: 'older generations hidden',
     toast_filled: '✓ fields filled by AI', toast_copied: '✓ copied to clipboard',
     toast_copy_fail: "couldn't copy automatically",
     open_suno: 'open Suno', open_suno_lyrics: 'open Suno · paste lyrics',
@@ -1301,6 +1307,12 @@ const UI = {
     song_title: 'título da música',
     previous_lyrics: 'letras anteriores',
     previous_show: 'mostrar',
+    gen_count_singular: 'geração',
+    gen_count_plural: 'gerações',
+    gen_kind_album: 'EP · 5 faixas',
+    gen_kind_variations: 'variações',
+    clear_all: 'limpar tudo',
+    older_hidden: 'gerações antigas ocultas',
     toast_filled: '✓ campos preenchidos pela IA', toast_copied: '✓ copiado',
     toast_copy_fail: 'não foi possível copiar',
     open_suno: 'abrir Suno', open_suno_lyrics: 'abrir Suno · colar letra',
@@ -1414,6 +1426,12 @@ const UI = {
     song_title: 'título de la canción',
     previous_lyrics: 'letras anteriores',
     previous_show: 'mostrar',
+    gen_count_singular: 'generación',
+    gen_count_plural: 'generaciones',
+    gen_kind_album: 'EP · 5 pistas',
+    gen_kind_variations: 'variaciones',
+    clear_all: 'limpiar todo',
+    older_hidden: 'generaciones antiguas ocultas',
     toast_filled: '✓ campos rellenados', toast_copied: '✓ copiado',
     toast_copy_fail: 'no se pudo copiar',
     open_suno: 'abrir Suno', open_suno_lyrics: 'abrir Suno · pegar letra',
@@ -1513,6 +1531,12 @@ const UI = {
     song_title: 'titre de la chanson',
     previous_lyrics: 'paroles précédentes',
     previous_show: 'voir',
+    gen_count_singular: 'génération',
+    gen_count_plural: 'générations',
+    gen_kind_album: 'EP · 5 pistes',
+    gen_kind_variations: 'variations',
+    clear_all: 'tout effacer',
+    older_hidden: 'anciennes générations cachées',
     toast_filled: '✓ champs remplis', toast_copied: '✓ copié',
     toast_copy_fail: 'impossible de copier',
     open_suno: 'ouvrir Suno', open_suno_lyrics: 'ouvrir Suno · coller paroles',
@@ -2558,6 +2582,7 @@ function BrahmstormApp({ onBack } = {}) {
 
   const [aiVariants, setAiVariants] = useState([]);
   const [aiVariantsKind, setAiVariantsKind] = useState('variations');
+  const [promptGenerations, setPromptGenerations] = useState([]);
   const [letraGerada, setLetraGerada] = useState('');
   const [letraTitulo, setLetraTitulo] = useState('');
   const [letrasHistorico, setLetrasHistorico] = useState([]);
@@ -3270,7 +3295,10 @@ Return ONLY JSON:
       const p = JSON.parse(txt.replace(/```json|```/g, '').trim());
       const variantes = p.variacoes || [];
       setAiVariants(prev => [...variantes, ...prev]);
-      // log every variation to history
+      setPromptGenerations(prev => [
+        { id: 'g' + Date.now(), ts: Date.now(), kind: 'variations', items: variantes, expanded: true },
+        ...prev.map(g => ({ ...g, expanded: false })),
+      ]);
       variantes.forEach(v => adicionarAoHistorico(v.prompt, 'prompt', v.titulo));
     } catch (err) {
       handleAIError(err, 'err_variants');
@@ -3309,6 +3337,10 @@ Return ONLY JSON:
       const p = JSON.parse(txt.replace(/```json|```/g, '').trim());
       const variantes = p.variacoes || [];
       setAiVariants(prev => [...variantes, ...prev]);
+      setPromptGenerations(prev => [
+        { id: 'g' + Date.now(), ts: Date.now(), kind: 'album', items: variantes, expanded: true },
+        ...prev.map(g => ({ ...g, expanded: false })),
+      ]);
       variantes.forEach(v => adicionarAoHistorico(v.prompt, 'prompt', v.titulo));
     } catch (err) {
       handleAIError(err, 'err_variants');
@@ -4206,38 +4238,83 @@ Return ONLY this JSON, no preamble, no markdown:
                     </div>
                   )}
 
-                  {aiVariants.length > 0 && (
+                  {promptGenerations.length > 0 && (
                     <div className="space-y-3 pt-2">
-                      <div className="flex items-center gap-2 font-mono text-[10px] uppercase tracking-widest text-orange-700">
-                        <Flame className="w-3 h-3" /> {aiVariantsKind === 'album' ? t.out_album_generated : t.out_3_variants}
+                      <div className="flex items-center justify-between gap-2 mb-1">
+                        <div className="flex items-center gap-2 font-mono text-[10px] uppercase tracking-widest text-stone-600">
+                          <Flame className="w-3 h-3 text-orange-600" />
+                          <span>{promptGenerations.length} {promptGenerations.length === 1 ? (t.gen_count_singular || 'generation') : (t.gen_count_plural || 'generations')}</span>
+                        </div>
+                        <button onClick={() => setPromptGenerations([])}
+                          className="font-mono text-[9px] uppercase tracking-widest text-stone-500 hover:text-red-600 transition-colors flex items-center gap-1">
+                          <X className="w-3 h-3" /> {t.clear_all || 'clear all'}
+                        </button>
                       </div>
-                      {aiVariants.map((v, i) => {
-                        const vLen = v.prompt?.length || 0;
-                        const vOver = vLen > LIMITE_PROMPT;
+
+                      {promptGenerations.slice(0, 8).map((gen) => {
+                        const isAlbum = gen.kind === 'album';
+                        const isOpen = gen.expanded;
+                        const headerColor = isAlbum ? 'bg-stone-900 text-stone-50' : 'bg-orange-500/15 text-orange-700';
+                        const borderColor = isAlbum ? 'border-stone-700' : 'border-orange-500/30';
+                        const tsLabel = new Date(gen.ts).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                        const toggle = () => setPromptGenerations(prev => prev.map(g => g.id === gen.id ? { ...g, expanded: !g.expanded } : g));
                         return (
-                          <div key={i} className="rounded-xl border border-stone-300 bg-stone-50/60 p-4">
-                            <div className="flex items-baseline justify-between mb-2 gap-3">
-                              <div className="font-display italic text-base text-orange-700 min-w-0 wrap-any" style={{ fontWeight: 600 }}>{v.titulo}</div>
-                              <div className={`font-mono text-[9px] uppercase tracking-widest flex-shrink-0 ${vOver ? 'text-red-600' : 'text-stone-400'}`}>v{i + 1} · {vLen}c</div>
-                            </div>
-                            <p className="font-display text-sm leading-relaxed text-stone-800 mb-3 wrap-any">{v.prompt}</p>
-                            <div className="flex gap-2 flex-wrap">
-                              <button onClick={() => copiarEAbrirSuno(v.prompt, `vo${i}`, 'style')}
-                                className="font-mono text-[10px] uppercase tracking-widest px-2.5 py-1.5 rounded-md bg-orange-500 hover:bg-orange-400 text-stone-900 transition-all active:scale-95 flex items-center gap-1.5">
-                                {copiedKey === `vo${i}` ? <><Check className="w-3 h-3" /> {t.out_copied}</> : <><ExternalLink className="w-3 h-3" /> {t.open_suno}</>}
-                              </button>
-                              <button onClick={() => copiar(v.prompt, `v${i}`)}
-                                className="font-mono text-[10px] uppercase tracking-widest px-2.5 py-1.5 rounded-md border border-stone-400 btn-fill-orange transition-all active:scale-95 flex items-center gap-1.5">
-                                {copiedKey === `v${i}` ? <><Check className="w-3 h-3" /> {t.out_copied}</> : <><Copy className="w-3 h-3" /> {t.out_copy}</>}
-                              </button>
-                              <button onClick={() => salvar(v.prompt, 'prompt', v.titulo, `vs${i}`)}
-                                className="font-mono text-[10px] uppercase tracking-widest px-2.5 py-1.5 rounded-md border border-stone-400 btn-fill-orange transition-all active:scale-95 flex items-center gap-1.5">
-                                {savedKey === `vs${i}` ? <><Check className="w-3 h-3" /> {t.out_saved}</> : <><Save className="w-3 h-3" /> {t.out_save}</>}
-                              </button>
-                            </div>
+                          <div key={gen.id} className={`rounded-xl border ${borderColor} overflow-hidden bg-stone-50/40`}>
+                            <button onClick={toggle}
+                              className={`w-full ${headerColor} px-4 py-2.5 flex items-center justify-between gap-3 transition-all hover:opacity-90 active:scale-[0.998]`}>
+                              <div className="flex items-center gap-2 min-w-0">
+                                {isAlbum ? <Disc3 className="w-3.5 h-3.5 flex-shrink-0" /> : <Sparkles className="w-3.5 h-3.5 flex-shrink-0" />}
+                                <span className="font-mono text-[10px] uppercase tracking-[0.2em] flex-shrink-0" style={{ fontWeight: 700 }}>
+                                  {isAlbum ? (t.gen_kind_album || 'EP · 5 tracks') : `${gen.items.length} ${t.gen_kind_variations || 'variations'}`}
+                                </span>
+                                <span className="font-mono text-[10px] tabular-nums opacity-70 flex-shrink-0">· {tsLabel}</span>
+                              </div>
+                              <ChevronDown className={`w-4 h-4 flex-shrink-0 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
+                            </button>
+
+                            {isOpen && (
+                              <div className="p-3 space-y-3">
+                                {gen.items.map((v, i) => {
+                                  const vLen = v.prompt?.length || 0;
+                                  const vOver = vLen > LIMITE_PROMPT;
+                                  const itemKey = `${gen.id}_${i}`;
+                                  return (
+                                    <div key={itemKey} className="rounded-lg border border-stone-300 bg-white p-3">
+                                      <div className="flex items-baseline justify-between mb-2 gap-3">
+                                        <div className="font-display italic text-base text-orange-700 min-w-0 wrap-any" style={{ fontWeight: 600 }}>{v.titulo}</div>
+                                        <div className={`font-mono text-[9px] uppercase tracking-widest flex-shrink-0 tabular-nums ${vOver ? 'text-red-600' : 'text-stone-400'}`}>
+                                          {isAlbum ? `t${i + 1}` : `v${i + 1}`} · {vLen}c
+                                        </div>
+                                      </div>
+                                      <p className="font-display text-sm leading-relaxed text-stone-800 mb-3 wrap-any">{v.prompt}</p>
+                                      <div className="flex gap-2 flex-wrap">
+                                        <button onClick={() => copiarEAbrirSuno(v.prompt, `${itemKey}_open`, 'style')}
+                                          className="font-mono text-[10px] uppercase tracking-widest px-2.5 py-1.5 rounded-md bg-orange-500 hover:bg-orange-400 text-stone-900 transition-all active:scale-95 flex items-center gap-1.5">
+                                          {copiedKey === `${itemKey}_open` ? <><Check className="w-3 h-3" /> {t.out_copied}</> : <><ExternalLink className="w-3 h-3" /> {t.open_suno}</>}
+                                        </button>
+                                        <button onClick={() => copiar(v.prompt, itemKey)}
+                                          className="font-mono text-[10px] uppercase tracking-widest px-2.5 py-1.5 rounded-md border border-stone-400 btn-fill-orange transition-all active:scale-95 flex items-center gap-1.5">
+                                          {copiedKey === itemKey ? <><Check className="w-3 h-3" /> {t.out_copied}</> : <><Copy className="w-3 h-3" /> {t.out_copy}</>}
+                                        </button>
+                                        <button onClick={() => salvar(v.prompt, 'prompt', v.titulo, `${itemKey}_save`)}
+                                          className="font-mono text-[10px] uppercase tracking-widest px-2.5 py-1.5 rounded-md border border-stone-400 btn-fill-orange transition-all active:scale-95 flex items-center gap-1.5">
+                                          {savedKey === `${itemKey}_save` ? <><Check className="w-3 h-3" /> {t.out_saved}</> : <><Save className="w-3 h-3" /> {t.out_save}</>}
+                                        </button>
+                                      </div>
+                                    </div>
+                                  );
+                                })}
+                              </div>
+                            )}
                           </div>
                         );
                       })}
+
+                      {promptGenerations.length > 8 && (
+                        <div className="font-mono text-[10px] uppercase tracking-widest text-stone-400 italic text-center py-2">
+                          {(t.older_hidden || 'older generations hidden')} · {promptGenerations.length - 8}
+                        </div>
+                      )}
                     </div>
                   )}
                 </>
