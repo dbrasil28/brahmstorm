@@ -1820,6 +1820,23 @@ const PROD_LABELS = {
     'raw live in studio':'live brut','dirty and distorted':'sale et distordu' },
 };
 
+const VOZES_CATS_KEYS = {
+  female: ['female pop diva','female ethereal high','female soulful belt','female operatic soprano',
+    'female smoky jazz','female breathy intimate','female folk storyteller','female aggressive scream'],
+  male: ['male intimate baritone','male raspy bar','male emotional falsetto','male folk storyteller',
+    'male cadenced rap flow','male crooner','male aggressive scream','male spoken word'],
+  hybrid: ['male-female duet','three-part harmonies','gospel choir','crystal auto-tune',
+    'robotic vocoder','reverb whispers','melodic chant','distorted lo-fi vocals',
+    'angelic child voice','no vocals (instrumental)'],
+};
+
+const VOZES_CAT_LABELS = {
+  en: { female: 'Female voices', male: 'Male voices', hybrid: 'Hybrid · neutral · special' },
+  pt: { female: 'Vozes femininas', male: 'Vozes masculinas', hybrid: 'Hibridas · neutras · especiais' },
+  es: { female: 'Voces femeninas', male: 'Voces masculinas', hybrid: 'Hibridas · neutras · especiales' },
+  fr: { female: 'Voix feminines', male: 'Voix masculines', hybrid: 'Hybrides · neutres · speciales' },
+};
+
 const TEMPOS_KEYS = [
   { key: 'dragged', bpm: '60-80 BPM' }, { key: 'medium', bpm: '90-110 BPM' },
   { key: 'groove', bpm: '110-130 BPM' }, { key: 'fast', bpm: '130-150 BPM' },
@@ -1960,7 +1977,7 @@ const PRESETS = [
   // ─── BRAZILIAN ───
   { id: 'brazilian-soul', label: 'Brazilian Soul', icon: '🌴', category: 'brazilian',
     generos: ['bossa nova', 'samba jazz', 'MPB'], moods: ['romantic', 'serene'],
-    instrumentos: ['nylon-string guitar', 'acoustic piano'], vozes: ['emotional falsetto'],
+    instrumentos: ['nylon-string guitar', 'acoustic piano'], vozes: ['male emotional falsetto'],
     eras: ['analog 70s'], producoes: [], tempos: ['medium'] },
   { id: 'trap-brasil', label: 'Trap Brasil', icon: '🔥', category: 'brazilian',
     generos: ['trap', 'funk carioca'], moods: ['aggressive', 'urgent'],
@@ -1972,7 +1989,7 @@ const PRESETS = [
     eras: [], producoes: ['live room ambience'], tempos: ['medium'] },
   { id: 'mpb-acoustic', label: 'MPB Acoustic', icon: '🎶', category: 'brazilian',
     generos: ['MPB', 'bossa nova'], moods: ['contemplative', 'romantic'],
-    instrumentos: ['acoustic guitar', 'flute'], vozes: ['emotional falsetto'],
+    instrumentos: ['acoustic guitar', 'flute'], vozes: ['male emotional falsetto'],
     eras: ['analog 70s'], producoes: ['intimate room sound'], tempos: ['slow'] },
   { id: 'sertanejo-pop', label: 'Sertanejo Pop', icon: '🤠', category: 'brazilian',
     generos: ['country pop', 'pop'], moods: ['romantic', 'liberating'],
@@ -2012,7 +2029,7 @@ const PRESETS = [
     eras: [], producoes: ['analog tape'], tempos: ['medium'] },
   { id: 'singer-songwriter', label: 'Singer-Songwriter', icon: '🎤', category: 'acoustic',
     generos: ['indie folk', 'singer-songwriter'], moods: ['melancholic', 'contemplative'],
-    instrumentos: ['acoustic guitar', 'piano'], vozes: ['emotional falsetto'],
+    instrumentos: ['acoustic guitar', 'piano'], vozes: ['male emotional falsetto'],
     eras: [], producoes: ['intimate room sound'], tempos: ['slow'] },
   { id: 'celtic-folk', label: 'Celtic Folk', icon: '🍀', category: 'acoustic',
     generos: ['celtic', 'folk'], moods: ['hopeful', 'liberating'],
@@ -2022,11 +2039,11 @@ const PRESETS = [
   // ─── URBAN & POP ───
   { id: 'neo-soul', label: 'Neo-Soul', icon: '💜', category: 'urban',
     generos: ['neo-soul', 'r&b'], moods: ['romantic', 'sensual'],
-    instrumentos: ['rhodes piano', 'soft bass', 'jazz drums'], vozes: ['emotional falsetto'],
+    instrumentos: ['rhodes piano', 'soft bass', 'jazz drums'], vozes: ['male emotional falsetto'],
     eras: [], producoes: ['warm analog'], tempos: ['medium'] },
   { id: 'rb-slow', label: 'R&B Slow Jam', icon: '🌙', category: 'urban',
     generos: ['r&b', 'contemporary r&b'], moods: ['sensual', 'romantic'],
-    instrumentos: ['analog synthesizer', '808 sub bass'], vozes: ['emotional falsetto'],
+    instrumentos: ['analog synthesizer', '808 sub bass'], vozes: ['male emotional falsetto'],
     eras: [], producoes: ['polished pop production'], tempos: ['slow'] },
   { id: 'boom-bap', label: 'Hip-Hop Boom-Bap', icon: '🎧', category: 'urban',
     generos: ['boom bap', 'hip hop'], moods: ['contemplative', 'aggressive'],
