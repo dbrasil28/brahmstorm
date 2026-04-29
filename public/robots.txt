@@ -1,0 +1,9 @@
+# brahmstorm.com
+User-agent: *
+Allow: /
+
+# Don't crawl the API endpoint (waste of crawl budget)
+Disallow: /api/
+
+# Sitemap
+Sitemap: https://brahmstorm.com/sitemap.xml
