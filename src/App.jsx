@@ -801,7 +801,7 @@ function BrahmstormLanding({ onLaunch }) {
           <div className="flex items-center gap-5">
             <a href="#" className="text-stone-500 hover:text-stone-900 transition-colors" title="Twitter"><AtSign className="w-4 h-4" /></a>
             <a href="#" className="text-stone-500 hover:text-stone-900 transition-colors" title="GitHub"><Code className="w-4 h-4" /></a>
-            <a href="#" className="text-stone-500 hover:text-stone-900 transition-colors" title="Email"><Mail className="w-4 h-4" /></a>
+            <a href="mailto:hello@brahmstorm.com" className="text-stone-500 hover:text-stone-900 transition-colors" title="Email"><Mail className="w-4 h-4" /></a>
           </div>
         </div>
         <div className="max-w-[1280px] mx-auto mt-8 pt-8 border-t border-stone-200">
@@ -1137,7 +1137,16 @@ const UI = {
     live_preview: 'live preview',
     live_preview_empty: 'select blocks to see your prompt build…',
     live_preview_over: 'over Suno character limit',
-    inspiration_title: 'free inspiration',
+    inspiration_title: 'be a poet',
+    be_producer_title: 'be a producer',
+    be_producer_sub: 'fine-tune the technical side',
+    tab_producer: 'producer',
+    tab_advanced: 'advanced',
+    advanced_intro_title: 'vintage gear · pro mode',
+    advanced_intro_sub: 'Hand-picked equipment Suno consistently reproduces. Combine with the Producer tab for finer texture.',
+    lbl_drum_machines: 'Drum machines',
+    lbl_synths: 'Vintage synths & keys',
+    lbl_mics: 'Microphones · recording',
     inspiration_prompt_sub: 'describe a feeling, scene, memory — AI fills all fields below.',
     inspiration_letra_sub: 'tell a story, a feeling, an image — AI fills mood, structure, imagery and the hook.',
     inspiration_prompt_ph: 'ex: driving at dawn crying in secret; or: noir film score in a rainy Rio',
@@ -1232,7 +1241,16 @@ const UI = {
     live_preview: 'pré-visualização ao vivo',
     live_preview_empty: 'selecione blocos pra ver seu prompt formando…',
     live_preview_over: 'acima do limite do Suno',
-    inspiration_title: 'inspiração livre',
+    inspiration_title: 'seja um poeta',
+    be_producer_title: 'seja um produtor',
+    be_producer_sub: 'ajuste o lado técnico',
+    tab_producer: 'produtor',
+    tab_advanced: 'avançado',
+    advanced_intro_title: 'equipamento vintage · modo pro',
+    advanced_intro_sub: 'Equipamentos selecionados que o Suno reproduz com fidelidade. Combine com a aba Produtor pra textura mais fina.',
+    lbl_drum_machines: 'Drum machines',
+    lbl_synths: 'Sintetizadores vintage & teclas',
+    lbl_mics: 'Microfones · gravação',
     inspiration_prompt_sub: 'descreva um sentimento, uma cena, uma memória — a IA preenche todos os campos abaixo.',
     inspiration_letra_sub: 'conte uma história, um sentimento, uma imagem — a IA preenche mood, estrutura, imagens e o refrão-chave.',
     inspiration_prompt_ph: 'ex: música pra dirigir de madrugada chorando escondido; ou: trilha de noir num Rio chuvoso',
@@ -1334,7 +1352,16 @@ const UI = {
     live_preview: 'vista previa en vivo',
     live_preview_empty: 'selecciona bloques para ver tu prompt formándose…',
     live_preview_over: 'sobre el límite de Suno',
-    inspiration_title: 'inspiración libre',
+    inspiration_title: 'sé un poeta',
+    be_producer_title: 'sé un productor',
+    be_producer_sub: 'ajusta el lado técnico',
+    tab_producer: 'productor',
+    tab_advanced: 'avanzado',
+    advanced_intro_title: 'equipo vintage · modo pro',
+    advanced_intro_sub: 'Equipo seleccionado que Suno reproduce con fidelidad. Combina con la pestaña Productor para textura más fina.',
+    lbl_drum_machines: 'Drum machines',
+    lbl_synths: 'Sintetizadores vintage & teclas',
+    lbl_mics: 'Micrófonos · grabación',
     inspiration_prompt_sub: 'describe un sentimiento, escena, recuerdo — la IA rellena todos los campos.',
     inspiration_letra_sub: 'cuenta una historia, un sentimiento, una imagen — la IA rellena todo.',
     inspiration_prompt_ph: 'ej: música para conducir de madrugada llorando; o: banda sonora noir',
@@ -1421,7 +1448,16 @@ const UI = {
     live_preview: 'aperçu en direct',
     live_preview_empty: 'sélectionnez des blocs pour voir votre prompt se former…',
     live_preview_over: 'au-dessus de la limite Suno',
-    inspiration_title: 'inspiration libre',
+    inspiration_title: 'sois un poète',
+    be_producer_title: 'sois un producteur',
+    be_producer_sub: 'affinez le côté technique',
+    tab_producer: 'producteur',
+    tab_advanced: 'avancé',
+    advanced_intro_title: 'matériel vintage · mode pro',
+    advanced_intro_sub: "Équipement sélectionné que Suno reproduit fidèlement. Combinez avec l'onglet Producteur pour une texture plus fine.",
+    lbl_drum_machines: 'Boîtes à rythme',
+    lbl_synths: 'Synthés vintage & claviers',
+    lbl_mics: 'Microphones · enregistrement',
     inspiration_prompt_sub: 'décrivez un sentiment, une scène, un souvenir — l\'IA remplit tous les champs.',
     inspiration_letra_sub: 'racontez une histoire — l\'IA remplit tout.',
     inspiration_prompt_ph: 'ex: musique pour conduire à l\'aube en pleurant; ou: bande-son d\'un film noir',
@@ -2006,6 +2042,35 @@ const PRESET_CATEGORIES = {
   urban: { en: 'Urban & Pop', pt: 'Urbano & Pop', es: 'Urbano & Pop', fr: 'Urbain & Pop' },
 };
 
+// ─── ADVANCED VOCABULARY ─────────────────────────────────────────
+const DRUM_MACHINES_KEYS = ['TR-808','TR-909','TR-707','LinnDrum','SP-1200','MPC-60','MPC-2000','DMX','CR-78','Drumtraks','Simmons SDS-V','Alesis HR-16'];
+const DRUM_MACHINES_HINTS = {
+  en: { 'TR-808':'hip-hop / trap / R&B — booming sub-bass kick', 'TR-909':'house / techno — punchy snappy kick', 'TR-707':'80s pop — clean digital drums', 'LinnDrum':'80s pop — tight realistic samples', 'SP-1200':'90s boom-bap — gritty sampled drums', 'MPC-60':'classic hip-hop — Akai swing groove', 'MPC-2000':'90s/00s rap — sharper digital MPC', 'DMX':'early 80s hip-hop — Oberheim crunch', 'CR-78':'late 70s — soft analog rhythms', 'Drumtraks':'80s synth-pop — Sequential Circuits', 'Simmons SDS-V':'80s rock — electronic toms', 'Alesis HR-16':'late 80s — DIY home studio' },
+  pt: { 'TR-808':'hip-hop / trap / R&B — kick subgrave estourado', 'TR-909':'house / techno — kick estaladinho', 'TR-707':'pop dos 80s — bateria digital limpa', 'LinnDrum':'pop dos 80s — samples realistas', 'SP-1200':'boom-bap dos 90s — bateria suja sampleada', 'MPC-60':'hip-hop clássico — swing Akai', 'MPC-2000':'rap 90s/00s — MPC mais nítido', 'DMX':'hip-hop início dos 80s — Oberheim seco', 'CR-78':'fim dos 70s — ritmos analógicos suaves', 'Drumtraks':'synth-pop 80s — Sequential Circuits', 'Simmons SDS-V':'rock 80s — toms eletrônicos', 'Alesis HR-16':'fim dos 80s — estúdio caseiro' },
+  es: { 'TR-808':'hip-hop / trap / R&B — kick sub-grave', 'TR-909':'house / techno — kick contundente', 'TR-707':'pop 80s — batería digital limpia', 'LinnDrum':'pop 80s — samples realistas', 'SP-1200':'boom-bap 90s — batería sucia', 'MPC-60':'hip-hop clásico — swing Akai', 'MPC-2000':'rap 90s/00s — MPC más nítida', 'DMX':'hip-hop inicio 80s — Oberheim', 'CR-78':'finales 70s — ritmos analógicos', 'Drumtraks':'synth-pop 80s — Sequential', 'Simmons SDS-V':'rock 80s — toms electrónicos', 'Alesis HR-16':'finales 80s — estudio casero' },
+  fr: { 'TR-808':'hip-hop / trap / R&B — kick sub-bass', 'TR-909':'house / techno — kick percutant', 'TR-707':'pop 80s — batterie numérique propre', 'LinnDrum':'pop 80s — samples réalistes', 'SP-1200':'boom-bap 90s — batterie sale', 'MPC-60':'hip-hop classique — swing Akai', 'MPC-2000':'rap 90s/00s — MPC plus nette', 'DMX':'hip-hop début 80s — Oberheim', 'CR-78':'fin 70s — rythmes analogiques', 'Drumtraks':'synth-pop 80s — Sequential', 'Simmons SDS-V':'rock 80s — toms électroniques', 'Alesis HR-16':'fin 80s — home studio' },
+};
+
+const SYNTHS_KEYS = ['Moog Minimoog','Moog Modular','Roland Juno-60','Roland Juno-106','Roland Jupiter-8','Yamaha DX7','Sequential Prophet-5','Korg M1','ARP 2600','Oberheim OB-X','Mellotron','Hammond B3','Rhodes Mark II','Wurlitzer 200A','Clavinet D6'];
+const SYNTHS_HINTS = {
+  en: { 'Moog Minimoog':'iconic fat analog bass — funk, prog, Stevie Wonder', 'Moog Modular':'cosmic sci-fi sweeps — Wendy Carlos, Tangerine Dream', 'Roland Juno-60':'lush analog pads — synthwave, dream pop', 'Roland Juno-106':'warm 80s polyphony — synth-pop, new wave', 'Roland Jupiter-8':'cinematic strings — 80s film scores', 'Yamaha DX7':'crystal FM bells — 80s pop, smooth jazz', 'Sequential Prophet-5':'analog warmth — Michael Jackson, Madonna', 'Korg M1':'late 80s digital — house piano, organ', 'ARP 2600':'experimental leads — Pete Townshend, Stevie Wonder', 'Oberheim OB-X':'huge analog brass — Van Halen, Rush', 'Mellotron':'string tape ensemble — Beatles, King Crimson, prog rock', 'Hammond B3':'soulful organ — Booker T, jazz, gospel', 'Rhodes Mark II':'electric piano warmth — soul, jazz fusion', 'Wurlitzer 200A':'bright honky electric — Ray Charles, Supertramp', 'Clavinet D6':'funky percussive keys — Stevie Wonder Superstition' },
+  pt: { 'Moog Minimoog':'baixo analógico icônico — funk, prog', 'Moog Modular':'sweeps cósmicos sci-fi — Wendy Carlos', 'Roland Juno-60':'pads analógicos lush — synthwave', 'Roland Juno-106':'polifonia 80s quente — synth-pop', 'Roland Jupiter-8':'cordas cinemáticas — trilhas 80s', 'Yamaha DX7':'sinos FM cristalinos — pop 80s', 'Sequential Prophet-5':'calor analógico — Michael Jackson', 'Korg M1':'digital fim 80s — piano house', 'ARP 2600':'leads experimentais — Stevie Wonder', 'Oberheim OB-X':'metais analógicos — Van Halen', 'Mellotron':'cordas em fita — Beatles, prog rock', 'Hammond B3':'órgão soul — Booker T, jazz', 'Rhodes Mark II':'piano elétrico — soul, jazz fusion', 'Wurlitzer 200A':'elétrico brilhante — Ray Charles', 'Clavinet D6':'teclas percussivas — Stevie Wonder' },
+  es: { 'Moog Minimoog':'bajo analógico icónico — funk', 'Moog Modular':'barridos cósmicos — Wendy Carlos', 'Roland Juno-60':'pads analógicos — synthwave', 'Roland Juno-106':'polifonía 80s cálida', 'Roland Jupiter-8':'cuerdas cinemáticas', 'Yamaha DX7':'campanas FM cristalinas', 'Sequential Prophet-5':'calor analógico', 'Korg M1':'digital finales 80s', 'ARP 2600':'leads experimentales', 'Oberheim OB-X':'bronces analógicos', 'Mellotron':'cuerdas en cinta — Beatles', 'Hammond B3':'órgano soul, jazz', 'Rhodes Mark II':'piano eléctrico soul', 'Wurlitzer 200A':'eléctrico brillante', 'Clavinet D6':'teclas percusivas funk' },
+  fr: { 'Moog Minimoog':'basse analogique iconique — funk', 'Moog Modular':'balayages cosmiques — Wendy Carlos', 'Roland Juno-60':'pads analogiques — synthwave', 'Roland Juno-106':'polyphonie 80s chaleureuse', 'Roland Jupiter-8':'cordes cinématiques', 'Yamaha DX7':'cloches FM cristallines', 'Sequential Prophet-5':'chaleur analogique', 'Korg M1':'numérique fin 80s', 'ARP 2600':'leads expérimentaux', 'Oberheim OB-X':'cuivres analogiques', 'Mellotron':'cordes sur bande — Beatles', 'Hammond B3':'orgue soul, jazz', 'Rhodes Mark II':'piano électrique soul', 'Wurlitzer 200A':'électrique brillant', 'Clavinet D6':'touches percussives funk' },
+};
+
+const MICS_KEYS = ['Shure SM7B','Neumann U87','Neumann U47','Sennheiser MD421','AKG C414','Royer R-121 ribbon','Coles 4038 ribbon','RCA 44 vintage ribbon','Shure SM57 close-mic','condenser pair stereo','lo-fi room mic','cassette dictaphone'];
+const MICS_HINTS = {
+  en: { 'Shure SM7B':'intimate radio voice — podcast / Michael Jackson Thriller', 'Neumann U87':'studio standard — pop vocals, jazz', 'Neumann U47':'warm vintage — Sinatra, Beatles', 'Sennheiser MD421':'punchy drums and amps — rock', 'AKG C414':'detailed acoustic — guitars, piano', 'Royer R-121 ribbon':'smooth guitar amps — vintage warmth', 'Coles 4038 ribbon':'BBC drum overheads — jazz, orchestra', 'RCA 44 vintage ribbon':'40s/50s broadcast vibe', 'Shure SM57 close-mic':'tight snare and amp — live energy', 'condenser pair stereo':'wide capture — choir, room ambience', 'lo-fi room mic':'distant, washy — bedroom record vibe', 'cassette dictaphone':'crushed lo-fi — found-tape aesthetic' },
+  pt: { 'Shure SM7B':'voz íntima — podcast / Michael Jackson Thriller', 'Neumann U87':'padrão de estúdio — vocais pop', 'Neumann U47':'vintage quente — Sinatra, Beatles', 'Sennheiser MD421':'baterias e amps — rock', 'AKG C414':'detalhe acústico — violões, piano', 'Royer R-121 ribbon':'amps de guitarra — calor vintage', 'Coles 4038 ribbon':'overheads BBC — jazz, orquestra', 'RCA 44 vintage ribbon':'vibe rádio 40s/50s', 'Shure SM57 close-mic':'caixa colada — energia ao vivo', 'condenser pair stereo':'captura ampla — coro, ambiência', 'lo-fi room mic':'distante, lavado — quarto demo', 'cassette dictaphone':'lo-fi esmagado — fita achada' },
+  es: { 'Shure SM7B':'voz íntima — podcast / Thriller', 'Neumann U87':'estándar — voces pop, jazz', 'Neumann U47':'vintage cálido — Sinatra', 'Sennheiser MD421':'baterías y amps — rock', 'AKG C414':'detalle acústico', 'Royer R-121 ribbon':'amps guitarra — calor vintage', 'Coles 4038 ribbon':'overheads BBC — jazz', 'RCA 44 vintage ribbon':'radio 40s/50s', 'Shure SM57 close-mic':'caja cercana — energía', 'condenser pair stereo':'captura amplia', 'lo-fi room mic':'distante — demo casera', 'cassette dictaphone':'lo-fi triturado' },
+  fr: { 'Shure SM7B':'voix intime — podcast / Thriller', 'Neumann U87':'standard — voix pop, jazz', 'Neumann U47':'vintage chaleureux — Sinatra', 'Sennheiser MD421':'batteries et amplis — rock', 'AKG C414':'détail acoustique', 'Royer R-121 ribbon':'amplis guitare — chaleur vintage', 'Coles 4038 ribbon':'overheads BBC — jazz', 'RCA 44 vintage ribbon':'radio 40s/50s', 'Shure SM57 close-mic':'caisse proche — énergie', 'condenser pair stereo':'capture large', 'lo-fi room mic':'distant — démo maison', 'cassette dictaphone':'lo-fi écrasé' },
+};
+
+function getDrumHint(k, lang) { return DRUM_MACHINES_HINTS[lang]?.[k] || DRUM_MACHINES_HINTS.en[k] || ''; }
+function getSynthHint(k, lang) { return SYNTHS_HINTS[lang]?.[k] || SYNTHS_HINTS.en[k] || ''; }
+function getMicHint(k, lang) { return MICS_HINTS[lang]?.[k] || MICS_HINTS.en[k] || ''; }
+
 // Soft caps per category — based on Suno best practices.
 // Prompts with more than these tend to dilute or be ignored by Suno.
 const MULTI_LIMITS = {
@@ -2015,6 +2080,9 @@ const MULTI_LIMITS = {
   vozes: 2,        // 2 voices = duet, more is chaos
   eras: 2,         // genre + era usually suffice
   producoes: 2,    // production styles compound at 2 max
+  drum_machines: 2,// drum machines blend at 2
+  synths: 3,       // up to 3 vintage synths
+  mics: 2,         // mic combinations are usually 1-2
 };
 
 const TAMANHOS_LETRA = [
@@ -2289,6 +2357,9 @@ function composePrompt(s) {
   }
   if (s.eras?.length) parts.push(`${s.eras.join(' + ')} aesthetic`);
   if (s.producoes?.length) parts.push(`${s.producoes.join(' + ')} production`);
+  if (s.drumMachines?.length) parts.push(`drums: ${s.drumMachines.join(' + ')}`);
+  if (s.synths?.length) parts.push(`synths: ${s.synths.join(' + ')}`);
+  if (s.mics?.length) parts.push(`mic'd with: ${s.mics.join(', ')}`);
   if (s.instrumentos?.length) parts.push(`instrumentation: ${s.instrumentos.join(', ')}`);
   if (s.tema?.trim()) parts.push(`theme: ${s.tema.trim()}`);
   if (s.negativos?.trim()) parts.push(`avoid: ${s.negativos.trim()}`);
@@ -2439,6 +2510,11 @@ function BrahmstormApp({ onBack } = {}) {
   const [numRefroes, setNumRefroes] = useState(0);
   const [metricas, setMetricas] = useState([]);
 
+  // Advanced sub-tab selections (vintage gear)
+  const [drumMachines, setDrumMachines] = useState([]);
+  const [synths, setSynths] = useState([]);
+  const [mics, setMics] = useState([]);
+
   const [briefLivrePrompt, setBriefLivrePrompt] = useState('');
   const [briefLivreLetra, setBriefLivreLetra] = useState('');
   const briefLivre = tab === 'prompt' ? briefLivrePrompt : briefLivreLetra;
@@ -2531,6 +2607,14 @@ function BrahmstormApp({ onBack } = {}) {
   // Modal state for keyboard shortcuts help (shown when user presses ?)
   const [shortcutsOpen, setShortcutsOpen] = useState(false);
   const [presetsModalOpen, setPresetsModalOpen] = useState(false);
+
+  const [producerTab, setProducerTabState] = useState(() => {
+    try { return localStorage.getItem('bs:producerTab') || 'producer'; } catch (e) { return 'producer'; }
+  });
+  const setProducerTab = (val) => {
+    setProducerTabState(val);
+    try { localStorage.setItem('bs:producerTab', val); } catch (e) {}
+  };
 
   // Keyboard shortcuts (desktop power users)
   useEffect(() => {
@@ -2646,6 +2730,7 @@ function BrahmstormApp({ onBack } = {}) {
     setProducoes((preset.producoes || []).filter(x => PRODUCOES_KEYS.includes(x)).slice(0, MULTI_LIMITS.producoes));
     setTempos((preset.tempos || []).filter(x => TEMPO_KEYS_FLAT.includes(x)).slice(0, 1));
     setOpenBlocks(prev => ({ ...prev, genero: true, mood: true, instr: true }));
+    setProducerTab('producer');
     if (typeof window !== 'undefined' && blocksRef.current) {
       requestAnimationFrame(() => {
         const HEADER_OFFSET = window.innerWidth < 768 ? 24 : 132;
@@ -2685,7 +2770,8 @@ function BrahmstormApp({ onBack } = {}) {
 
   const promptComposto = useMemo(() => composePrompt({
     generos, moods, instrumentos, vozes, eras, producoes, tempos, tema, negativos,
-  }), [generos, moods, instrumentos, vozes, eras, producoes, tempos, tema, negativos]);
+    drumMachines, synths, mics,
+  }), [generos, moods, instrumentos, vozes, eras, producoes, tempos, tema, negativos, drumMachines, synths, mics]);
 
   const promptLen = promptComposto.length;
   const promptOverLimit = promptLen > LIMITE_PROMPT;
@@ -2952,6 +3038,7 @@ Return ONLY JSON, no markdown:
       setTempos((p.tempos || []).filter(x => TEMPO_KEYS_FLAT.includes(x)));
       if (p.tema) setTema(p.tema);
       setOpenBlocks(prev => ({ ...prev, genero: true, mood: true, instr: true }));
+      setProducerTab('producer');
       mostrarToast(t.toast_filled);
       // Scroll user to the now-filled blocks (mobile only — desktop already shows them)
       if (typeof window !== 'undefined' && blocksRef.current) {
@@ -3117,6 +3204,7 @@ Return ONLY this JSON, no preamble:
       }
 
       setRefResult({ confidence: conf, kind: tipo, message: parsed.message || '' });
+      setProducerTab('producer');
       mostrarToast(t.toast_filled);
     } catch (_) {
       setRefResult({ confidence: 'low', kind: tipo, message: t.ref_unknown });
@@ -3673,6 +3761,37 @@ Return ONLY this JSON, no preamble, no markdown:
             )}
 
             {tab === 'prompt' && (
+              <div className="mt-4 mb-3 flex items-center justify-between gap-3 flex-wrap">
+                <div className="flex items-center gap-2 min-w-0">
+                  <Sliders className="w-4 h-4 text-stone-500 flex-shrink-0" />
+                  <div>
+                    <div className="font-mono text-[11px] uppercase tracking-[0.2em] text-stone-700" style={{ fontWeight: 600 }}>
+                      {t.be_producer_title}
+                    </div>
+                    <div className="font-mono text-[10px] uppercase tracking-[0.15em] text-stone-400 italic mt-0.5">
+                      {t.be_producer_sub}
+                    </div>
+                  </div>
+                </div>
+                <div className="flex items-center gap-1 bg-stone-100 border border-stone-300 rounded-lg p-1">
+                  <button onClick={() => setProducerTab('producer')}
+                    className={`font-mono text-[10px] uppercase tracking-[0.2em] px-3 py-1.5 rounded-md transition-all ${producerTab === 'producer' ? 'bg-stone-900 text-stone-50' : 'text-stone-600 hover:text-stone-900'}`}>
+                    {t.tab_producer || 'producer'}
+                  </button>
+                  <button onClick={() => setProducerTab('advanced')}
+                    className={`font-mono text-[10px] uppercase tracking-[0.2em] px-3 py-1.5 rounded-md transition-all flex items-center gap-1.5 ${producerTab === 'advanced' ? 'bg-stone-900 text-stone-50' : 'text-stone-600 hover:text-stone-900'}`}>
+                    {t.tab_advanced || 'advanced'}
+                    {(drumMachines.length + synths.length + mics.length) > 0 && (
+                      <span className="font-mono text-[8px] tabular-nums px-1 py-0.5 rounded-sm bg-orange-500 text-stone-900" style={{ fontWeight: 700 }}>
+                        {drumMachines.length + synths.length + mics.length}
+                      </span>
+                    )}
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {tab === 'prompt' && producerTab === 'producer' && (
               <>
                 <Block mobileSheetKey={mobileSheetKey} setMobileSheetKey={setMobileSheetKey} setMobileSheetData={setMobileSheetData} keyId="genero" label={t.lbl_genre} count={generos.length} max={MULTI_LIMITS.generos} limitHint={t.limit_hint}
                   preview={generos.map(k => getGenreLabel(k, lang))} open={openBlocks.genero} onToggle={toggleBlock}
@@ -3773,6 +3892,47 @@ Return ONLY this JSON, no preamble, no markdown:
                   className="md:hidden w-full font-mono text-[11px] uppercase tracking-[0.2em] px-4 py-3 border border-stone-400 text-stone-600 transition-all active:scale-[0.98] flex items-center justify-center gap-2 rounded-xl">
                   {mobileShowAdvanced ? <>− {t.hide_advanced}</> : <>+ {t.show_all}</>}
                 </button>
+              </>
+            )}
+
+            {tab === 'prompt' && producerTab === 'advanced' && (
+              <>
+                <div className="rounded-xl border border-orange-500/30 bg-orange-500/5 px-4 py-3 mb-2">
+                  <div className="flex items-center gap-2 mb-1">
+                    <Sliders className="w-3.5 h-3.5 text-orange-700 flex-shrink-0" />
+                    <div className="font-mono text-[10px] uppercase tracking-[0.2em] text-orange-700" style={{ fontWeight: 700 }}>{t.advanced_intro_title || 'vintage gear · pro mode'}</div>
+                  </div>
+                  <p className="font-display italic text-sm text-stone-600 leading-relaxed">
+                    {t.advanced_intro_sub || 'Hand-picked equipment Suno consistently reproduces.'}
+                  </p>
+                </div>
+
+                <Block mobileSheetKey={mobileSheetKey} setMobileSheetKey={setMobileSheetKey} setMobileSheetData={setMobileSheetData}
+                  keyId="drumMachines" label={t.lbl_drum_machines || 'Drum machines'} count={drumMachines.length} max={MULTI_LIMITS.drum_machines} limitHint={t.limit_hint}
+                  preview={drumMachines} open={openBlocks.drumMachines} onToggle={toggleBlock}
+                  onClear={() => setDrumMachines([])} tClear={t.block_clear} tOpen={t.block_open}>
+                  <ListSelect options={DRUM_MACHINES_KEYS} values={drumMachines}
+                    onToggle={(k) => toggleItem(drumMachines, setDrumMachines, k, MULTI_LIMITS.drum_machines)}
+                    getLabel={(k) => k} getHint={(k) => getDrumHint(k, lang)} />
+                </Block>
+
+                <Block mobileSheetKey={mobileSheetKey} setMobileSheetKey={setMobileSheetKey} setMobileSheetData={setMobileSheetData}
+                  keyId="synths" label={t.lbl_synths || 'Vintage synths & keys'} count={synths.length} max={MULTI_LIMITS.synths} limitHint={t.limit_hint}
+                  preview={synths} open={openBlocks.synths} onToggle={toggleBlock}
+                  onClear={() => setSynths([])} tClear={t.block_clear} tOpen={t.block_open}>
+                  <ListSelect options={SYNTHS_KEYS} values={synths}
+                    onToggle={(k) => toggleItem(synths, setSynths, k, MULTI_LIMITS.synths)}
+                    getLabel={(k) => k} getHint={(k) => getSynthHint(k, lang)} />
+                </Block>
+
+                <Block mobileSheetKey={mobileSheetKey} setMobileSheetKey={setMobileSheetKey} setMobileSheetData={setMobileSheetData}
+                  keyId="mics" label={t.lbl_mics || 'Microphones · recording'} count={mics.length} max={MULTI_LIMITS.mics} limitHint={t.limit_hint}
+                  preview={mics} open={openBlocks.mics} onToggle={toggleBlock}
+                  onClear={() => setMics([])} tClear={t.block_clear} tOpen={t.block_open}>
+                  <ListSelect options={MICS_KEYS} values={mics}
+                    onToggle={(k) => toggleItem(mics, setMics, k, MULTI_LIMITS.mics)}
+                    getLabel={(k) => k} getHint={(k) => getMicHint(k, lang)} />
+                </Block>
               </>
             )}
 
@@ -4724,17 +4884,23 @@ function GridSelect({ options, values, onToggle, getLabel, single }) {
   );
 }
 
-function ListSelect({ options, values, onToggle, getLabel, single }) {
+function ListSelect({ options, values, onToggle, getLabel, getHint, single }) {
   const Indicator = single ? RadioDot : CheckBox;
   return (
     <div className="space-y-1 min-w-0">
       {options.map(o => {
         const active = values.includes(o);
+        const hint = getHint ? getHint(o) : '';
         return (
           <button key={o} onClick={() => onToggle(o)}
-            className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-md border text-left transition-all active:scale-[0.99] min-w-0 ${active ? 'border-orange-500 bg-orange-500/15' : 'border-stone-300 hover:border-stone-500 hover:bg-stone-200'}`}>
-            <Indicator active={active} />
-            <span className={`font-display text-sm leading-4 wrap-any min-w-0 ${active ? 'text-orange-800' : 'text-stone-800'}`} style={{ fontWeight: 500 }}>{getLabel ? getLabel(o) : o}</span>
+            className={`w-full flex items-start gap-3 px-3 py-2.5 rounded-md border text-left transition-all active:scale-[0.99] min-w-0 ${active ? 'border-orange-500 bg-orange-500/15' : 'border-stone-300 hover:border-stone-500 hover:bg-stone-200'}`}>
+            <span className="flex-shrink-0 mt-0.5"><Indicator active={active} /></span>
+            <div className="min-w-0 flex-1">
+              <span className={`font-display text-sm leading-tight wrap-any block ${active ? 'text-orange-800' : 'text-stone-800'}`} style={{ fontWeight: 500 }}>{getLabel ? getLabel(o) : o}</span>
+              {hint && (
+                <span className="font-mono text-[10px] text-stone-500 italic block mt-0.5 wrap-any">{hint}</span>
+              )}
+            </div>
           </button>
         );
       })}
