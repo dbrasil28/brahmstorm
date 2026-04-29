@@ -6,6 +6,8 @@ import {
   ArrowRight, Lock, Zap, Heart, Code, AtSign, Mail, Settings2,
   Feather, Sliders, Download,
 } from 'lucide-react';
+import { Analytics } from '@vercel/analytics/react';
+import { SpeedInsights } from '@vercel/speed-insights/react';
 
 // ═══════════════════════════════════════════════════════════════════
 // Brahmstorm — Root orchestrator (combined single-file build)
@@ -59,8 +61,20 @@ export default function Brahmstorm() {
     setView(VIEW_LANDING);
   };
 
-  if (view === VIEW_APP) return <BrahmstormApp onBack={goToLanding} />;
-  return <BrahmstormLanding onLaunch={goToApp} />;
+  if (view === VIEW_APP) return (
+    <>
+      <BrahmstormApp onBack={goToLanding} />
+      <Analytics />
+      <SpeedInsights />
+    </>
+  );
+  return (
+    <>
+      <BrahmstormLanding onLaunch={goToApp} />
+      <Analytics />
+      <SpeedInsights />
+    </>
+  );
 }
 
 // ═══════════════════════════════════════════════════════════════════
