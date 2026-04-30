@@ -3835,7 +3835,7 @@ Return ONLY this JSON, no preamble, no markdown:
             )}
 
             {tab === 'prompt' && (
-              <div className="mt-16 mb-3 flex items-center justify-between gap-3 flex-wrap">
+              <div className="mt-32 mb-3 flex items-center justify-between gap-3 flex-wrap">
                 <div className="flex items-center gap-2 min-w-0">
                   <Sliders className="w-4 h-4 text-stone-500 flex-shrink-0" />
                   <div>
