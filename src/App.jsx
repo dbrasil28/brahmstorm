@@ -49,7 +49,7 @@ export default function Brahmstorm() {
 
   const goToApp = () => {
     window.location.hash = 'app';
-    try { if (window.storage) window.storage.set('seenLanding', '1'); } catch (e) {}
+    try { localStorage.setItem('bs:seenLanding', '1'); } catch (e) {}
   };
 
   const goToLanding = () => {
@@ -2830,29 +2830,24 @@ function BrahmstormApp({ onBack } = {}) {
   const promptOverLimit = promptLen > LIMITE_PROMPT;
 
   useEffect(() => {
-    (async () => {
-      try {
-        if (!window.storage) return;
-        const res = await window.storage.get('favoritos');
-        if (res?.value) {
-          const parsed = JSON.parse(res.value);
-          if (Array.isArray(parsed)) setFavoritos(parsed);
-        }
-        const histRes = await window.storage.get('historico');
-        if (histRes?.value) {
-          const parsedH = JSON.parse(histRes.value);
-          if (Array.isArray(parsedH)) setHistorico(parsedH);
-        }
-        const langRes = await window.storage.get('lang');
-        if (langRes?.value && LANGUAGES.find(l => l.id === langRes.value)) setLang(langRes.value);
-      } catch (e) {}
-    })();
+    try {
+      const favRaw = localStorage.getItem('bs:favoritos');
+      if (favRaw) {
+        const parsed = JSON.parse(favRaw);
+        if (Array.isArray(parsed)) setFavoritos(parsed);
+      }
+      const histRaw = localStorage.getItem('bs:historico');
+      if (histRaw) {
+        const parsedH = JSON.parse(histRaw);
+        if (Array.isArray(parsedH)) setHistorico(parsedH);
+      }
+      const langRaw = localStorage.getItem('bs:lang');
+      if (langRaw && LANGUAGES.find(l => l.id === langRaw)) setLang(langRaw);
+    } catch (e) {}
   }, []);
 
   useEffect(() => {
-    (async () => {
-      try { if (window.storage) await window.storage.set('lang', lang); } catch (e) {}
-    })();
+    try { localStorage.setItem('bs:lang', lang); } catch (e) {}
   }, [lang]);
 
   const mostrarToast = (msg) => { setToast(msg); setTimeout(() => setToast(''), msg.length > 30 ? 3500 : 2200); };
@@ -2862,9 +2857,7 @@ function BrahmstormApp({ onBack } = {}) {
     const novo = { texto: texto.trim(), tipo, titulo: titulo || (tipo === 'letra' ? 'Lyrics' : 'Prompt'), data: new Date().toISOString() };
     setFavoritos(prev => {
       const updated = [novo, ...prev].slice(0, 100);
-      (async () => {
-        try { if (window.storage) await window.storage.set('favoritos', JSON.stringify(updated)); } catch (e) {}
-      })();
+      try { localStorage.setItem('bs:favoritos', JSON.stringify(updated)); } catch (e) {}
       return updated;
     });
     if (key) { setSavedKey(key); setTimeout(() => setSavedKey(null), 1800); }
@@ -2874,9 +2867,7 @@ function BrahmstormApp({ onBack } = {}) {
   const removerFavorito = (idx) => {
     setFavoritos(prev => {
       const updated = prev.filter((_, i) => i !== idx);
-      (async () => {
-        try { if (window.storage) await window.storage.set('favoritos', JSON.stringify(updated)); } catch (e) {}
-      })();
+      try { localStorage.setItem('bs:favoritos', JSON.stringify(updated)); } catch (e) {}
       return updated;
     });
   };
@@ -2891,18 +2882,14 @@ function BrahmstormApp({ onBack } = {}) {
     };
     setHistorico(prev => {
       const updated = [item, ...prev].slice(0, 50);
-      (async () => {
-        try { if (window.storage) await window.storage.set('historico', JSON.stringify(updated)); } catch (e) {}
-      })();
+      try { localStorage.setItem('bs:historico', JSON.stringify(updated)); } catch (e) {}
       return updated;
     });
   };
 
   const limparHistorico = () => {
     setHistorico([]);
-    (async () => {
-      try { if (window.storage) await window.storage.set('historico', JSON.stringify([])); } catch (e) {}
-    })();
+    try { localStorage.setItem('bs:historico', JSON.stringify([])); } catch (e) {}
   };
 
   const copiar = async (texto, key) => {
