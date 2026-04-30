@@ -2583,11 +2583,8 @@ function BrahmstormApp({ onBack } = {}) {
   const [aiVariants, setAiVariants] = useState([]);
   const [aiVariantsKind, setAiVariantsKind] = useState('variations');
   const [promptGenerations, setPromptGenerations] = useState([]);
-  const [letraGerada, setLetraGerada] = useState('');
-  const [letraTitulo, setLetraTitulo] = useState('');
+  const [lyricsGenerations, setLyricsGenerations] = useState([]);
   const [letrasHistorico, setLetrasHistorico] = useState([]);
-  const [letrasAlbum, setLetrasAlbum] = useState([]);
-  const [letrasAlbumExpanded, setLetrasAlbumExpanded] = useState({});
   const [loadingPrompt, setLoadingPrompt] = useState(false);
   const [loadingLetra, setLoadingLetra] = useState(false);
   const [loadingPhase, setLoadingPhase] = useState('');
@@ -2736,7 +2733,7 @@ function BrahmstormApp({ onBack } = {}) {
 
   // Scroll to output when content is generated (mobile only — desktop has sticky output)
   useEffect(() => {
-    const hasContent = aiVariants.length > 0 || letrasAlbum.length > 0 || (letraGerada && letraGerada.length > 0);
+    const hasContent = aiVariants.length > 0 || lyricsGenerations.length > 0;
     if (!hasContent) return;
     if (typeof window === 'undefined' || window.innerWidth >= 768) return;
     const el = outputRef.current;
@@ -2745,7 +2742,7 @@ function BrahmstormApp({ onBack } = {}) {
     requestAnimationFrame(() => {
       el.scrollIntoView({ behavior: 'smooth', block: 'start' });
     });
-  }, [aiVariants, letrasAlbum, letraGerada]);
+  }, [aiVariants, lyricsGenerations]);
   const advancedBlockClass = mobileShowAdvanced ? '' : 'hidden md:block';
   const [openBlocks, setOpenBlocks] = useState({ genero: true, ltema: true });
 
@@ -3351,7 +3348,7 @@ Return ONLY JSON:
   };
 
   const gerarLetra = async () => {
-    setLoadingLetra(true); setLoadingKind('letra'); setErrorMsg(''); setLetraGerada('');
+    setLoadingLetra(true); setLoadingKind('letra'); setErrorMsg('');
     const stopPhases = startPhaseCycle(t.phases_letra);
     const tc = TAMANHOS_LETRA.find(x => x.id === tamanhoLetra) || TAMANHOS_LETRA[2];
     const targetVersos = numVersos > 0 ? numVersos : tc.versos;
@@ -3418,10 +3415,12 @@ The TITLE line is for our app to display the song name — it will not be sent t
       const songTitle = titleMatch ? titleMatch[1].trim() : (tema || 'Untitled');
       const lyricsBody = txt.replace(/^\s*TITLE:\s*.+$/im, '').trim();
       const limpa = sanitizarLetra(lyricsBody);
-      setLetraGerada(limpa);
-      setLetraTitulo(songTitle);
       setLetrasHistorico(prev => [{ titulo: songTitle, letra: limpa, ts: Date.now() }, ...prev]);
       adicionarAoHistorico(limpa, 'letra', songTitle);
+      setLyricsGenerations(prev => [
+        { id: 'lg' + Date.now(), ts: Date.now(), kind: 'avulsa', items: [{ titulo: songTitle, letra: limpa }], expanded: true },
+        ...prev.map(g => ({ ...g, expanded: false })),
+      ]);
     } catch (err) {
       handleAIError(err, 'err_letra');
     } finally {
@@ -3431,7 +3430,7 @@ The TITLE line is for our app to display the song name — it will not be sent t
   };
 
   const gerarLetrasAlbum = async () => {
-    setLoadingLetra(true); setLoadingKind('letrasAlbum'); setErrorMsg(''); setLetrasAlbum([]); setLetraGerada('');
+    setLoadingLetra(true); setLoadingKind('letrasAlbum'); setErrorMsg('');
     const stopPhases = startPhaseCycle(t.phases_letras_album);
     const tc = TAMANHOS_LETRA.find(x => x.id === tamanhoLetra) || TAMANHOS_LETRA[2];
     const targetIdiomas = idiomas.length ? idiomas.join(' / ') : 'Brazilian Portuguese';
@@ -3518,11 +3517,12 @@ Return ONLY this JSON, no preamble, no markdown:
         ...tr,
         letra: sanitizarLetra(tr.letra || ''),
       }));
-      setLetrasAlbum(tracks);
-      // expand the first track by default
-      if (tracks.length > 0) setLetrasAlbumExpanded({ 0: true });
       // log each track to history
       tracks.forEach((tr, i) => adicionarAoHistorico(tr.letra, 'letra', tr.titulo || `Track ${i+1}`));
+      setLyricsGenerations(prev => [
+        { id: 'lg' + Date.now(), ts: Date.now(), kind: 'album', items: tracks, expanded: true, trackExpanded: { 0: true } },
+        ...prev.map(g => ({ ...g, expanded: false })),
+      ]);
     } catch (err) {
       handleAIError(err, 'err_letra');
     } finally {
@@ -4367,115 +4367,149 @@ Return ONLY this JSON, no preamble, no markdown:
                     </div>
                   )}
 
-                  {letrasAlbum.length > 0 && (
+                  {lyricsGenerations.length > 0 && (
                     <div className="space-y-3 pt-2">
-                      <div className="flex items-center gap-2 font-mono text-[10px] uppercase tracking-widest text-orange-700">
-                        <Disc3 className="w-3 h-3" /> {t.out_album_letras_generated}
+                      <div className="flex items-center justify-between gap-2 mb-1">
+                        <div className="flex items-center gap-2 font-mono text-[10px] uppercase tracking-widest text-stone-600">
+                          <Flame className="w-3 h-3 text-orange-600" />
+                          <span>{lyricsGenerations.length} {lyricsGenerations.length === 1 ? (t.gen_count_singular || 'generation') : (t.gen_count_plural || 'generations')}</span>
+                        </div>
+                        <button onClick={() => setLyricsGenerations([])}
+                          className="font-mono text-[10px] uppercase tracking-widest text-stone-500 hover:text-red-600 transition-colors flex items-center gap-1">
+                          <X className="w-3 h-3" /> {t.clear_all || 'clear all'}
+                        </button>
                       </div>
-                      {letrasAlbum.map((tr, i) => {
-                        const expanded = letrasAlbumExpanded[i];
-                        const tcLocal = TAMANHOS_LETRA.find(x => x.id === tamanhoLetra) || TAMANHOS_LETRA[2];
-                        const linhas = tr.letra.split('\n').filter(l => l.trim() && !l.trim().startsWith('[')).length;
-                        const excedeLimite = tr.letra.length > LIMITE_LETRA;
+
+                      {lyricsGenerations.slice(0, 8).map((gen) => {
+                        const isAlbum = gen.kind === 'album';
+                        const headerColor = isAlbum ? 'bg-stone-900 text-stone-50' : 'bg-orange-500/15 text-orange-700';
+                        const borderColor = isAlbum ? 'border-stone-700' : 'border-orange-500/30';
+                        const tsLabel = new Date(gen.ts).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                        const toggle = () => setLyricsGenerations(prev =>
+                          prev.map(g => g.id === gen.id ? { ...g, expanded: !g.expanded } : g)
+                        );
+                        const toggleTrack = (i) => setLyricsGenerations(prev =>
+                          prev.map(g => g.id === gen.id ? { ...g, trackExpanded: { ...(g.trackExpanded || {}), [i]: !(g.trackExpanded || {})[i] } } : g)
+                        );
                         return (
-                          <div key={i} className="rounded-xl border border-stone-300 bg-stone-50/80 overflow-hidden">
-                            <button onClick={() => setLetrasAlbumExpanded(p => ({ ...p, [i]: !p[i] }))}
-                              className="w-full flex items-center justify-between gap-3 px-4 py-3 hover:bg-stone-200/40 transition-colors text-left active:bg-stone-200/80">
-                              <div className="flex items-center gap-3 min-w-0 flex-1">
-                                <ChevronDown className={`w-4 h-4 text-stone-500 transition-transform flex-shrink-0 ${expanded ? 'rotate-0' : '-rotate-90'}`} />
-                                <span className="font-mono text-[9px] uppercase tracking-widest text-stone-50 bg-stone-900 px-1.5 py-0.5 flex-shrink-0">
-                                  {t.out_album_track_label} {i + 1}
+                          <div key={gen.id} className={`rounded-xl border ${borderColor} overflow-hidden`}>
+                            <button onClick={toggle} className={`w-full ${headerColor} px-4 py-2.5 flex items-center justify-between gap-3 transition-colors`}>
+                              <div className="flex items-center gap-2 min-w-0 flex-1">
+                                {isAlbum ? <Disc3 className="w-3.5 h-3.5 flex-shrink-0" /> : <Sparkles className="w-3.5 h-3.5 flex-shrink-0" />}
+                                <span className="font-mono text-[10px] uppercase tracking-widest truncate">
+                                  {isAlbum ? (t.gen_kind_album || 'EP') : (gen.items[0]?.titulo || 'lyrics')}
                                 </span>
-                                <div className="min-w-0 flex-1">
-                                  <div className="font-display italic text-base text-stone-900 truncate" style={{ fontWeight: 600 }}>{tr.titulo}</div>
-                                  {tr.papel && <div className="font-mono text-[9px] uppercase tracking-widest text-stone-500 truncate">{tr.papel}</div>}
-                                </div>
+                                <span className="font-mono text-[9px] tracking-widest opacity-60 flex-shrink-0">· {tsLabel}</span>
                               </div>
-                              <span className={`font-mono text-[9px] tracking-widest tabular-nums flex-shrink-0 ${excedeLimite ? 'text-red-600' : 'text-stone-500'}`}>
-                                {linhas} · {tr.letra.length}c
-                              </span>
+                              <ChevronDown className={`w-4 h-4 transition-transform flex-shrink-0 ${gen.expanded ? 'rotate-0' : '-rotate-90'}`} />
                             </button>
-                            {expanded && (
-                              <div className="border-t border-stone-300">
-                                <div className="p-4 max-h-[400px] overflow-y-auto scrollbar-thin">
-                                  <pre className="font-display text-[14px] leading-relaxed text-stone-900 whitespace-pre-wrap wrap-any" style={{ fontFamily: "'Fraunces', Georgia, serif" }}>{tr.letra}</pre>
-                                </div>
-                                {excedeLimite && (
-                                  <div className="border-t border-red-200 bg-red-50 px-4 py-2 flex items-start gap-2">
-                                    <AlertTriangle className="w-3.5 h-3.5 text-red-600 flex-shrink-0 mt-0.5" />
-                                    <p className="font-mono text-[10px] text-red-700 leading-relaxed">{t.out_over_limit_letra(LIMITE_LETRA)}</p>
-                                  </div>
+                            {gen.expanded && (
+                              <div className="p-3 space-y-3 bg-stone-50/40">
+                                {isAlbum ? (
+                                  gen.items.map((tr, i) => {
+                                    const trExpanded = (gen.trackExpanded || {})[i];
+                                    const linhas = tr.letra.split('\n').filter(l => l.trim() && !l.trim().startsWith('[')).length;
+                                    const excedeLimite = tr.letra.length > LIMITE_LETRA;
+                                    return (
+                                      <div key={i} className="rounded-xl border border-stone-300 bg-stone-50/80 overflow-hidden">
+                                        <button onClick={() => toggleTrack(i)}
+                                          className="w-full flex items-center justify-between gap-3 px-4 py-3 hover:bg-stone-200/40 transition-colors text-left active:bg-stone-200/80">
+                                          <div className="flex items-center gap-3 min-w-0 flex-1">
+                                            <ChevronDown className={`w-4 h-4 text-stone-500 transition-transform flex-shrink-0 ${trExpanded ? 'rotate-0' : '-rotate-90'}`} />
+                                            <span className="font-mono text-[9px] uppercase tracking-widest text-stone-50 bg-stone-900 px-1.5 py-0.5 flex-shrink-0">
+                                              {t.out_album_track_label} {i + 1}
+                                            </span>
+                                            <div className="min-w-0 flex-1">
+                                              <div className="font-display italic text-base text-stone-900 truncate" style={{ fontWeight: 600 }}>{tr.titulo}</div>
+                                              {tr.papel && <div className="font-mono text-[9px] uppercase tracking-widest text-stone-500 truncate">{tr.papel}</div>}
+                                            </div>
+                                          </div>
+                                          <span className={`font-mono text-[9px] tracking-widest tabular-nums flex-shrink-0 ${excedeLimite ? 'text-red-600' : 'text-stone-500'}`}>
+                                            {linhas} · {tr.letra.length}c
+                                          </span>
+                                        </button>
+                                        {trExpanded && (
+                                          <div className="border-t border-stone-300">
+                                            <div className="p-4 max-h-[400px] overflow-y-auto scrollbar-thin">
+                                              <pre className="font-display text-[14px] leading-relaxed text-stone-900 whitespace-pre-wrap wrap-any" style={{ fontFamily: "'Fraunces', Georgia, serif" }}>{tr.letra}</pre>
+                                            </div>
+                                            {excedeLimite && (
+                                              <div className="border-t border-red-200 bg-red-50 px-4 py-2 flex items-start gap-2">
+                                                <AlertTriangle className="w-3.5 h-3.5 text-red-600 flex-shrink-0 mt-0.5" />
+                                                <p className="font-mono text-[10px] text-red-700 leading-relaxed">{t.out_over_limit_letra(LIMITE_LETRA)}</p>
+                                              </div>
+                                            )}
+                                            <div className="border-t border-stone-300 p-3 flex gap-2 flex-wrap">
+                                              <button onClick={() => copiarEAbrirSuno(tr.letra, `${gen.id}-tr-open-${i}`, 'lyrics')}
+                                                className="flex-1 min-w-[140px] font-mono text-[10px] uppercase tracking-widest px-3 py-2 rounded-lg bg-orange-500 hover:bg-orange-400 text-stone-900 transition-all active:scale-95 flex items-center justify-center gap-2">
+                                                {copiedKey === `${gen.id}-tr-open-${i}` ? <><Check className="w-3 h-3" /> {t.out_copied}</> : <><ExternalLink className="w-3 h-3" /> {t.open_suno_lyrics}</>}
+                                              </button>
+                                              <button onClick={() => copiar(tr.letra, `${gen.id}-tr-copy-${i}`)}
+                                                className="font-mono text-[10px] uppercase tracking-widest px-2.5 py-2 rounded-md border border-stone-400 btn-fill-orange transition-all active:scale-95 flex items-center gap-1.5">
+                                                {copiedKey === `${gen.id}-tr-copy-${i}` ? <><Check className="w-3 h-3" /> {t.out_copied}</> : <><Copy className="w-3 h-3" /> {t.out_copy}</>}
+                                              </button>
+                                              <button onClick={() => salvar(tr.letra, 'letra', tr.titulo, `${gen.id}-tr-save-${i}`)}
+                                                className="font-mono text-[10px] uppercase tracking-widest px-2.5 py-2 rounded-md border border-stone-400 btn-fill-orange transition-all active:scale-95 flex items-center gap-1.5">
+                                                {savedKey === `${gen.id}-tr-save-${i}` ? <><Check className="w-3 h-3" /> {t.out_saved}</> : <><Save className="w-3 h-3" /> {t.out_save}</>}
+                                              </button>
+                                            </div>
+                                          </div>
+                                        )}
+                                      </div>
+                                    );
+                                  })
+                                ) : (
+                                  gen.items.map((it, i) => {
+                                    const linhas = it.letra.split('\n').filter(l => l.trim() && !l.trim().startsWith('[')).length;
+                                    const excedeLimite = it.letra.length > LIMITE_LETRA;
+                                    return (
+                                      <div key={i} className="rounded-xl border border-stone-300 bg-stone-50/80 overflow-hidden">
+                                        <div className="bg-stone-200 border-b border-stone-300 px-4 py-2 flex items-center justify-between gap-2">
+                                          <div className="font-display italic text-sm text-stone-900 truncate" style={{ fontWeight: 600 }}>{it.titulo}</div>
+                                          <div className={`font-mono text-[10px] tracking-widest tabular-nums flex items-center gap-2 flex-shrink-0 ${excedeLimite ? 'text-red-600' : 'text-stone-500'}`}>
+                                            <span>{linhas} {t.out_lines}</span><span className="text-stone-300">·</span><span>{it.letra.length}c</span>
+                                          </div>
+                                        </div>
+                                        <div className="p-5 max-h-[500px] overflow-y-auto scrollbar-thin">
+                                          <pre className="font-display text-[15px] leading-relaxed text-stone-900 whitespace-pre-wrap wrap-any" style={{ fontFamily: "'Fraunces', Georgia, serif" }}>{it.letra}</pre>
+                                        </div>
+                                        {excedeLimite && (
+                                          <div className="border-t border-red-200 bg-red-50 px-4 py-2 flex items-start gap-2">
+                                            <AlertTriangle className="w-3.5 h-3.5 text-red-600 flex-shrink-0 mt-0.5" />
+                                            <p className="font-mono text-[10px] text-red-700 leading-relaxed">{t.out_over_limit_letra(LIMITE_LETRA)}</p>
+                                          </div>
+                                        )}
+                                        <div className="border-t border-stone-300 p-3 flex gap-2 flex-wrap">
+                                          <button onClick={() => copiarEAbrirSuno(it.letra, `${gen.id}-letra-open-${i}`, 'lyrics')}
+                                            className="flex-1 min-w-[140px] font-mono text-[11px] uppercase tracking-widest px-3 py-2 rounded-lg bg-orange-500 hover:bg-orange-400 text-stone-900 transition-all active:scale-95 flex items-center justify-center gap-2">
+                                            {copiedKey === `${gen.id}-letra-open-${i}` ? <><Check className="w-3.5 h-3.5" /> {t.out_copied}</> : <><ExternalLink className="w-3.5 h-3.5" /> {t.open_suno_lyrics}</>}
+                                          </button>
+                                          <button onClick={() => copiar(it.letra, `${gen.id}-letra-copy-${i}`)}
+                                            className="font-mono text-[11px] uppercase tracking-widest px-3 py-2 rounded-lg border border-stone-400 btn-fill-orange transition-all active:scale-95 flex items-center gap-2">
+                                            {copiedKey === `${gen.id}-letra-copy-${i}` ? <><Check className="w-3.5 h-3.5" /> {t.out_copied}</> : <><Copy className="w-3.5 h-3.5" /> {t.out_copy_letra}</>}
+                                          </button>
+                                          <button onClick={() => salvar(it.letra, 'letra', it.titulo, `${gen.id}-letra-save-${i}`)}
+                                            className="font-mono text-[11px] uppercase tracking-widest px-3 py-2 border border-stone-700 hover:border-orange-500 hover:text-orange-400 transition-all active:scale-95 flex items-center gap-2 rounded-lg">
+                                            {savedKey === `${gen.id}-letra-save-${i}` ? <><Check className="w-3.5 h-3.5" /> {t.out_saved}</> : <><Save className="w-3.5 h-3.5" /> {t.out_save}</>}
+                                          </button>
+                                        </div>
+                                      </div>
+                                    );
+                                  })
                                 )}
-                                <div className="border-t border-stone-300 p-3 flex gap-2 flex-wrap">
-                                  <button onClick={() => copiarEAbrirSuno(tr.letra, `tr-open-${i}`, 'lyrics')}
-                                    className="flex-1 min-w-[140px] font-mono text-[10px] uppercase tracking-widest px-3 py-2 rounded-lg bg-orange-500 hover:bg-orange-400 text-stone-900 transition-all active:scale-95 flex items-center justify-center gap-2">
-                                    {copiedKey === `tr-open-${i}` ? <><Check className="w-3 h-3" /> {t.out_copied}</> : <><ExternalLink className="w-3 h-3" /> {t.open_suno_lyrics}</>}
-                                  </button>
-                                  <button onClick={() => copiar(tr.letra, `tr-copy-${i}`)}
-                                    className="font-mono text-[10px] uppercase tracking-widest px-2.5 py-2 rounded-md border border-stone-400 btn-fill-orange transition-all active:scale-95 flex items-center gap-1.5">
-                                    {copiedKey === `tr-copy-${i}` ? <><Check className="w-3 h-3" /> {t.out_copied}</> : <><Copy className="w-3 h-3" /> {t.out_copy}</>}
-                                  </button>
-                                  <button onClick={() => salvar(tr.letra, 'letra', tr.titulo, `tr-save-${i}`)}
-                                    className="font-mono text-[10px] uppercase tracking-widest px-2.5 py-2 rounded-md border border-stone-400 btn-fill-orange transition-all active:scale-95 flex items-center gap-1.5">
-                                    {savedKey === `tr-save-${i}` ? <><Check className="w-3 h-3" /> {t.out_saved}</> : <><Save className="w-3 h-3" /> {t.out_save}</>}
-                                  </button>
-                                </div>
                               </div>
                             )}
                           </div>
                         );
                       })}
-                    </div>
-                  )}
 
-                  <div className="rounded-xl border border-stone-300 bg-stone-50/80 relative overflow-hidden">
-                    <div className="bg-stone-200 border-b border-stone-300 px-4 py-2 flex items-center justify-between gap-2">
-                      <div className="font-mono text-[10px] uppercase tracking-widest text-stone-500">lyrics · Suno</div>
-                      {letraGerada && (() => {
-                        const tc = TAMANHOS_LETRA.find(x => x.id === tamanhoLetra) || TAMANHOS_LETRA[2];
-                        const linhas = letraGerada.split('\n').filter(l => l.trim() && !l.trim().startsWith('[')).length;
-                        const excedeAlvo = letraGerada.length > tc.chars * 1.15;
-                        const excedeLimite = letraGerada.length > LIMITE_LETRA;
-                        return (
-                          <div className={`font-mono text-[10px] tracking-widest tabular-nums flex items-center gap-2 ${excedeLimite ? 'text-red-600' : excedeAlvo ? 'text-orange-700' : 'text-stone-500'}`}>
-                            <span>{linhas} {t.out_lines}</span><span className="text-stone-300">·</span><span>{letraGerada.length} / {tc.chars}c</span>
-                          </div>
-                        );
-                      })()}
-                      {!letraGerada && <div className="font-mono text-[10px] tabular-nums text-stone-500">0c</div>}
-                    </div>
-                    <div className="p-5 min-h-[280px] max-h-[500px] overflow-y-auto scrollbar-thin">
-                      {letraGerada ? (
-                        <pre className="font-display text-[15px] leading-relaxed text-stone-900 whitespace-pre-wrap wrap-any" style={{ fontFamily: "'Fraunces', Georgia, serif" }}>{letraGerada}</pre>
-                      ) : loadingLetra ? (
-                        <p className="font-mono text-xs text-stone-400 uppercase tracking-wider">{t.out_composing}</p>
-                      ) : (
-                        <p className="font-mono text-xs text-stone-400 uppercase tracking-wider">{t.out_empty_letra}</p>
+                      {lyricsGenerations.length > 8 && (
+                        <div className="font-mono text-[10px] uppercase tracking-widest text-stone-400 text-center py-2">
+                          {(t.older_hidden || 'older generations hidden')} · {lyricsGenerations.length - 8}
+                        </div>
                       )}
                     </div>
-                    {letraGerada && letraGerada.length > LIMITE_LETRA && (
-                      <div className="border-t border-red-200 bg-red-50 px-4 py-2 flex items-start gap-2">
-                        <AlertTriangle className="w-3.5 h-3.5 text-red-600 flex-shrink-0 mt-0.5" />
-                        <p className="font-mono text-[10px] text-red-700 leading-relaxed">{t.out_over_limit_letra(LIMITE_LETRA)}</p>
-                      </div>
-                    )}
-                    {letraGerada && (
-                      <div className="border-t border-stone-300 p-3 flex gap-2 flex-wrap">
-                        <button onClick={() => copiarEAbrirSuno(letraGerada, 'letra-open', 'lyrics')}
-                          className="flex-1 min-w-[140px] font-mono text-[11px] uppercase tracking-widest px-3 py-2 rounded-lg bg-orange-500 hover:bg-orange-400 text-stone-900 transition-all active:scale-95 flex items-center justify-center gap-2">
-                          {copiedKey === 'letra-open' ? <><Check className="w-3.5 h-3.5" /> {t.out_copied}</> : <><ExternalLink className="w-3.5 h-3.5" /> {t.open_suno_lyrics}</>}
-                        </button>
-                        <button onClick={() => copiar(letraGerada, 'letra')}
-                          className="font-mono text-[11px] uppercase tracking-widest px-3 py-2 rounded-lg border border-stone-400 btn-fill-orange transition-all active:scale-95 flex items-center gap-2">
-                          {copiedKey === 'letra' ? <><Check className="w-3.5 h-3.5" /> {t.out_copied}</> : <><Copy className="w-3.5 h-3.5" /> {t.out_copy_letra}</>}
-                        </button>
-                        <button onClick={() => salvar(letraGerada, 'letra', tema || 'Lyrics', 'letra-save')}
-                          className="font-mono text-[11px] uppercase tracking-widest px-3 py-2 border border-stone-700 hover:border-orange-500 hover:text-orange-400 transition-all active:scale-95 flex items-center gap-2 rounded-lg">
-                          {savedKey === 'letra-save' ? <><Check className="w-3.5 h-3.5" /> {t.out_saved}</> : <><Save className="w-3.5 h-3.5" /> {t.out_save}</>}
-                        </button>
-                      </div>
-                    )}
-                  </div>
+                  )}
                 </>
               )}
             </div>
