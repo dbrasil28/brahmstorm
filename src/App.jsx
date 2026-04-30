@@ -3732,7 +3732,7 @@ Return ONLY this JSON, no preamble, no markdown:
               <div className="flex items-center justify-between mb-1 gap-2">
                 <div className="flex items-center gap-2 min-w-0">
                   <Wand2 className="w-4 h-4 text-orange-500 flex-shrink-0" />
-                  <div className="font-mono text-[11px] uppercase tracking-[0.2em] text-orange-700">{t.inspiration_title}</div>
+                  <div className="font-mono text-[13px] uppercase tracking-[0.2em] text-orange-700" style={{ fontWeight: 700 }}>{t.inspiration_title}</div>
                 </div>
                 {briefLivre.trim() && (
                   <button onClick={() => setBriefLivre('')} title={t.clear_inspiration}
@@ -3761,7 +3761,7 @@ Return ONLY this JSON, no preamble, no markdown:
               <div className="flex items-center justify-between mb-1 gap-2">
                 <div className="flex items-center gap-2 min-w-0">
                   <Music2 className="w-4 h-4 text-stone-700 flex-shrink-0" />
-                  <div className="font-mono text-[11px] uppercase tracking-[0.2em] text-stone-700">{t.ref_title}</div>
+                  <div className="font-mono text-[13px] uppercase tracking-[0.2em] text-stone-700" style={{ fontWeight: 700 }}>{t.ref_title}</div>
                   {refResult && (
                     <span className={`font-mono text-[9px] uppercase tracking-widest px-1.5 py-0.5 border flex-shrink-0 ${
                       refResult.confidence === 'high' ? 'border-emerald-600/50 text-emerald-700 bg-emerald-50' :
@@ -3835,11 +3835,11 @@ Return ONLY this JSON, no preamble, no markdown:
             )}
 
             {tab === 'prompt' && (
-              <div className="mt-4 mb-3 flex items-center justify-between gap-3 flex-wrap">
+              <div className="mt-10 mb-3 flex items-center justify-between gap-3 flex-wrap">
                 <div className="flex items-center gap-2 min-w-0">
                   <Sliders className="w-4 h-4 text-stone-500 flex-shrink-0" />
                   <div>
-                    <div className="font-mono text-[11px] uppercase tracking-[0.2em] text-stone-700" style={{ fontWeight: 600 }}>
+                    <div className="font-mono text-[13px] uppercase tracking-[0.2em] text-stone-800" style={{ fontWeight: 700 }}>
                       {t.be_producer_title}
                     </div>
                     <div className="font-mono text-[10px] uppercase tracking-[0.15em] text-stone-400 italic mt-0.5">
@@ -3872,7 +3872,7 @@ Return ONLY this JSON, no preamble, no markdown:
                   onClear={() => setGeneros([])} tClear={t.block_clear} tOpen={t.block_open}>
                   {Object.entries(GENEROS_CATS_KEYS).map(([catKey, items]) => (
                     <div key={catKey} className="mb-5 last:mb-0">
-                      <div className="font-mono text-[10px] uppercase tracking-[0.2em] text-orange-700/80 mb-2 pb-1 border-b border-stone-300">
+                      <div className="font-mono text-[11px] uppercase tracking-[0.2em] text-orange-700 font-bold mb-2 pb-1 border-b border-stone-300">
                         {CAT_LABELS[lang][catKey]}
                       </div>
                       <div className="grid grid-cols-1 gap-1 min-w-0">
@@ -3904,7 +3904,7 @@ Return ONLY this JSON, no preamble, no markdown:
                   open={openBlocks.instr} onToggle={toggleBlock} onClear={() => setInstrumentos([])} tClear={t.block_clear} tOpen={t.block_open}>
                   {Object.entries(INSTRUMENTOS_CATS_KEYS).map(([catKey, items]) => (
                     <div key={catKey} className="mb-5 last:mb-0">
-                      <div className="font-mono text-[10px] uppercase tracking-[0.2em] text-orange-700/80 mb-2 pb-1 border-b border-stone-300">
+                      <div className="font-mono text-[11px] uppercase tracking-[0.2em] text-orange-700 font-bold mb-2 pb-1 border-b border-stone-300">
                         {INSTR_CAT_LABELS[lang][catKey]}
                       </div>
                       <GridSelect options={sortByLabel(items, getInstrLabel, lang)} values={instrumentos}
@@ -3917,7 +3917,7 @@ Return ONLY this JSON, no preamble, no markdown:
                   open={openBlocks.voz} onToggle={toggleBlock} onClear={() => setVozes([])} tClear={t.block_clear} tOpen={t.block_open}>
                   {Object.entries(VOZES_CATS_KEYS).map(([catKey, items]) => (
                     <div key={catKey} className="mb-5 last:mb-0">
-                      <div className="font-mono text-[10px] uppercase tracking-[0.2em] text-orange-700/80 mb-2 pb-1 border-b border-stone-300">
+                      <div className="font-mono text-[11px] uppercase tracking-[0.2em] text-orange-700 font-bold mb-2 pb-1 border-b border-stone-300">
                         {VOZES_CAT_LABELS[lang]?.[catKey] || VOZES_CAT_LABELS.en[catKey]}
                       </div>
                       <div className="grid grid-cols-1 gap-1 min-w-0">
@@ -4037,7 +4037,7 @@ Return ONLY this JSON, no preamble, no markdown:
                   open={openBlocks.lgen} onToggle={toggleBlock} onClear={() => setGeneros([])} tClear={t.block_clear} tOpen={t.block_open}>
                   {Object.entries(GENEROS_CATS_KEYS).map(([catKey, items]) => (
                     <div key={catKey} className="mb-5 last:mb-0">
-                      <div className="font-mono text-[10px] uppercase tracking-[0.2em] text-orange-700/80 mb-2 pb-1 border-b border-stone-300">
+                      <div className="font-mono text-[11px] uppercase tracking-[0.2em] text-orange-700 font-bold mb-2 pb-1 border-b border-stone-300">
                         {CAT_LABELS[lang][catKey]}
                       </div>
                       <div className="grid grid-cols-1 gap-1 min-w-0">
