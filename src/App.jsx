@@ -264,8 +264,7 @@ function BrahmstormLanding({ onLaunch }) {
             <div className="relative">
               <button onClick={() => setLangMenuOpen(v => !v)}
                 aria-label={LANGUAGES.find(l => l.id === lang)?.full}
-                className="font-mono text-[11px] uppercase tracking-[0.2em] text-orange-500 border-[1.5px] border-orange-500 px-3 py-2 rounded-lg flex items-center gap-1.5 active:scale-95 transition-all"
-                style={{ fontWeight: 500 }}>
+                className="font-mono text-[11px] uppercase tracking-[0.2em] px-3 py-2 rounded-lg border border-stone-700 text-stone-300 hover:border-orange-500 hover:text-orange-400 transition-all active:scale-95 flex items-center gap-2">
                 <Globe className="w-3.5 h-3.5" />
                 <span>{LANGUAGES.find(l => l.id === lang)?.label}</span>
                 <ChevronDown className={`w-3 h-3 transition-transform ${langMenuOpen ? 'rotate-180' : ''}`} />
