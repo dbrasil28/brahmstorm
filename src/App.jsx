@@ -4416,8 +4416,11 @@ Return ONLY this JSON, no preamble, no markdown:
           <div className="flex items-center gap-2 relative">
             <div className="relative">
               <button ref={langBtnRef} onClick={() => setLangMenuOpen(v => !v)}
-                className="font-mono text-xs uppercase tracking-widest px-3 py-2 border border-stone-700 hover:border-orange-500 hover:text-orange-400 transition-all active:scale-95 flex items-center gap-2 rounded-lg">
-                <Globe className="w-3.5 h-3.5" /> {LANGUAGES.find(l => l.id === lang)?.label}
+                aria-label={LANGUAGES.find(l => l.id === lang)?.full}
+                className="font-mono text-xs uppercase tracking-widest px-2.5 md:px-3 py-2 border border-stone-700 hover:border-orange-500 hover:text-orange-400 transition-all active:scale-95 flex items-center gap-2 rounded-lg">
+                <Globe className="w-3.5 h-3.5 hidden md:block" />
+                <span className="text-base leading-none md:hidden">{LANGUAGES.find(l => l.id === lang)?.flag}</span>
+                <span className="hidden md:inline">{LANGUAGES.find(l => l.id === lang)?.label}</span>
               </button>
               {langMenuOpen && langMenuPos && (
                 <>
@@ -4439,12 +4442,14 @@ Return ONLY this JSON, no preamble, no markdown:
               )}
             </div>
             <button onClick={() => setTipsOpen(true)}
-              className="font-mono text-xs uppercase tracking-widest px-3 py-2 border border-stone-700 hover:border-orange-500 hover:text-orange-400 transition-all active:scale-95 flex items-center gap-2 rounded-lg">
-              <Lightbulb className="w-3.5 h-3.5" /> {t.tips}
+              aria-label={t.tips}
+              className="font-mono text-xs uppercase tracking-widest px-2.5 md:px-3 py-2 border border-stone-700 hover:border-orange-500 hover:text-orange-400 transition-all active:scale-95 flex items-center gap-2 rounded-lg">
+              <Lightbulb className="w-3.5 h-3.5" /> <span className="hidden md:inline">{t.tips}</span>
             </button>
             <button onClick={() => setDrawerOpen(true)}
-              className="font-mono text-xs uppercase tracking-widest px-3 py-2 border border-stone-700 hover:border-orange-500 hover:text-orange-400 transition-all active:scale-95 flex items-center gap-2 rounded-lg">
-              <Archive className="w-3.5 h-3.5" /> {t.favorites} · {favoritos.length}
+              aria-label={`${t.favorites} · ${favoritos.length}`}
+              className="font-mono text-xs uppercase tracking-widest px-2.5 md:px-3 py-2 border border-stone-700 hover:border-orange-500 hover:text-orange-400 transition-all active:scale-95 flex items-center gap-2 rounded-lg">
+              <Archive className="w-3.5 h-3.5" /> <span className="hidden md:inline">{t.favorites} · </span>{favoritos.length}
             </button>
             <button onClick={() => setShortcutsOpen(true)} title={t.shortcuts_title}
               data-desktop-only="true"
