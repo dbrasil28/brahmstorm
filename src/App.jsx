@@ -250,14 +250,14 @@ function BrahmstormLanding({ onLaunch }) {
       {/* ═══════════════════════════════════════════════════════════
           NAV — floats over dark hero
           ═══════════════════════════════════════════════════════════ */}
-      <nav className={`absolute top-0 left-0 right-0 z-30 px-6 md:px-12 lg:px-20 py-6 flex items-center justify-between reveal ${mounted ? 'in' : ''}`}>
+      <nav className={`absolute top-0 left-0 right-0 z-30 px-6 md:px-12 lg:px-20 py-6 flex flex-col md:flex-row items-start md:items-center md:justify-between gap-4 md:gap-0 reveal ${mounted ? 'in' : ''}`}>
         <a href="#" className="flex items-center gap-3">
           <Disc3 className="w-7 h-7 text-orange-500 spin-slow" strokeWidth={1.5} />
           <div className="font-display text-xl tracking-tight text-stone-50" style={{ fontWeight: 800, fontStyle: 'italic' }}>
             Brahm<span className="text-orange-500">storm</span>
           </div>
         </a>
-        <div className="flex items-center gap-2 md:gap-6">
+        <div className="flex items-center gap-3 md:gap-6">
           <a href="#what" onClick={(e) => { e.preventDefault(); document.getElementById('what')?.scrollIntoView({ behavior: 'smooth', block: 'start' }); }}
             className="hidden md:block font-mono text-[11px] uppercase tracking-[0.2em] text-stone-400 hover:text-stone-50 transition-colors">{tL.nav_what}</a>
           <a href="#how" onClick={(e) => { e.preventDefault(); document.getElementById('how')?.scrollIntoView({ behavior: 'smooth', block: 'start' }); }}
@@ -267,11 +267,10 @@ function BrahmstormLanding({ onLaunch }) {
           <div className="relative">
             <button ref={langBtnRef} onClick={() => setLangMenuOpen(v => !v)}
               aria-label={LANGUAGES.find(l => l.id === lang)?.full}
-              className="font-mono text-[11px] uppercase tracking-[0.2em] px-2.5 md:px-3 py-2.5 rounded-lg border border-stone-700 text-stone-300 hover:border-orange-500 hover:text-orange-400 transition-all active:scale-95 flex items-center gap-2 md:gap-2">
-              <Globe className="w-3.5 h-3.5 hidden md:block" />
-              <span className="text-base leading-none md:hidden">{LANGUAGES.find(l => l.id === lang)?.flag}</span>
-              <span className="hidden md:inline">{LANGUAGES.find(l => l.id === lang)?.label}</span>
-              <ChevronDown className={`w-3 h-3 hidden md:block transition-transform ${langMenuOpen ? 'rotate-180' : ''}`} />
+              className="font-mono text-[11px] uppercase tracking-[0.2em] px-3 py-2.5 rounded-lg border border-stone-700 text-stone-300 hover:border-orange-500 hover:text-orange-400 transition-all active:scale-95 flex items-center gap-2">
+              <Globe className="w-3.5 h-3.5" />
+              <span>{LANGUAGES.find(l => l.id === lang)?.label}</span>
+              <ChevronDown className={`w-3 h-3 transition-transform ${langMenuOpen ? 'rotate-180' : ''}`} />
             </button>
             {langMenuOpen && (
               <>
@@ -4416,11 +4415,8 @@ Return ONLY this JSON, no preamble, no markdown:
           <div className="flex items-center gap-2 relative">
             <div className="relative">
               <button ref={langBtnRef} onClick={() => setLangMenuOpen(v => !v)}
-                aria-label={LANGUAGES.find(l => l.id === lang)?.full}
-                className="font-mono text-xs uppercase tracking-widest px-2.5 md:px-3 py-2 border border-stone-700 hover:border-orange-500 hover:text-orange-400 transition-all active:scale-95 flex items-center gap-2 rounded-lg">
-                <Globe className="w-3.5 h-3.5 hidden md:block" />
-                <span className="text-base leading-none md:hidden">{LANGUAGES.find(l => l.id === lang)?.flag}</span>
-                <span className="hidden md:inline">{LANGUAGES.find(l => l.id === lang)?.label}</span>
+                className="font-mono text-xs uppercase tracking-widest px-3 py-2 border border-stone-700 hover:border-orange-500 hover:text-orange-400 transition-all active:scale-95 flex items-center gap-2 rounded-lg">
+                <Globe className="w-3.5 h-3.5" /> {LANGUAGES.find(l => l.id === lang)?.label}
               </button>
               {langMenuOpen && langMenuPos && (
                 <>
@@ -4442,14 +4438,12 @@ Return ONLY this JSON, no preamble, no markdown:
               )}
             </div>
             <button onClick={() => setTipsOpen(true)}
-              aria-label={t.tips}
-              className="font-mono text-xs uppercase tracking-widest px-2.5 md:px-3 py-2 border border-stone-700 hover:border-orange-500 hover:text-orange-400 transition-all active:scale-95 flex items-center gap-2 rounded-lg">
-              <Lightbulb className="w-3.5 h-3.5" /> <span className="hidden md:inline">{t.tips}</span>
+              className="font-mono text-xs uppercase tracking-widest px-3 py-2 border border-stone-700 hover:border-orange-500 hover:text-orange-400 transition-all active:scale-95 flex items-center gap-2 rounded-lg">
+              <Lightbulb className="w-3.5 h-3.5" /> {t.tips}
             </button>
             <button onClick={() => setDrawerOpen(true)}
-              aria-label={`${t.favorites} · ${favoritos.length}`}
-              className="font-mono text-xs uppercase tracking-widest px-2.5 md:px-3 py-2 border border-stone-700 hover:border-orange-500 hover:text-orange-400 transition-all active:scale-95 flex items-center gap-2 rounded-lg">
-              <Archive className="w-3.5 h-3.5" /> <span className="hidden md:inline">{t.favorites} · </span>{favoritos.length}
+              className="font-mono text-xs uppercase tracking-widest px-3 py-2 border border-stone-700 hover:border-orange-500 hover:text-orange-400 transition-all active:scale-95 flex items-center gap-2 rounded-lg">
+              <Archive className="w-3.5 h-3.5" /> {t.favorites} · {favoritos.length}
             </button>
             <button onClick={() => setShortcutsOpen(true)} title={t.shortcuts_title}
               data-desktop-only="true"
