@@ -116,6 +116,18 @@ function BrahmstormLanding({ onLaunch }) {
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
+  const [lang, setLang] = useState(detectLang);
+  const [langMenuOpen, setLangMenuOpen] = useState(false);
+  const langBtnRef = useRef(null);
+  const tL = LANDING_UI[lang] || LANDING_UI.en;
+  useEffect(() => {
+    try { localStorage.setItem('bs:lang', lang); } catch (e) {}
+    if (typeof document !== 'undefined') {
+      document.title = tL.meta_title;
+      document.documentElement.lang = lang;
+    }
+  }, [lang, tL.meta_title]);
+
   return (
     <div className="min-h-screen w-full bg-stone-100 text-stone-900 relative overflow-x-clip"
       style={{ fontFamily: "'Fraunces', Georgia, serif" }}>
@@ -245,17 +257,38 @@ function BrahmstormLanding({ onLaunch }) {
             Brahm<span className="text-orange-500">storm</span>
           </div>
         </a>
-        <div className="flex items-center gap-4 md:gap-8">
+        <div className="flex items-center gap-4 md:gap-6">
           <a href="#what" onClick={(e) => { e.preventDefault(); document.getElementById('what')?.scrollIntoView({ behavior: 'smooth', block: 'start' }); }}
-            className="hidden md:block font-mono text-[11px] uppercase tracking-[0.2em] text-stone-400 hover:text-stone-50 transition-colors">what</a>
+            className="hidden md:block font-mono text-[11px] uppercase tracking-[0.2em] text-stone-400 hover:text-stone-50 transition-colors">{tL.nav_what}</a>
           <a href="#how" onClick={(e) => { e.preventDefault(); document.getElementById('how')?.scrollIntoView({ behavior: 'smooth', block: 'start' }); }}
-            className="hidden md:block font-mono text-[11px] uppercase tracking-[0.2em] text-stone-400 hover:text-stone-50 transition-colors">how</a>
+            className="hidden md:block font-mono text-[11px] uppercase tracking-[0.2em] text-stone-400 hover:text-stone-50 transition-colors">{tL.nav_how}</a>
           <a href="#why" onClick={(e) => { e.preventDefault(); document.getElementById('why')?.scrollIntoView({ behavior: 'smooth', block: 'start' }); }}
-            className="hidden md:block font-mono text-[11px] uppercase tracking-[0.2em] text-stone-400 hover:text-stone-50 transition-colors">why</a>
+            className="hidden md:block font-mono text-[11px] uppercase tracking-[0.2em] text-stone-400 hover:text-stone-50 transition-colors">{tL.nav_why}</a>
+          <div className="relative">
+            <button ref={langBtnRef} onClick={() => setLangMenuOpen(v => !v)}
+              className="font-mono text-[11px] uppercase tracking-[0.2em] px-3 py-2.5 rounded-lg border border-stone-700 text-stone-300 hover:border-orange-500 hover:text-orange-400 transition-all active:scale-95 flex items-center gap-2">
+              <Globe className="w-3.5 h-3.5" /> {LANGUAGES.find(l => l.id === lang)?.label}
+              <ChevronDown className={`w-3 h-3 transition-transform ${langMenuOpen ? 'rotate-180' : ''}`} />
+            </button>
+            {langMenuOpen && (
+              <>
+                <div className="fixed inset-0 z-[60]" onClick={() => setLangMenuOpen(false)} />
+                <div className="absolute top-full right-0 mt-2 z-[70] bg-stone-900 border border-stone-700 min-w-[180px] shadow-2xl rounded-lg overflow-hidden">
+                  {LANGUAGES.map(l => (
+                    <button key={l.id} onClick={() => { setLang(l.id); setLangMenuOpen(false); }}
+                      className={`w-full text-left px-3 py-3 font-mono text-[11px] uppercase tracking-[0.2em] transition-all flex items-center gap-2 ${l.id === lang ? 'bg-orange-500/15 text-orange-400' : 'text-stone-300 hover:bg-stone-800 hover:text-stone-50'}`}>
+                      <span className="text-base">{l.flag}</span><span className="flex-1">{l.full}</span>
+                      {l.id === lang && <Check className="w-3.5 h-3.5 text-orange-500" />}
+                    </button>
+                  ))}
+                </div>
+              </>
+            )}
+          </div>
           <button onClick={openApp}
             className="font-mono text-[11px] uppercase tracking-[0.2em] px-4 py-2.5 rounded-lg bg-orange-500 hover:bg-orange-400 text-stone-900 transition-all active:scale-95 flex items-center gap-2 glow-amber"
             style={{ fontWeight: 700 }}>
-            launch <ArrowRight className="w-3.5 h-3.5" />
+            {tL.nav_launch} <ArrowRight className="w-3.5 h-3.5" />
           </button>
         </div>
       </nav>
@@ -297,11 +330,11 @@ function BrahmstormLanding({ onLaunch }) {
             style={{ transitionDelay: '0.1s' }}>
             <span className="inline-flex items-center gap-1.5 bg-orange-500 text-stone-900 px-3 py-1.5 rounded-md font-mono text-xs uppercase tracking-[0.25em]"
               style={{ fontWeight: 700 }}>
-              <Sparkles className="w-3 h-3" /> 100% Free
+              <Sparkles className="w-3 h-3" /> {tL.hero_badge_free}
             </span>
             <span className="hidden sm:block w-8 h-px bg-stone-700" />
             <span className="font-mono text-[11px] uppercase tracking-[0.3em] text-stone-400">
-              prompt forge for Suno AI
+              {tL.hero_descriptor}
             </span>
           </div>
 
@@ -312,18 +345,17 @@ function BrahmstormLanding({ onLaunch }) {
               fontSize: 'clamp(40px, 7vw, 88px)',
               transitionDelay: '0.2s'
             }}>
-            Write Suno prompts
+            {tL.hero_h1_line1}
             <br />
-            that <span className="not-italic font-display text-orange-500" style={{ fontStyle: 'normal' }}>actually sound</span>
+            {tL.hero_h1_line2_pre}<span className="not-italic font-display text-orange-500" style={{ fontStyle: 'normal' }}>{tL.hero_h1_line2_accent}</span>
             <br />
-            <span className="text-stone-400">like the song you imagined.</span>
+            <span className="text-stone-400">{tL.hero_h1_line3}</span>
           </h1>
 
           {/* Sub-headline (mb-12 = 64px) */}
           <p className={`font-display text-xl md:text-2xl text-stone-300 leading-snug max-w-3xl mb-6 md:mb-8 reveal ${mounted ? 'in' : ''}`}
             style={{ fontWeight: 400, transitionDelay: '0.32s' }}>
-            Brahmstorm turns your <em className="text-stone-50">feelings, references and ideas</em> into
-            production-ready prompts and lyrics for Suno AI — without the trial and error.
+            {tL.hero_sub_pre}<em className="text-stone-50">{tL.hero_sub_em}</em>{tL.hero_sub_post}
           </p>
 
           {/* CTAs (mb-12 = 64px) */}
@@ -332,28 +364,28 @@ function BrahmstormLanding({ onLaunch }) {
             <button onClick={openApp}
               className="bg-orange-500 hover:bg-orange-400 text-stone-900 font-mono text-sm uppercase tracking-[0.25em] px-8 py-4 rounded-xl flex items-center gap-3 transition-all active:scale-[0.98] glow-amber"
               style={{ fontWeight: 700 }}>
-              <Sparkles className="w-4 h-4" /> Open Brahmstorm <ArrowRight className="w-4 h-4" />
+              <Sparkles className="w-4 h-4" /> {tL.hero_cta_open} <ArrowRight className="w-4 h-4" />
             </button>
             <a href="#what" onClick={(e) => { e.preventDefault(); document.getElementById('what')?.scrollIntoView({ behavior: 'smooth', block: 'start' }); }}
               className="font-mono text-xs uppercase tracking-[0.25em] text-stone-300 hover:text-stone-50 transition-colors flex items-center gap-2 px-3 py-3">
-              see how it works ↓
+              {tL.hero_cta_see} ↓
             </a>
           </div>
 
           {/* Stats (8px grid: gap-8/12, pt-8) */}
           <div className={`grid grid-cols-2 md:grid-cols-4 gap-8 max-w-3xl border-t border-stone-800 pt-6 reveal ${mounted ? 'in' : ''}`}
             style={{ transitionDelay: '0.56s' }}>
-            <HeroStat number="5" label="generations / day" />
-            <HeroStat number="0" label="signup required" />
-            <HeroStat number="4" label="languages" />
-            <HeroStat number="∞" label="creativity" subtle />
+            <HeroStat number="5" label={tL.hero_stat_per_day} />
+            <HeroStat number="0" label={tL.hero_stat_signup} />
+            <HeroStat number="4" label={tL.hero_stat_langs} />
+            <HeroStat number="∞" label={tL.hero_stat_creativity} subtle />
           </div>
         </div>
 
         {/* scroll cue */}
         <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-10 scroll-pulse">
           <div className="font-mono text-[9px] uppercase tracking-[0.4em] text-stone-500">
-            scroll
+            {tL.hero_scroll}
           </div>
         </div>
       </section>
@@ -377,37 +409,37 @@ function BrahmstormLanding({ onLaunch }) {
               }} />
               <div className="absolute bottom-6 left-6 right-6">
                 <div className="font-display italic text-base text-stone-100" style={{ fontWeight: 500 }}>
-                  the gear was simpler. the rules, hidden.
+                  {tL.problem_photo_caption}
                 </div>
               </div>
             </div>
           </div>
 
           <div className="lg:col-span-7">
-            <div className="rule-with-label dark mb-8">the problem</div>
+            <div className="rule-with-label dark mb-8">{tL.problem_label}</div>
 
             <h2 className="font-display leading-[1.05] text-stone-50 mb-8 max-w-2xl"
               style={{
                 fontWeight: 700, fontStyle: 'italic',
                 fontSize: 'clamp(28px, 3.8vw, 44px)'
               }}>
-              Suno is powerful.
+              {tL.problem_h_pre}
               <br />
-              <span className="text-stone-400">But it has rules</span>
+              <span className="text-stone-400">{tL.problem_h_mid}</span>
               <br />
-              <span className="text-orange-500">nobody tells you.</span>
+              <span className="text-orange-500">{tL.problem_h_accent}</span>
             </h2>
 
             <div className="space-y-8">
               <ProblemRow num="01" icon={<MessageSquareQuote className="w-4 h-4" />}
-                title="Real artist names get filtered"
-                body="You can't just say ‘like Pearl Jam'. Suno strips it. You learn this only after rerolling 12 times." />
+                title={tL.problem_p1_title}
+                body={tL.problem_p1_body} />
               <ProblemRow num="02" icon={<FileText className="w-4 h-4" />}
-                title="Tags in your language don't work"
-                body="Write [Verso] and Suno sings the word ‘verso' instead of treating it as a structure tag." />
+                title={tL.problem_p2_title}
+                body={tL.problem_p2_body} />
               <ProblemRow num="03" icon={<Zap className="w-4 h-4" />}
-                title="Prompts get truncated"
-                body="The 1000-character limit is a graveyard of half-described songs." />
+                title={tL.problem_p3_title}
+                body={tL.problem_p3_body} />
             </div>
 
             <div className="mt-8 pt-6 border-t border-stone-800">
@@ -416,9 +448,9 @@ function BrahmstormLanding({ onLaunch }) {
                 fontSize: 'clamp(18px, 2vw, 26px)',
                 color: '#d6d3d1'
               }}>
-                Brahmstorm handles all of this.
+                {tL.problem_close_pre}
                 <br />
-                <span className="text-orange-400">So you don't have to.</span>
+                <span className="text-orange-400">{tL.problem_close_accent}</span>
               </p>
             </div>
           </div>
@@ -432,8 +464,8 @@ function BrahmstormLanding({ onLaunch }) {
         <div className="grain absolute inset-0 pointer-events-none" />
         <div className="relative max-w-[800px] mx-auto">
           <p className="pull-quote">
-            Music starts with a feeling.
-            <em className="text-orange-700"> Brahmstorm gives it the form Suno understands.</em>
+            {tL.pullquote_pre}
+            <em className="text-orange-700"> {tL.pullquote_em}</em>
           </p>
         </div>
       </section>
@@ -444,33 +476,33 @@ function BrahmstormLanding({ onLaunch }) {
       <section id="what" className="relative z-10 pt-4 pb-12 md:pb-16 px-6 md:px-12 lg:px-20">
         <div className="grain absolute inset-0 pointer-events-none" />
         <div className="relative max-w-[1280px] mx-auto">
-          <div className="rule-with-label mb-8">what it is</div>
+          <div className="rule-with-label mb-8">{tL.what_label}</div>
 
           <h2 className="font-display leading-[1.05] text-stone-900 mb-8 max-w-3xl"
             style={{
               fontWeight: 700, fontStyle: 'italic',
               fontSize: 'clamp(28px, 3.8vw, 44px)'
             }}>
-            Three things Brahmstorm
+            {tL.what_h_pre}
             <br />
-            <span className="text-stone-500">does better than anyone.</span>
+            <span className="text-stone-500">{tL.what_h_accent}</span>
           </h2>
 
           <div className="space-y-16">
-            <FeatureRow num="A1" flip={false} tag="The Translator"
-              title={<>Describe a feeling.<br/>AI fills the <em className="text-orange-600">technical settings</em>.</>}
-              body="You don't need to know that ‘phonk' is a genre or that ‘Rhodes piano in cathedral reverb' is a production style. Write ‘noir film score in a rainy Rio'. Brahmstorm decodes it and pre-fills 9 categorized fields you can review and tweak."
-              mockup={<MockFreeInspiration />} />
+            <FeatureRow num="A1" flip={false} tag={tL.featA1_tag}
+              title={<>{tL.featA1_title_pre}<br/>{tL.featA1_title_mid}<em className="text-orange-600">{tL.featA1_title_em}</em>{tL.featA1_title_post}</>}
+              body={tL.featA1_body}
+              mockup={<MockFreeInspiration tL={tL} />} />
 
-            <FeatureRow num="A2" flip={true} tag="The Conductor"
-              title={<>Generate a <em className="text-orange-600">cohesive 5-track EP</em> in one click.</>}
-              body="Same sonic universe, varied tracks. Each song gets a role: opening, single, confession, peak, closing. Like a real album, written in 30 seconds. Nobody else does this."
-              mockup={<MockAlbumMode />} />
+            <FeatureRow num="A2" flip={true} tag={tL.featA2_tag}
+              title={<>{tL.featA2_title_pre}<em className="text-orange-600">{tL.featA2_title_em}</em>{tL.featA2_title_post}</>}
+              body={tL.featA2_body}
+              mockup={<MockAlbumMode tL={tL} />} />
 
-            <FeatureRow num="A3" flip={false} tag="The Compass"
-              title={<>Paste a song you love.<br/>We extract <em className="text-orange-600">the patterns</em>, never the lyrics.</>}
-              body="Type a song title and artist (“Pearl Jam — Black”), or paste full lyrics. Brahmstorm reads the DNA — mood, structure, perspective, meter — and translates it into a prompt. Original output, every time."
-              mockup={<MockReference />} />
+            <FeatureRow num="A3" flip={false} tag={tL.featA3_tag}
+              title={<>{tL.featA3_title_pre}<br/>{tL.featA3_title_mid}<em className="text-orange-600">{tL.featA3_title_em}</em>{tL.featA3_title_post}</>}
+              body={tL.featA3_body}
+              mockup={<MockReference tL={tL} />} />
           </div>
         </div>
       </section>
@@ -482,46 +514,45 @@ function BrahmstormLanding({ onLaunch }) {
         <div className="grain-dark absolute inset-0 pointer-events-none" />
 
         <div className="relative max-w-[1280px] mx-auto">
-          <div className="rule-with-label dark mb-8">two ways in</div>
+          <div className="rule-with-label dark mb-8">{tL.twopaths_label}</div>
 
           <h2 className="font-display leading-[1.05] text-stone-50 mb-6 max-w-3xl"
             style={{
               fontWeight: 700, fontStyle: 'italic',
               fontSize: 'clamp(28px, 3.8vw, 44px)'
             }}>
-            However you think
+            {tL.twopaths_h_pre}
             <br />
-            <span className="text-stone-400">about music.</span>
+            <span className="text-stone-400">{tL.twopaths_h_accent}</span>
           </h2>
 
           <p className="font-display text-lg md:text-xl text-stone-400 max-w-2xl mb-12 leading-relaxed">
-            Some people start with a story. Others start with a kick drum and a tempo.
-            Brahmstorm works with both — and lets you switch fluidly between them.
+            {tL.twopaths_lead}
           </p>
 
           <div className="grid md:grid-cols-2 gap-8">
             <PathCard
               icon={<Feather className="w-5 h-5" />}
-              numLabel="path / 01"
-              title="The Poet"
-              subtitle="Description-first"
-              body="Write what you feel. ‘A Sunday afternoon in 1973, dust in sunlight, a piano left open.' AI translates the prose into 9 technical fields you can review, refine, or rewrite."
+              numLabel={tL.twopaths_path1_numlabel}
+              title={tL.twopaths_path1_title}
+              subtitle={tL.twopaths_path1_subtitle}
+              body={tL.twopaths_path1_body}
               steps={[
-                'Write a feeling, scene, or memory',
-                'AI fills genre, mood, instruments, vocals…',
-                'Edit anything you want before generating',
+                tL.twopaths_path1_step1,
+                tL.twopaths_path1_step2,
+                tL.twopaths_path1_step3,
               ]}
             />
             <PathCard
               icon={<Sliders className="w-5 h-5" />}
-              numLabel="path / 02"
-              title="The Producer"
-              subtitle="Technical-first"
-              body="Hand-pick every parameter directly. Genre + mood + instruments + tempo + era + production + vocal type + lyrical theme. Full control, no guessing."
+              numLabel={tL.twopaths_path2_numlabel}
+              title={tL.twopaths_path2_title}
+              subtitle={tL.twopaths_path2_subtitle}
+              body={tL.twopaths_path2_body}
               steps={[
-                'Open the categorized blocks',
-                'Multi-select what fits, single-select what shouldn\'t conflict',
-                'Generate 3 variations or a 5-track EP',
+                tL.twopaths_path2_step1,
+                tL.twopaths_path2_step2,
+                tL.twopaths_path2_step3,
               ]}
               highlighted
             />
@@ -529,8 +560,8 @@ function BrahmstormLanding({ onLaunch }) {
 
           <div className="mt-8 pt-6 border-t border-stone-800 max-w-2xl">
             <p className="font-display italic text-stone-300 text-lg md:text-xl leading-relaxed">
-              You can mix both at any time. Start with a feeling, refine the technicals.
-              <em className="text-orange-400"> Best of both worlds.</em>
+              {tL.twopaths_close_pre}
+              <em className="text-orange-400"> {tL.twopaths_close_em}</em>
             </p>
           </div>
         </div>
@@ -548,11 +579,10 @@ function BrahmstormLanding({ onLaunch }) {
           <div className="absolute inset-0 bg-gradient-to-r from-stone-100 via-stone-100/40 to-transparent" />
           <div className="absolute inset-0 flex items-center px-6 md:px-12 lg:px-20">
             <div className="max-w-md">
-              <div className="rule-with-label mb-4">interlude</div>
+              <div className="rule-with-label mb-4">{tL.interlude_label}</div>
               <p className="font-display italic text-stone-900 leading-tight"
                 style={{ fontWeight: 500, fontSize: 'clamp(18px, 2.4vw, 26px)' }}>
-                Every song begins as <em className="text-orange-700">an idea</em>.
-                We help yours get heard.
+                {tL.interlude_pre}<em className="text-orange-700">{tL.interlude_em}</em>{tL.interlude_post}
               </p>
             </div>
           </div>
@@ -564,34 +594,31 @@ function BrahmstormLanding({ onLaunch }) {
           ═══════════════════════════════════════════════════════════ */}
       <section id="how" className="relative z-10 bg-stone-200/50 py-12 md:py-16 px-6 md:px-12 lg:px-20">
         <div className="max-w-[1280px] mx-auto">
-          <div className="rule-with-label mb-8">how it works</div>
+          <div className="rule-with-label mb-8">{tL.how_label}</div>
 
           <h2 className="font-display leading-[1.05] text-stone-900 mb-8 max-w-3xl"
             style={{
               fontWeight: 700, fontStyle: 'italic',
               fontSize: 'clamp(28px, 3.8vw, 44px)'
             }}>
-            From feeling
+            {tL.how_h_pre}
             <br />
-            to <span className="text-orange-600">finished prompt</span>
+            {tL.how_h_to}<span className="text-orange-600">{tL.how_h_accent}</span>
             <br />
-            <span className="text-stone-500">in 60 seconds.</span>
+            <span className="text-stone-500">{tL.how_h_post}</span>
           </h2>
 
           <div className="grid md:grid-cols-3 gap-8">
-            <StepCard num="01" title="Describe"
-              body="Write a feeling, paste a reference, or open the blocks directly. Whatever's easiest in the moment." />
-            <StepCard num="02" title="Generate"
-              body="AI returns 3 variations or a 5-track EP, all under Suno's character limits, ready to paste." />
-            <StepCard num="03" title="Paste in Suno"
-              body="One-click ‘Open Suno' button copies and opens the right tab. Cmd+V and you're live." />
+            <StepCard num="01" title={tL.how_step1_title} body={tL.how_step1_body} />
+            <StepCard num="02" title={tL.how_step2_title} body={tL.how_step2_body} />
+            <StepCard num="03" title={tL.how_step3_title} body={tL.how_step3_body} />
           </div>
 
           <div className="mt-10 flex justify-center">
             <button onClick={openApp}
               className="bg-stone-900 hover:bg-stone-800 text-stone-50 font-mono text-xs uppercase tracking-[0.25em] px-7 py-4 rounded-xl flex items-center gap-3 transition-all active:scale-[0.98]"
               style={{ fontWeight: 600 }}>
-              try the flow yourself <ArrowRight className="w-4 h-4" />
+              {tL.how_cta} <ArrowRight className="w-4 h-4" />
             </button>
           </div>
         </div>
@@ -604,39 +631,38 @@ function BrahmstormLanding({ onLaunch }) {
         <div className="grain absolute inset-0 pointer-events-none" />
         <div className="relative max-w-[1280px] mx-auto grid lg:grid-cols-12 gap-12 items-center">
           <div className="lg:col-span-7">
-            <div className="rule-with-label mb-8">your library</div>
+            <div className="rule-with-label mb-8">{tL.lib_label}</div>
 
             <h2 className="font-display leading-[1.05] text-stone-900 mb-8 max-w-2xl"
               style={{
                 fontWeight: 700, fontStyle: 'italic',
                 fontSize: 'clamp(28px, 3.8vw, 44px)'
               }}>
-              Every prompt and lyric
+              {tL.lib_h_pre}
               <br />
-              <span className="text-orange-600">stays with you.</span>
+              <span className="text-orange-600">{tL.lib_h_accent}</span>
             </h2>
 
             <p className="font-display text-lg md:text-xl text-stone-700 mb-8 max-w-xl leading-relaxed">
-              Save your favorites. Browse your last 50 generations in the history.
-              Filter by prompt or lyrics. Reuse, remix, build on what worked before.
+              {tL.lib_lead}
             </p>
 
             <div className="space-y-4">
               <LibraryItem icon={<Archive className="w-4 h-4" />}
-                title="Favorites archive"
-                body="One click to save. Organized by type. Always one tap away." />
+                title={tL.lib_i1_title}
+                body={tL.lib_i1_body} />
               <LibraryItem icon={<Settings2 className="w-4 h-4" />}
-                title="Auto-saved history"
-                body="Last 50 generations kept automatically. Find that one you almost lost." />
+                title={tL.lib_i2_title}
+                body={tL.lib_i2_body} />
               <LibraryItem icon={<Download className="w-4 h-4" />}
-                title="Yours, locally"
-                body="Saved in your browser, not a database. Private by design. Export coming soon." />
+                title={tL.lib_i3_title}
+                body={tL.lib_i3_body} />
             </div>
           </div>
 
           <div className="lg:col-span-5">
             <div className="screenshot-frame">
-              <MockFavorites />
+              <MockFavorites tL={tL} />
             </div>
           </div>
         </div>
@@ -656,38 +682,35 @@ function BrahmstormLanding({ onLaunch }) {
                 className="absolute inset-0 w-full h-full object-cover photo-treated" />
               <div className="absolute bottom-6 left-6 right-6">
                 <div className="font-display italic text-base text-stone-100" style={{ fontWeight: 500 }}>
-                  made for the late nights, not the boardroom.
+                  {tL.why_photo_caption}
                 </div>
               </div>
             </div>
           </div>
 
           <div className="lg:col-span-7 lg:col-start-1 lg:order-1">
-            <div className="rule-with-label mb-8">why this exists</div>
+            <div className="rule-with-label mb-8">{tL.why_label}</div>
 
             <h2 className="font-display leading-[1.02] text-stone-900 mb-6"
               style={{
                 fontWeight: 800, fontStyle: 'italic',
                 fontSize: 'clamp(36px, 5vw, 64px)'
               }}>
-              This isn't
+              {tL.why_h_pre}
               <br />
-              <span className="text-stone-400">a SaaS.</span>
+              <span className="text-stone-400">{tL.why_h_accent}</span>
             </h2>
 
             <div className="font-display text-xl md:text-2xl text-stone-700 leading-[1.5] space-y-6 max-w-2xl"
               style={{ fontWeight: 400 }}>
               <p>
-                Brahmstorm was built by <em>one person</em> who got tired of how
-                the existing tools felt. Confusing UX. Login walls. ‘Free tiers'
-                that are actually traps.
+                {tL.why_p1_pre}<em>{tL.why_p1_em}</em>{tL.why_p1_post}
               </p>
               <p>
-                The whole thing runs in your browser. Nothing's stored on a
-                server. Nothing's tracked beyond anonymous page views. Just a tool that does what it says.
+                {tL.why_p2}
               </p>
               <p className="text-stone-900" style={{ fontWeight: 500 }}>
-                <em>5 free generations every day.</em> No credit card. No upsells. No dark patterns.
+                <em>{tL.why_p3_em}</em>{tL.why_p3_post}
               </p>
             </div>
           </div>
@@ -695,14 +718,14 @@ function BrahmstormLanding({ onLaunch }) {
 
         <div className="max-w-[1280px] mx-auto mt-10 grid md:grid-cols-3 gap-6">
           <PrincipleCard icon={<Lock className="w-5 h-5" />}
-            title="No signup"
-            body="Open and use. Your favorites stay in your browser, not a database." />
+            title={tL.prin_p1_title}
+            body={tL.prin_p1_body} />
           <PrincipleCard icon={<Heart className="w-5 h-5" />}
-            title="Made by a creator"
-            body="Built for music people, by someone who actually uses Suno every week." />
+            title={tL.prin_p2_title}
+            body={tL.prin_p2_body} />
           <PrincipleCard icon={<Globe className="w-5 h-5" />}
-            title="Multilingual"
-            body="Interface in English, Português, Español and Français. Lyrics in even more." />
+            title={tL.prin_p3_title}
+            body={tL.prin_p3_body} />
         </div>
       </section>
 
@@ -711,31 +734,25 @@ function BrahmstormLanding({ onLaunch }) {
           ═══════════════════════════════════════════════════════════ */}
       <section className="relative z-10 bg-stone-200/50 py-12 md:py-16 px-6 md:px-12 lg:px-20">
         <div className="max-w-[900px] mx-auto">
-          <div className="rule-with-label mb-8">questions</div>
+          <div className="rule-with-label mb-8">{tL.faq_label}</div>
 
           <h2 className="font-display leading-[1.05] text-stone-900 mb-12"
             style={{
               fontWeight: 700, fontStyle: 'italic',
               fontSize: 'clamp(28px, 3.8vw, 44px)'
             }}>
-            Things you're probably
+            {tL.faq_h_pre}
             <br />
-            <span className="text-stone-500">about to ask.</span>
+            <span className="text-stone-500">{tL.faq_h_accent}</span>
           </h2>
 
           <div className="space-y-6">
-            <FAQItem q="Is it really free?"
-              a="Yes. 5 generations per day, every day. No credit card, no trial period that ends. If usage grows beyond what one person can sustain, paid tiers may come — but the free tier stays." />
-            <FAQItem q="Do I need to sign up?"
-              a="No. Open the app and start. Your favorites and history live in your browser, tied to your device. There's no account, no email collection, no password to forget." />
-            <FAQItem q="What happens if I clear my browser?"
-              a="You lose your saved favorites and history. This is the trade-off of true ‘no signup'. An export feature is on the roadmap so you can back up your library to a file." />
-            <FAQItem q="How do you count the 5 daily generations?"
-              a="Anonymous IP-based rate limiting on the server. We don't track your identity, just the count of API calls from your network. Resets every day at midnight UTC." />
-            <FAQItem q="Are my prompts and lyrics shared with anyone?"
-              a="No. They go to Anthropic's API for the AI to process, then come back to you. Nothing is stored on Brahmstorm servers. Nothing is used for training." />
-            <FAQItem q="Why isn't this a Suno feature?"
-              a="Suno is focused on the AI music model. Brahmstorm is a thin layer that sits between you and Suno, helping you describe music in the way Suno understands. Different problems, different teams." />
+            <FAQItem q={tL.faq_q1} a={tL.faq_a1} />
+            <FAQItem q={tL.faq_q2} a={tL.faq_a2} />
+            <FAQItem q={tL.faq_q3} a={tL.faq_a3} />
+            <FAQItem q={tL.faq_q4} a={tL.faq_a4} />
+            <FAQItem q={tL.faq_q5} a={tL.faq_a5} />
+            <FAQItem q={tL.faq_q6} a={tL.faq_a6} />
           </div>
         </div>
       </section>
@@ -767,21 +784,21 @@ function BrahmstormLanding({ onLaunch }) {
               fontWeight: 800, fontStyle: 'italic',
               fontSize: 'clamp(36px, 5.5vw, 72px)'
             }}>
-            Your next song
+            {tL.cta_h_pre}
             <br />
-            <span className="text-orange-500">starts here.</span>
+            <span className="text-orange-500">{tL.cta_h_accent}</span>
           </h2>
 
           <p className="font-display text-lg md:text-xl text-stone-300 max-w-xl mx-auto mb-12 leading-relaxed">
-            Free. 5 generations every day. No signup.
+            {tL.cta_lead_pre}
             <br />
-            <em className="text-stone-400">Just open it.</em>
+            <em className="text-stone-400">{tL.cta_lead_em}</em>
           </p>
 
           <button onClick={openApp}
             className="bg-orange-500 hover:bg-orange-400 text-stone-900 font-mono text-sm uppercase tracking-[0.25em] px-10 py-5 rounded-xl inline-flex items-center gap-3 transition-all active:scale-[0.98] glow-amber"
             style={{ fontWeight: 700 }}>
-            <Sparkles className="w-4 h-4" /> Open Brahmstorm <ArrowRight className="w-4 h-4" />
+            <Sparkles className="w-4 h-4" /> {tL.cta_btn} <ArrowRight className="w-4 h-4" />
           </button>
         </div>
       </section>
@@ -806,9 +823,9 @@ function BrahmstormLanding({ onLaunch }) {
         </div>
         <div className="max-w-[1280px] mx-auto mt-8 pt-8 border-t border-stone-200">
           <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-stone-400 leading-relaxed">
-            Brahmstorm is an independent tool, not affiliated with Suno Inc.
+            {tL.footer_disclaimer1}
             <br />
-            Suno is a trademark of Suno Inc.
+            {tL.footer_disclaimer2}
           </p>
         </div>
       </footer>
@@ -890,50 +907,50 @@ function FeatureRow({ num, flip, tag, title, body, mockup }) {
   );
 }
 
-function MockFreeInspiration() {
+function MockFreeInspiration({ tL }) {
   return (
     <div className="bg-stone-100 rounded-2xl border border-stone-300 overflow-hidden">
       <div className="bg-gradient-to-br from-orange-500/15 via-orange-500/8 to-transparent p-5 space-y-3">
         <div className="flex items-center gap-2">
           <Wand2 className="w-4 h-4 text-orange-500" />
-          <div className="font-mono text-[10px] uppercase tracking-[0.2em] text-orange-700">free inspiration</div>
+          <div className="font-mono text-[10px] uppercase tracking-[0.2em] text-orange-700">{tL.mock_free_label}</div>
         </div>
         <p className="font-display italic text-sm text-stone-600 leading-relaxed">
-          describe a feeling, scene, memory — AI fills all fields below.
+          {tL.mock_free_hint}
         </p>
         <div className="bg-white border border-stone-300 rounded-lg p-3">
           <p className="font-display italic text-base text-stone-900 leading-relaxed">
-            "noir film score in a rainy Rio de Janeiro"
+            {tL.mock_free_example}
           </p>
         </div>
         <button className="w-full bg-orange-500 text-stone-900 font-mono text-[10px] uppercase tracking-[0.2em] py-3 rounded-xl flex items-center justify-center gap-2">
-          <Wand2 className="w-3 h-3" /> fill fields with AI
+          <Wand2 className="w-3 h-3" /> {tL.mock_free_btn}
         </button>
       </div>
       <div className="px-5 py-4 space-y-2 border-t border-stone-200 bg-stone-50">
-        <MockBlock label="Genre" badges={['trip-hop', 'jazz fusion']} />
-        <MockBlock label="Mood" badges={['melancholic', 'tense']} />
-        <MockBlock label="Vocals" badges={['reverb whispers']} />
-        <MockBlock label="Production" badges={['cathedral reverb']} />
+        <MockBlock label={tL.mock_block_genre} badges={['trip-hop', 'jazz fusion']} />
+        <MockBlock label={tL.mock_block_mood} badges={[tL.mock_badge_melancholic, tL.mock_badge_tense]} />
+        <MockBlock label={tL.mock_block_vocals} badges={[tL.mock_badge_reverb_whispers]} />
+        <MockBlock label={tL.mock_block_production} badges={[tL.mock_badge_cathedral]} />
       </div>
     </div>
   );
 }
 
-function MockAlbumMode() {
+function MockAlbumMode({ tL }) {
   const tracks = [
-    { num: '01', title: 'Last Bus Home', role: 'opening' },
-    { num: '02', title: 'Rooms We Left Empty', role: 'introduction' },
-    { num: '03', title: 'The Confession', role: 'turning point' },
-    { num: '04', title: 'Static & Salt', role: 'descent' },
-    { num: '05', title: 'A Good Year for Quiet', role: 'closing' },
+    { num: '01', title: tL.mock_album_t1_title, role: tL.mock_album_t1_role },
+    { num: '02', title: tL.mock_album_t2_title, role: tL.mock_album_t2_role },
+    { num: '03', title: tL.mock_album_t3_title, role: tL.mock_album_t3_role },
+    { num: '04', title: tL.mock_album_t4_title, role: tL.mock_album_t4_role },
+    { num: '05', title: tL.mock_album_t5_title, role: tL.mock_album_t5_role },
   ];
   return (
     <div className="bg-stone-100 rounded-2xl border border-stone-300 overflow-hidden">
       <div className="bg-stone-950 px-5 py-3 flex items-center gap-3">
         <Disc3 className="w-5 h-5 text-orange-500 spin-slow" strokeWidth={1.5} />
         <div className="font-display italic text-stone-50 text-base" style={{ fontWeight: 700 }}>
-          5-track EP generated
+          {tL.mock_album_header}
         </div>
       </div>
       <div className="p-3 space-y-1.5 bg-stone-50">
@@ -952,67 +969,67 @@ function MockAlbumMode() {
   );
 }
 
-function MockReference() {
+function MockReference({ tL }) {
   return (
     <div className="bg-stone-100 rounded-2xl border border-stone-300 overflow-hidden">
       <div className="border border-stone-400 bg-stone-50/60 p-5">
         <div className="flex items-center gap-2 mb-3 flex-wrap">
           <Music2 className="w-4 h-4 text-stone-700" />
-          <div className="font-mono text-[10px] uppercase tracking-[0.2em] text-stone-700">reference track</div>
+          <div className="font-mono text-[10px] uppercase tracking-[0.2em] text-stone-700">{tL.mock_ref_label}</div>
           <span className="font-mono text-[9px] uppercase tracking-widest px-1.5 py-0.5 border border-emerald-600/50 text-emerald-700 bg-emerald-50 rounded-sm">
-            high confidence
+            {tL.mock_ref_confidence}
           </span>
         </div>
         <p className="font-display italic text-sm text-stone-600 mb-3">
-          type a song name and artist, or paste full lyrics — AI uses it as a sound compass without copying.
+          {tL.mock_ref_hint}
         </p>
         <div className="bg-white border border-stone-300 rounded-lg p-3 mb-3">
           <p className="font-display text-base text-stone-900">"Black — Pearl Jam"</p>
         </div>
         <button className="w-full bg-stone-900 text-stone-50 font-mono text-[10px] uppercase tracking-[0.2em] py-3 rounded-xl flex items-center justify-center gap-2">
-          <Music2 className="w-3 h-3" /> analyze reference
+          <Music2 className="w-3 h-3" /> {tL.mock_ref_btn}
         </button>
         <p className="font-display italic text-[13px] text-stone-700 mt-3 pt-3 border-t border-stone-300 leading-relaxed">
-          A 90s grunge ballad with raspy intimate vocals, slow brooding tempo,
-          melancholic and nostalgic atmosphere.
+          {tL.mock_ref_result}
         </p>
       </div>
     </div>
   );
 }
 
-function MockFavorites() {
+function MockFavorites({ tL }) {
+  const items = [
+    { kind: 'prompt', label: tL.mock_fav_tag_prompt, title: tL.mock_fav_item1 },
+    { kind: 'lyrics', label: tL.mock_fav_tag_lyrics, title: tL.mock_fav_item2 },
+    { kind: 'prompt', label: tL.mock_fav_tag_prompt, title: tL.mock_fav_item3 },
+  ];
   return (
     <div className="bg-stone-100 rounded-2xl border border-stone-300 overflow-hidden">
       <div className="bg-white border-b border-stone-300 px-5 py-4 flex items-center justify-between">
         <div>
-          <div className="font-mono text-[10px] uppercase tracking-[0.2em] text-stone-500">archive</div>
-          <div className="font-display italic text-xl text-stone-900" style={{ fontWeight: 700 }}>favorites</div>
+          <div className="font-mono text-[10px] uppercase tracking-[0.2em] text-stone-500">{tL.mock_fav_archive}</div>
+          <div className="font-display italic text-xl text-stone-900" style={{ fontWeight: 700 }}>{tL.mock_fav_title}</div>
         </div>
         <Archive className="w-5 h-5 text-stone-500" />
       </div>
       <div className="border-b border-stone-300 px-5 py-3 flex gap-1">
         <span className="flex-1 font-mono text-[10px] uppercase tracking-widest px-2.5 py-2 rounded-md border border-orange-500 bg-orange-500/15 text-orange-700 text-center">
-          favorites · 12
+          {tL.mock_fav_tab_fav}
         </span>
         <span className="flex-1 font-mono text-[10px] uppercase tracking-widest px-2.5 py-2 rounded-md border border-stone-300 text-stone-500 text-center">
-          history · 47
+          {tL.mock_fav_tab_hist}
         </span>
       </div>
       <div className="p-4 space-y-2 bg-stone-50">
-        {[
-          { tag: 'prompt', title: 'Late night drives' },
-          { tag: 'lyrics', title: 'The Confession' },
-          { tag: 'prompt', title: 'Rio noir trip-hop' },
-        ].map((f, i) => (
+        {items.map((f, i) => (
           <div key={i} className="bg-white border border-stone-300 rounded-lg p-3">
             <div className="flex items-center gap-2 mb-1">
-              <span className={`font-mono text-[8px] uppercase tracking-widest px-1 py-0.5 border rounded-sm ${f.tag === 'lyrics' ? 'border-orange-500/40 text-orange-700' : 'border-stone-400 text-stone-600'}`}>
-                {f.tag}
+              <span className={`font-mono text-[8px] uppercase tracking-widest px-1 py-0.5 border rounded-sm ${f.kind === 'lyrics' ? 'border-orange-500/40 text-orange-700' : 'border-stone-400 text-stone-600'}`}>
+                {f.label}
               </span>
               <span className="font-display italic text-xs text-stone-700 truncate" style={{ fontWeight: 500 }}>{f.title}</span>
             </div>
-            <div className="font-mono text-[8px] text-stone-400">apr 24 · 19:42</div>
+            <div className="font-mono text-[8px] text-stone-400">{tL.mock_fav_date}</div>
           </div>
         ))}
       </div>
@@ -1119,11 +1136,737 @@ const LANGUAGES = [
   { id: 'fr', label: 'FR', full: 'Français',   flag: '🇫🇷' },
 ];
 
+// Landing-page translations. Auto-detected from browser locale on first
+// visit, then persisted to bs:lang (shared with the studio app).
+// Strings are added incrementally — sections still in en are placeholders.
+const LANDING_UI = {
+  en: {
+    nav_what: 'what', nav_how: 'how', nav_why: 'why', nav_launch: 'launch',
+    hero_badge_free: '100% Free',
+    hero_descriptor: 'prompt forge for Suno AI',
+    hero_h1_line1: 'Write Suno prompts',
+    hero_h1_line2_pre: 'that ',
+    hero_h1_line2_accent: 'actually sound',
+    hero_h1_line3: 'like the song you imagined.',
+    hero_sub_pre: 'Brahmstorm turns your ',
+    hero_sub_em: 'feelings, references and ideas',
+    hero_sub_post: ' into production-ready prompts and lyrics for Suno AI — without the trial and error.',
+    hero_cta_open: 'Open Brahmstorm',
+    hero_cta_see: 'see how it works',
+    hero_stat_per_day: 'generations / day',
+    hero_stat_signup: 'signup required',
+    hero_stat_langs: 'languages',
+    hero_stat_creativity: 'creativity',
+    hero_scroll: 'scroll',
+    problem_photo_caption: 'the gear was simpler. the rules, hidden.',
+    problem_label: 'the problem',
+    problem_h_pre: 'Suno is powerful.',
+    problem_h_mid: 'But it has rules',
+    problem_h_accent: 'nobody tells you.',
+    problem_p1_title: 'Real artist names get filtered',
+    problem_p1_body: "You can't just say 'like Pearl Jam'. Suno strips it. You learn this only after rerolling 12 times.",
+    problem_p2_title: "Tags in your language don't work",
+    problem_p2_body: "Write [Verso] and Suno sings the word 'verso' instead of treating it as a structure tag.",
+    problem_p3_title: 'Prompts get truncated',
+    problem_p3_body: 'The 1000-character limit is a graveyard of half-described songs.',
+    problem_close_pre: 'Brahmstorm handles all of this.',
+    problem_close_accent: "So you don't have to.",
+    pullquote_pre: 'Music starts with a feeling.',
+    pullquote_em: 'Brahmstorm gives it the form Suno understands.',
+    what_label: 'what it is',
+    what_h_pre: 'Three things Brahmstorm',
+    what_h_accent: 'does better than anyone.',
+    featA1_tag: 'The Translator',
+    featA1_title_pre: 'Describe a feeling.',
+    featA1_title_mid: 'AI fills the ',
+    featA1_title_em: 'technical settings',
+    featA1_title_post: '.',
+    featA1_body: "You don't need to know that 'phonk' is a genre or that 'Rhodes piano in cathedral reverb' is a production style. Write 'noir film score in a rainy Rio'. Brahmstorm decodes it and pre-fills 9 categorized fields you can review and tweak.",
+    featA2_tag: 'The Conductor',
+    featA2_title_pre: 'Generate a ',
+    featA2_title_em: 'cohesive 5-track EP',
+    featA2_title_post: ' in one click.',
+    featA2_body: 'Same sonic universe, varied tracks. Each song gets a role: opening, single, confession, peak, closing. Like a real album, written in 30 seconds. Nobody else does this.',
+    featA3_tag: 'The Compass',
+    featA3_title_pre: 'Paste a song you love.',
+    featA3_title_mid: 'We extract ',
+    featA3_title_em: 'the patterns',
+    featA3_title_post: ', never the lyrics.',
+    featA3_body: 'Type a song title and artist ("Pearl Jam — Black"), or paste full lyrics. Brahmstorm reads the DNA — mood, structure, perspective, meter — and translates it into a prompt. Original output, every time.',
+    twopaths_label: 'two ways in',
+    twopaths_h_pre: 'However you think',
+    twopaths_h_accent: 'about music.',
+    twopaths_lead: 'Some people start with a story. Others start with a kick drum and a tempo. Brahmstorm works with both — and lets you switch fluidly between them.',
+    twopaths_path1_numlabel: 'path / 01',
+    twopaths_path1_title: 'The Poet',
+    twopaths_path1_subtitle: 'Description-first',
+    twopaths_path1_body: "Write what you feel. 'A Sunday afternoon in 1973, dust in sunlight, a piano left open.' AI translates the prose into 9 technical fields you can review, refine, or rewrite.",
+    twopaths_path1_step1: 'Write a feeling, scene, or memory',
+    twopaths_path1_step2: 'AI fills genre, mood, instruments, vocals…',
+    twopaths_path1_step3: 'Edit anything you want before generating',
+    twopaths_path2_numlabel: 'path / 02',
+    twopaths_path2_title: 'The Producer',
+    twopaths_path2_subtitle: 'Technical-first',
+    twopaths_path2_body: 'Hand-pick every parameter directly. Genre + mood + instruments + tempo + era + production + vocal type + lyrical theme. Full control, no guessing.',
+    twopaths_path2_step1: 'Open the categorized blocks',
+    twopaths_path2_step2: "Multi-select what fits, single-select what shouldn't conflict",
+    twopaths_path2_step3: 'Generate 3 variations or a 5-track EP',
+    twopaths_close_pre: 'You can mix both at any time. Start with a feeling, refine the technicals.',
+    twopaths_close_em: 'Best of both worlds.',
+    interlude_label: 'interlude',
+    interlude_pre: 'Every song begins as ',
+    interlude_em: 'an idea',
+    interlude_post: '. We help yours get heard.',
+    how_label: 'how it works',
+    how_h_pre: 'From feeling',
+    how_h_to: 'to ',
+    how_h_accent: 'finished prompt',
+    how_h_post: 'in 60 seconds.',
+    how_step1_title: 'Describe',
+    how_step1_body: "Write a feeling, paste a reference, or open the blocks directly. Whatever's easiest in the moment.",
+    how_step2_title: 'Generate',
+    how_step2_body: "AI returns 3 variations or a 5-track EP, all under Suno's character limits, ready to paste.",
+    how_step3_title: 'Paste in Suno',
+    how_step3_body: "One-click 'Open Suno' button copies and opens the right tab. Cmd+V and you're live.",
+    how_cta: 'try the flow yourself',
+    lib_label: 'your library',
+    lib_h_pre: 'Every prompt and lyric',
+    lib_h_accent: 'stays with you.',
+    lib_lead: 'Save your favorites. Browse your last 50 generations in the history. Filter by prompt or lyrics. Reuse, remix, build on what worked before.',
+    lib_i1_title: 'Favorites archive',
+    lib_i1_body: 'One click to save. Organized by type. Always one tap away.',
+    lib_i2_title: 'Auto-saved history',
+    lib_i2_body: 'Last 50 generations kept automatically. Find that one you almost lost.',
+    lib_i3_title: 'Yours, locally',
+    lib_i3_body: 'Saved in your browser, not a database. Private by design. Export coming soon.',
+    why_photo_caption: 'made for the late nights, not the boardroom.',
+    why_label: 'why this exists',
+    why_h_pre: "This isn't",
+    why_h_accent: 'a SaaS.',
+    why_p1_pre: 'Brahmstorm was built by ',
+    why_p1_em: 'one person',
+    why_p1_post: " who got tired of how the existing tools felt. Confusing UX. Login walls. 'Free tiers' that are actually traps.",
+    why_p2: "The whole thing runs in your browser. Nothing's stored on a server. Nothing's tracked beyond anonymous page views. Just a tool that does what it says.",
+    why_p3_em: '5 free generations every day.',
+    why_p3_post: ' No credit card. No upsells. No dark patterns.',
+    prin_p1_title: 'No signup',
+    prin_p1_body: 'Open and use. Your favorites stay in your browser, not a database.',
+    prin_p2_title: 'Made by a creator',
+    prin_p2_body: 'Built for music people, by someone who actually uses Suno every week.',
+    prin_p3_title: 'Multilingual',
+    prin_p3_body: 'Interface in English, Português, Español and Français. Lyrics in even more.',
+    faq_label: 'questions',
+    faq_h_pre: "Things you're probably",
+    faq_h_accent: 'about to ask.',
+    faq_q1: 'Is it really free?',
+    faq_a1: 'Yes. 5 generations per day, every day. No credit card, no trial period that ends. If usage grows beyond what one person can sustain, paid tiers may come — but the free tier stays.',
+    faq_q2: 'Do I need to sign up?',
+    faq_a2: "No. Open the app and start. Your favorites and history live in your browser, tied to your device. There's no account, no email collection, no password to forget.",
+    faq_q3: 'What happens if I clear my browser?',
+    faq_a3: "You lose your saved favorites and history. This is the trade-off of true 'no signup'. An export feature is on the roadmap so you can back up your library to a file.",
+    faq_q4: 'How do you count the 5 daily generations?',
+    faq_a4: "Anonymous IP-based rate limiting on the server. We don't track your identity, just the count of API calls from your network. Resets every day at midnight UTC.",
+    faq_q5: 'Are my prompts and lyrics shared with anyone?',
+    faq_a5: "No. They go to Anthropic's API for the AI to process, then come back to you. Nothing is stored on Brahmstorm servers. Nothing is used for training.",
+    faq_q6: "Why isn't this a Suno feature?",
+    faq_a6: 'Suno is focused on the AI music model. Brahmstorm is a thin layer that sits between you and Suno, helping you describe music in the way Suno understands. Different problems, different teams.',
+    cta_h_pre: 'Your next song',
+    cta_h_accent: 'starts here.',
+    cta_lead_pre: 'Free. 5 generations every day. No signup.',
+    cta_lead_em: 'Just open it.',
+    cta_btn: 'Open Brahmstorm',
+    footer_disclaimer1: 'Brahmstorm is an independent tool, not affiliated with Suno Inc.',
+    footer_disclaimer2: 'Suno is a trademark of Suno Inc.',
+    mock_free_label: 'free inspiration',
+    mock_free_hint: 'describe a feeling, scene, memory — AI fills all fields below.',
+    mock_free_example: '"noir film score in a rainy Rio de Janeiro"',
+    mock_free_btn: 'fill fields with AI',
+    mock_block_genre: 'Genre',
+    mock_block_mood: 'Mood',
+    mock_block_vocals: 'Vocals',
+    mock_block_production: 'Production',
+    mock_badge_melancholic: 'melancholic',
+    mock_badge_tense: 'tense',
+    mock_badge_reverb_whispers: 'reverb whispers',
+    mock_badge_cathedral: 'cathedral reverb',
+    mock_album_header: '5-track EP generated',
+    mock_album_t1_title: 'Last Bus Home',
+    mock_album_t1_role: 'opening',
+    mock_album_t2_title: 'Rooms We Left Empty',
+    mock_album_t2_role: 'introduction',
+    mock_album_t3_title: 'The Confession',
+    mock_album_t3_role: 'turning point',
+    mock_album_t4_title: 'Static & Salt',
+    mock_album_t4_role: 'descent',
+    mock_album_t5_title: 'A Good Year for Quiet',
+    mock_album_t5_role: 'closing',
+    mock_ref_label: 'reference track',
+    mock_ref_confidence: 'high confidence',
+    mock_ref_hint: 'type a song name and artist, or paste full lyrics — AI uses it as a sound compass without copying.',
+    mock_ref_btn: 'analyze reference',
+    mock_ref_result: 'A 90s grunge ballad with raspy intimate vocals, slow brooding tempo, melancholic and nostalgic atmosphere.',
+    mock_fav_archive: 'archive',
+    mock_fav_title: 'favorites',
+    mock_fav_tab_fav: 'favorites · 12',
+    mock_fav_tab_hist: 'history · 47',
+    mock_fav_tag_prompt: 'prompt',
+    mock_fav_tag_lyrics: 'lyrics',
+    mock_fav_item1: 'Late night drives',
+    mock_fav_item2: 'The Confession',
+    mock_fav_item3: 'Rio noir trip-hop',
+    mock_fav_date: 'apr 24 · 19:42',
+    meta_title: 'Brahmstorm · Prompt Forge for Suno AI',
+  },
+  pt: {
+    nav_what: 'o quê', nav_how: 'como', nav_why: 'por quê', nav_launch: 'abrir',
+    hero_badge_free: '100% Grátis',
+    hero_descriptor: 'forja de prompts pra Suno AI',
+    hero_h1_line1: 'Escreva prompts pro Suno',
+    hero_h1_line2_pre: 'que ',
+    hero_h1_line2_accent: 'soam de verdade',
+    hero_h1_line3: 'como a música que você imaginou.',
+    hero_sub_pre: 'Brahmstorm transforma seus ',
+    hero_sub_em: 'sentimentos, referências e ideias',
+    hero_sub_post: ' em prompts e letras prontos pra produção no Suno AI — sem tentativa e erro.',
+    hero_cta_open: 'Abrir Brahmstorm',
+    hero_cta_see: 'veja como funciona',
+    hero_stat_per_day: 'gerações / dia',
+    hero_stat_signup: 'cadastro necessário',
+    hero_stat_langs: 'idiomas',
+    hero_stat_creativity: 'criatividade',
+    hero_scroll: 'role',
+    problem_photo_caption: 'os equipamentos eram mais simples. as regras, escondidas.',
+    problem_label: 'o problema',
+    problem_h_pre: 'O Suno é poderoso.',
+    problem_h_mid: 'Mas tem regras',
+    problem_h_accent: 'que ninguém te conta.',
+    problem_p1_title: 'Nomes reais de artistas são filtrados',
+    problem_p1_body: 'Você não pode simplesmente dizer "como Pearl Jam". O Suno apaga. Você só descobre depois de gerar 12 vezes.',
+    problem_p2_title: 'Tags no seu idioma não funcionam',
+    problem_p2_body: 'Escreva [Verso] e o Suno canta a palavra "verso" em vez de tratá-la como tag de estrutura.',
+    problem_p3_title: 'Prompts são truncados',
+    problem_p3_body: 'O limite de 1000 caracteres é um cemitério de músicas descritas pela metade.',
+    problem_close_pre: 'O Brahmstorm cuida de tudo isso.',
+    problem_close_accent: 'Pra você não precisar.',
+    pullquote_pre: 'A música começa com um sentimento.',
+    pullquote_em: 'O Brahmstorm dá a ela a forma que o Suno entende.',
+    what_label: 'o que é',
+    what_h_pre: 'Três coisas que o Brahmstorm',
+    what_h_accent: 'faz melhor que ninguém.',
+    featA1_tag: 'O Tradutor',
+    featA1_title_pre: 'Descreva um sentimento.',
+    featA1_title_mid: 'A IA preenche as ',
+    featA1_title_em: 'configurações técnicas',
+    featA1_title_post: '.',
+    featA1_body: 'Você não precisa saber que "phonk" é um gênero ou que "piano Rhodes com reverb de catedral" é estilo de produção. Escreva "trilha de filme noir num Rio chuvoso". O Brahmstorm decodifica e preenche 9 campos categorizados que você pode revisar e ajustar.',
+    featA2_tag: 'O Maestro',
+    featA2_title_pre: 'Gere um ',
+    featA2_title_em: 'EP coeso de 5 faixas',
+    featA2_title_post: ' num clique.',
+    featA2_body: 'Mesmo universo sonoro, faixas variadas. Cada música ganha um papel: abertura, single, confissão, ápice, fechamento. Como um álbum de verdade, escrito em 30 segundos. Ninguém mais faz isso.',
+    featA3_tag: 'A Bússola',
+    featA3_title_pre: 'Cole uma música que você ama.',
+    featA3_title_mid: 'Extraímos ',
+    featA3_title_em: 'os padrões',
+    featA3_title_post: ', nunca a letra.',
+    featA3_body: 'Digite título e artista ("Pearl Jam — Black"), ou cole a letra completa. O Brahmstorm lê o DNA — clima, estrutura, perspectiva, métrica — e traduz em prompt. Resultado original, sempre.',
+    twopaths_label: 'duas entradas',
+    twopaths_h_pre: 'Não importa como você',
+    twopaths_h_accent: 'pensa música.',
+    twopaths_lead: 'Tem gente que começa por uma história. Outros, por um bumbo e um andamento. O Brahmstorm funciona com os dois — e deixa você alternar fluidamente entre eles.',
+    twopaths_path1_numlabel: 'caminho / 01',
+    twopaths_path1_title: 'O Poeta',
+    twopaths_path1_subtitle: 'Descrição primeiro',
+    twopaths_path1_body: 'Escreva o que sente. "Tarde de domingo em 1973, poeira na luz do sol, um piano aberto." A IA traduz a prosa em 9 campos técnicos que você pode revisar, refinar ou reescrever.',
+    twopaths_path1_step1: 'Escreva um sentimento, cena ou memória',
+    twopaths_path1_step2: 'A IA preenche gênero, clima, instrumentos, vozes…',
+    twopaths_path1_step3: 'Edite o que quiser antes de gerar',
+    twopaths_path2_numlabel: 'caminho / 02',
+    twopaths_path2_title: 'O Produtor',
+    twopaths_path2_subtitle: 'Técnico primeiro',
+    twopaths_path2_body: 'Escolha cada parâmetro direto. Gênero + clima + instrumentos + andamento + era + produção + tipo de voz + tema da letra. Controle total, sem chute.',
+    twopaths_path2_step1: 'Abra os blocos categorizados',
+    twopaths_path2_step2: 'Multi-seleção pro que combina, seleção única pro que não pode conflitar',
+    twopaths_path2_step3: 'Gere 3 variações ou um EP de 5 faixas',
+    twopaths_close_pre: 'Você pode misturar os dois a qualquer hora. Comece por um sentimento, refine os técnicos.',
+    twopaths_close_em: 'Melhor dos dois mundos.',
+    interlude_label: 'interlúdio',
+    interlude_pre: 'Toda música começa como ',
+    interlude_em: 'uma ideia',
+    interlude_post: '. A gente ajuda a sua a ser ouvida.',
+    how_label: 'como funciona',
+    how_h_pre: 'Do sentimento',
+    how_h_to: 'ao ',
+    how_h_accent: 'prompt pronto',
+    how_h_post: 'em 60 segundos.',
+    how_step1_title: 'Descreva',
+    how_step1_body: 'Escreva um sentimento, cole uma referência ou abra os blocos direto. O que for mais fácil na hora.',
+    how_step2_title: 'Gere',
+    how_step2_body: 'A IA devolve 3 variações ou um EP de 5 faixas, tudo dentro dos limites de caractere do Suno, prontos pra colar.',
+    how_step3_title: 'Cole no Suno',
+    how_step3_body: 'Botão "Abrir Suno" copia e abre a aba certa num clique. Cmd+V e você tá no ar.',
+    how_cta: 'experimente o fluxo',
+    lib_label: 'sua biblioteca',
+    lib_h_pre: 'Todo prompt e letra',
+    lib_h_accent: 'fica com você.',
+    lib_lead: 'Salve seus favoritos. Navegue pelas últimas 50 gerações no histórico. Filtre por prompt ou letra. Reaproveite, remixe, construa em cima do que funcionou.',
+    lib_i1_title: 'Arquivo de favoritos',
+    lib_i1_body: 'Um clique pra salvar. Organizado por tipo. Sempre a um toque.',
+    lib_i2_title: 'Histórico automático',
+    lib_i2_body: 'Últimas 50 gerações guardadas automaticamente. Ache aquela que você quase perdeu.',
+    lib_i3_title: 'Seu, localmente',
+    lib_i3_body: 'Salvo no seu navegador, não num banco de dados. Privado por design. Export em breve.',
+    why_photo_caption: 'feito pras madrugadas, não pras reuniões.',
+    why_label: 'por que existe',
+    why_h_pre: 'Isso não é',
+    why_h_accent: 'um SaaS.',
+    why_p1_pre: 'O Brahmstorm foi feito por ',
+    why_p1_em: 'uma pessoa só',
+    why_p1_post: ' que cansou de como as ferramentas existentes pareciam. UX confusa. Paredes de login. "Planos grátis" que são armadilhas.',
+    why_p2: 'A coisa toda roda no seu navegador. Nada armazenado em servidor. Nada rastreado além de page views anônimas. Só uma ferramenta que faz o que promete.',
+    why_p3_em: '5 gerações grátis todo dia.',
+    why_p3_post: ' Sem cartão de crédito. Sem upsell. Sem dark patterns.',
+    prin_p1_title: 'Sem cadastro',
+    prin_p1_body: 'Abra e use. Seus favoritos ficam no seu navegador, não num banco de dados.',
+    prin_p2_title: 'Feito por um criador',
+    prin_p2_body: 'Construído pra gente da música, por alguém que usa o Suno toda semana.',
+    prin_p3_title: 'Multilíngue',
+    prin_p3_body: 'Interface em inglês, português, espanhol e francês. Letras em ainda mais línguas.',
+    faq_label: 'perguntas',
+    faq_h_pre: 'Coisas que você provavelmente',
+    faq_h_accent: 'tá prestes a perguntar.',
+    faq_q1: 'É grátis mesmo?',
+    faq_a1: 'Sim. 5 gerações por dia, todo dia. Sem cartão, sem período de teste que acaba. Se o uso crescer além do que uma pessoa só sustenta, planos pagos podem aparecer — mas o grátis fica.',
+    faq_q2: 'Preciso me cadastrar?',
+    faq_a2: 'Não. Abra o app e comece. Seus favoritos e histórico vivem no seu navegador, atrelados ao dispositivo. Não tem conta, nem coleta de email, nem senha pra esquecer.',
+    faq_q3: 'E se eu limpar o navegador?',
+    faq_a3: 'Você perde os favoritos e o histórico. É o preço do "sem cadastro" de verdade. Tá no roadmap um export pra você fazer backup da sua biblioteca num arquivo.',
+    faq_q4: 'Como vocês contam as 5 gerações diárias?',
+    faq_a4: 'Rate limiting anônimo por IP no servidor. Não rastreamos sua identidade, só o número de chamadas à API da sua rede. Reseta todo dia à meia-noite UTC.',
+    faq_q5: 'Meus prompts e letras são compartilhados com alguém?',
+    faq_a5: 'Não. Eles vão pra API da Anthropic pra IA processar, e voltam pra você. Nada fica nos servidores do Brahmstorm. Nada é usado pra treino.',
+    faq_q6: 'Por que isso não é uma feature do Suno?',
+    faq_a6: 'O Suno foca no modelo de IA musical. O Brahmstorm é uma camada fina entre você e o Suno, te ajudando a descrever música do jeito que o Suno entende. Problemas diferentes, times diferentes.',
+    cta_h_pre: 'Sua próxima música',
+    cta_h_accent: 'começa aqui.',
+    cta_lead_pre: 'Grátis. 5 gerações todo dia. Sem cadastro.',
+    cta_lead_em: 'É só abrir.',
+    cta_btn: 'Abrir Brahmstorm',
+    footer_disclaimer1: 'Brahmstorm é uma ferramenta independente, sem afiliação com a Suno Inc.',
+    footer_disclaimer2: 'Suno é uma marca registrada da Suno Inc.',
+    mock_free_label: 'inspiração livre',
+    mock_free_hint: 'descreva um sentimento, cena, memória — a IA preenche todos os campos abaixo.',
+    mock_free_example: '"trilha de filme noir num Rio de Janeiro chuvoso"',
+    mock_free_btn: 'preencher campos com IA',
+    mock_block_genre: 'Gênero',
+    mock_block_mood: 'Clima',
+    mock_block_vocals: 'Vozes',
+    mock_block_production: 'Produção',
+    mock_badge_melancholic: 'melancólico',
+    mock_badge_tense: 'tenso',
+    mock_badge_reverb_whispers: 'sussurros com reverb',
+    mock_badge_cathedral: 'reverb de catedral',
+    mock_album_header: 'EP de 5 faixas gerado',
+    mock_album_t1_title: 'Último Ônibus de Volta',
+    mock_album_t1_role: 'abertura',
+    mock_album_t2_title: 'Quartos que Esvaziamos',
+    mock_album_t2_role: 'introdução',
+    mock_album_t3_title: 'A Confissão',
+    mock_album_t3_role: 'ponto de virada',
+    mock_album_t4_title: 'Estática & Sal',
+    mock_album_t4_role: 'descida',
+    mock_album_t5_title: 'Um Bom Ano pro Silêncio',
+    mock_album_t5_role: 'fechamento',
+    mock_ref_label: 'faixa de referência',
+    mock_ref_confidence: 'alta confiança',
+    mock_ref_hint: 'digite nome da música e artista, ou cole a letra completa — a IA usa como bússola sonora sem copiar.',
+    mock_ref_btn: 'analisar referência',
+    mock_ref_result: 'Uma balada grunge dos anos 90 com vocais íntimos e ásperos, andamento lento e melancólico, atmosfera nostálgica.',
+    mock_fav_archive: 'arquivo',
+    mock_fav_title: 'favoritos',
+    mock_fav_tab_fav: 'favoritos · 12',
+    mock_fav_tab_hist: 'histórico · 47',
+    mock_fav_tag_prompt: 'prompt',
+    mock_fav_tag_lyrics: 'letra',
+    mock_fav_item1: 'Madrugadas dirigindo',
+    mock_fav_item2: 'A Confissão',
+    mock_fav_item3: 'Rio noir trip-hop',
+    mock_fav_date: 'abr 24 · 19:42',
+    meta_title: 'Brahmstorm · Forja de Prompts pra Suno AI',
+  },
+  es: {
+    nav_what: 'qué', nav_how: 'cómo', nav_why: 'por qué', nav_launch: 'abrir',
+    hero_badge_free: '100% Gratis',
+    hero_descriptor: 'forja de prompts para Suno AI',
+    hero_h1_line1: 'Escribe prompts para Suno',
+    hero_h1_line2_pre: 'que ',
+    hero_h1_line2_accent: 'suenan de verdad',
+    hero_h1_line3: 'como la canción que imaginaste.',
+    hero_sub_pre: 'Brahmstorm convierte tus ',
+    hero_sub_em: 'sentimientos, referencias e ideas',
+    hero_sub_post: ' en prompts y letras listos para producción en Suno AI — sin prueba y error.',
+    hero_cta_open: 'Abrir Brahmstorm',
+    hero_cta_see: 'mira cómo funciona',
+    hero_stat_per_day: 'generaciones / día',
+    hero_stat_signup: 'registros requeridos',
+    hero_stat_langs: 'idiomas',
+    hero_stat_creativity: 'creatividad',
+    hero_scroll: 'desliza',
+    problem_photo_caption: 'el equipo era más simple. las reglas, ocultas.',
+    problem_label: 'el problema',
+    problem_h_pre: 'Suno es potente.',
+    problem_h_mid: 'Pero tiene reglas',
+    problem_h_accent: 'que nadie te cuenta.',
+    problem_p1_title: 'Los nombres reales de artistas se filtran',
+    problem_p1_body: 'No puedes decir simplemente "como Pearl Jam". Suno lo borra. Lo aprendes recién después de generar 12 veces.',
+    problem_p2_title: 'Las etiquetas en tu idioma no funcionan',
+    problem_p2_body: 'Escribe [Verso] y Suno canta la palabra "verso" en vez de tratarla como etiqueta de estructura.',
+    problem_p3_title: 'Los prompts se truncan',
+    problem_p3_body: 'El límite de 1000 caracteres es un cementerio de canciones descritas a medias.',
+    problem_close_pre: 'Brahmstorm se encarga de todo esto.',
+    problem_close_accent: 'Para que tú no tengas que hacerlo.',
+    pullquote_pre: 'La música empieza con un sentimiento.',
+    pullquote_em: 'Brahmstorm le da la forma que Suno entiende.',
+    what_label: 'qué es',
+    what_h_pre: 'Tres cosas que Brahmstorm',
+    what_h_accent: 'hace mejor que nadie.',
+    featA1_tag: 'El Traductor',
+    featA1_title_pre: 'Describe un sentimiento.',
+    featA1_title_mid: 'La IA llena los ',
+    featA1_title_em: 'ajustes técnicos',
+    featA1_title_post: '.',
+    featA1_body: 'No necesitas saber que "phonk" es un género o que "piano Rhodes con reverb de catedral" es un estilo de producción. Escribe "banda sonora noir en un Río lluvioso". Brahmstorm lo decodifica y llena 9 campos categorizados que puedes revisar y ajustar.',
+    featA2_tag: 'El Director',
+    featA2_title_pre: 'Genera un ',
+    featA2_title_em: 'EP cohesionado de 5 pistas',
+    featA2_title_post: ' en un clic.',
+    featA2_body: 'Mismo universo sonoro, pistas variadas. Cada canción tiene un rol: apertura, single, confesión, clímax, cierre. Como un álbum real, escrito en 30 segundos. Nadie más hace esto.',
+    featA3_tag: 'La Brújula',
+    featA3_title_pre: 'Pega una canción que ames.',
+    featA3_title_mid: 'Extraemos ',
+    featA3_title_em: 'los patrones',
+    featA3_title_post: ', nunca la letra.',
+    featA3_body: 'Escribe título y artista ("Pearl Jam — Black"), o pega la letra completa. Brahmstorm lee el ADN — ambiente, estructura, perspectiva, métrica — y lo traduce en un prompt. Resultado original, siempre.',
+    twopaths_label: 'dos vías',
+    twopaths_h_pre: 'Sea como sea que pienses',
+    twopaths_h_accent: 'la música.',
+    twopaths_lead: 'Algunos arrancan con una historia. Otros con un bombo y un tempo. Brahmstorm trabaja con ambos — y te deja alternar fluidamente entre ellos.',
+    twopaths_path1_numlabel: 'vía / 01',
+    twopaths_path1_title: 'El Poeta',
+    twopaths_path1_subtitle: 'Descripción primero',
+    twopaths_path1_body: 'Escribe lo que sientes. "Una tarde de domingo de 1973, polvo en la luz, un piano abierto." La IA traduce la prosa en 9 campos técnicos que puedes revisar, refinar o reescribir.',
+    twopaths_path1_step1: 'Escribe un sentimiento, escena o recuerdo',
+    twopaths_path1_step2: 'La IA llena género, ambiente, instrumentos, voces…',
+    twopaths_path1_step3: 'Edita lo que quieras antes de generar',
+    twopaths_path2_numlabel: 'vía / 02',
+    twopaths_path2_title: 'El Productor',
+    twopaths_path2_subtitle: 'Técnica primero',
+    twopaths_path2_body: 'Elige cada parámetro a mano. Género + ambiente + instrumentos + tempo + era + producción + tipo de voz + tema lírico. Control total, sin adivinar.',
+    twopaths_path2_step1: 'Abre los bloques categorizados',
+    twopaths_path2_step2: 'Multi-selección para lo que encaja, selección única para lo que no debe entrar en conflicto',
+    twopaths_path2_step3: 'Genera 3 variaciones o un EP de 5 pistas',
+    twopaths_close_pre: 'Puedes mezclar ambos en cualquier momento. Empieza con un sentimiento, refina los técnicos.',
+    twopaths_close_em: 'Lo mejor de ambos mundos.',
+    interlude_label: 'interludio',
+    interlude_pre: 'Toda canción empieza como ',
+    interlude_em: 'una idea',
+    interlude_post: '. Te ayudamos a que la tuya se escuche.',
+    how_label: 'cómo funciona',
+    how_h_pre: 'Del sentimiento',
+    how_h_to: 'al ',
+    how_h_accent: 'prompt listo',
+    how_h_post: 'en 60 segundos.',
+    how_step1_title: 'Describe',
+    how_step1_body: 'Escribe un sentimiento, pega una referencia o abre los bloques directo. Lo que sea más fácil en el momento.',
+    how_step2_title: 'Genera',
+    how_step2_body: 'La IA devuelve 3 variaciones o un EP de 5 pistas, todo bajo los límites de caracteres de Suno, listo para pegar.',
+    how_step3_title: 'Pega en Suno',
+    how_step3_body: 'Botón "Abrir Suno" copia y abre la pestaña correcta en un clic. Cmd+V y estás en vivo.',
+    how_cta: 'prueba el flujo',
+    lib_label: 'tu biblioteca',
+    lib_h_pre: 'Cada prompt y letra',
+    lib_h_accent: 'se queda contigo.',
+    lib_lead: 'Guarda tus favoritos. Navega tus últimas 50 generaciones en el historial. Filtra por prompt o letra. Reutiliza, remix, construye sobre lo que funcionó.',
+    lib_i1_title: 'Archivo de favoritos',
+    lib_i1_body: 'Un clic para guardar. Organizado por tipo. Siempre a un toque.',
+    lib_i2_title: 'Historial automático',
+    lib_i2_body: 'Últimas 50 generaciones guardadas automáticamente. Encuentra esa que casi perdiste.',
+    lib_i3_title: 'Tuyo, en local',
+    lib_i3_body: 'Guardado en tu navegador, no en una base de datos. Privado por diseño. Export pronto.',
+    why_photo_caption: 'hecho para las madrugadas, no para las reuniones.',
+    why_label: 'por qué existe',
+    why_h_pre: 'Esto no es',
+    why_h_accent: 'un SaaS.',
+    why_p1_pre: 'Brahmstorm fue construido por ',
+    why_p1_em: 'una sola persona',
+    why_p1_post: ' que se cansó de cómo se sentían las herramientas existentes. UX confusa. Muros de login. "Planes gratis" que son trampas.',
+    why_p2: 'Todo corre en tu navegador. Nada se almacena en servidor. Nada se rastrea más allá de page views anónimas. Solo una herramienta que hace lo que dice.',
+    why_p3_em: '5 generaciones gratis al día.',
+    why_p3_post: ' Sin tarjeta. Sin upsell. Sin dark patterns.',
+    prin_p1_title: 'Sin registro',
+    prin_p1_body: 'Abre y usa. Tus favoritos se quedan en tu navegador, no en una base de datos.',
+    prin_p2_title: 'Hecho por un creador',
+    prin_p2_body: 'Construido para gente de música, por alguien que usa Suno cada semana.',
+    prin_p3_title: 'Multilingüe',
+    prin_p3_body: 'Interfaz en inglés, portugués, español y francés. Letras en aún más idiomas.',
+    faq_label: 'preguntas',
+    faq_h_pre: 'Cosas que probablemente',
+    faq_h_accent: 'estás por preguntar.',
+    faq_q1: '¿Es realmente gratis?',
+    faq_a1: 'Sí. 5 generaciones por día, todos los días. Sin tarjeta, sin periodo de prueba que termina. Si el uso crece más allá de lo que una persona puede sostener, pueden venir planes pagos — pero el gratis se queda.',
+    faq_q2: '¿Necesito registrarme?',
+    faq_a2: 'No. Abre la app y empieza. Tus favoritos e historial viven en tu navegador, atados a tu dispositivo. No hay cuenta, ni recolección de email, ni contraseña que olvidar.',
+    faq_q3: '¿Qué pasa si limpio mi navegador?',
+    faq_a3: 'Pierdes tus favoritos guardados y el historial. Es el precio del "sin registro" real. Está en el roadmap un export para que puedas respaldar tu biblioteca en un archivo.',
+    faq_q4: '¿Cómo cuentan las 5 generaciones diarias?',
+    faq_a4: 'Rate limiting anónimo por IP en el servidor. No rastreamos tu identidad, solo el número de llamadas a la API desde tu red. Se reinicia cada día a medianoche UTC.',
+    faq_q5: '¿Mis prompts y letras se comparten con alguien?',
+    faq_a5: 'No. Van a la API de Anthropic para que la IA procese, y vuelven a ti. Nada se guarda en los servidores de Brahmstorm. Nada se usa para entrenamiento.',
+    faq_q6: '¿Por qué no es una función de Suno?',
+    faq_a6: 'Suno se enfoca en el modelo de IA musical. Brahmstorm es una capa fina entre tú y Suno, ayudándote a describir música como Suno entiende. Problemas diferentes, equipos diferentes.',
+    cta_h_pre: 'Tu próxima canción',
+    cta_h_accent: 'empieza aquí.',
+    cta_lead_pre: 'Gratis. 5 generaciones cada día. Sin registro.',
+    cta_lead_em: 'Solo ábrelo.',
+    cta_btn: 'Abrir Brahmstorm',
+    footer_disclaimer1: 'Brahmstorm es una herramienta independiente, sin afiliación con Suno Inc.',
+    footer_disclaimer2: 'Suno es una marca registrada de Suno Inc.',
+    mock_free_label: 'inspiración libre',
+    mock_free_hint: 'describe un sentimiento, escena, recuerdo — la IA llena todos los campos abajo.',
+    mock_free_example: '"banda sonora noir en un Río de Janeiro lluvioso"',
+    mock_free_btn: 'llenar campos con IA',
+    mock_block_genre: 'Género',
+    mock_block_mood: 'Ambiente',
+    mock_block_vocals: 'Voces',
+    mock_block_production: 'Producción',
+    mock_badge_melancholic: 'melancólico',
+    mock_badge_tense: 'tenso',
+    mock_badge_reverb_whispers: 'susurros con reverb',
+    mock_badge_cathedral: 'reverb de catedral',
+    mock_album_header: 'EP de 5 pistas generado',
+    mock_album_t1_title: 'Último Bus a Casa',
+    mock_album_t1_role: 'apertura',
+    mock_album_t2_title: 'Cuartos que Dejamos Vacíos',
+    mock_album_t2_role: 'introducción',
+    mock_album_t3_title: 'La Confesión',
+    mock_album_t3_role: 'punto de inflexión',
+    mock_album_t4_title: 'Estática y Sal',
+    mock_album_t4_role: 'descenso',
+    mock_album_t5_title: 'Un Buen Año para el Silencio',
+    mock_album_t5_role: 'cierre',
+    mock_ref_label: 'pista de referencia',
+    mock_ref_confidence: 'alta confianza',
+    mock_ref_hint: 'escribe nombre de la canción y artista, o pega la letra completa — la IA lo usa como brújula sonora sin copiar.',
+    mock_ref_btn: 'analizar referencia',
+    mock_ref_result: 'Una balada grunge de los 90 con voces íntimas y ásperas, tempo lento y melancólico, atmósfera nostálgica.',
+    mock_fav_archive: 'archivo',
+    mock_fav_title: 'favoritos',
+    mock_fav_tab_fav: 'favoritos · 12',
+    mock_fav_tab_hist: 'historial · 47',
+    mock_fav_tag_prompt: 'prompt',
+    mock_fav_tag_lyrics: 'letra',
+    mock_fav_item1: 'Manejos de madrugada',
+    mock_fav_item2: 'La Confesión',
+    mock_fav_item3: 'Río noir trip-hop',
+    mock_fav_date: 'abr 24 · 19:42',
+    meta_title: 'Brahmstorm · Forja de Prompts para Suno AI',
+  },
+  fr: {
+    nav_what: 'quoi', nav_how: 'comment', nav_why: 'pourquoi', nav_launch: 'ouvrir',
+    hero_badge_free: '100% Gratuit',
+    hero_descriptor: 'forge de prompts pour Suno AI',
+    hero_h1_line1: 'Écris des prompts Suno',
+    hero_h1_line2_pre: 'qui ',
+    hero_h1_line2_accent: 'sonnent vraiment',
+    hero_h1_line3: 'comme la chanson imaginée.',
+    hero_sub_pre: 'Brahmstorm transforme tes ',
+    hero_sub_em: 'émotions, références et idées',
+    hero_sub_post: ' en prompts et paroles prêts pour la production sur Suno AI — sans essai-erreur.',
+    hero_cta_open: 'Ouvrir Brahmstorm',
+    hero_cta_see: 'voir comment ça marche',
+    hero_stat_per_day: 'générations / jour',
+    hero_stat_signup: 'inscription requise',
+    hero_stat_langs: 'langues',
+    hero_stat_creativity: 'créativité',
+    hero_scroll: 'défile',
+    problem_photo_caption: 'le matériel était plus simple. les règles, cachées.',
+    problem_label: 'le problème',
+    problem_h_pre: 'Suno est puissant.',
+    problem_h_mid: 'Mais il a des règles',
+    problem_h_accent: 'que personne ne te dit.',
+    problem_p1_title: "Les vrais noms d'artistes sont filtrés",
+    problem_p1_body: 'Tu ne peux pas dire simplement "comme Pearl Jam". Suno le supprime. Tu l\'apprends après avoir relancé 12 fois.',
+    problem_p2_title: 'Les tags dans ta langue ne marchent pas',
+    problem_p2_body: 'Écris [Verso] et Suno chante le mot "verso" au lieu de le traiter comme une balise de structure.',
+    problem_p3_title: 'Les prompts sont coupés',
+    problem_p3_body: 'La limite de 1000 caractères est un cimetière de chansons décrites à moitié.',
+    problem_close_pre: 'Brahmstorm gère tout ça.',
+    problem_close_accent: "Pour que tu n'aies pas à le faire.",
+    pullquote_pre: 'La musique commence par une émotion.',
+    pullquote_em: 'Brahmstorm lui donne la forme que Suno comprend.',
+    what_label: "c'est quoi",
+    what_h_pre: 'Trois choses que Brahmstorm',
+    what_h_accent: 'fait mieux que personne.',
+    featA1_tag: 'Le Traducteur',
+    featA1_title_pre: 'Décris une émotion.',
+    featA1_title_mid: "L'IA remplit les ",
+    featA1_title_em: 'réglages techniques',
+    featA1_title_post: '.',
+    featA1_body: "Tu n'as pas besoin de savoir que « phonk » est un genre ou que « piano Rhodes avec reverb cathédrale » est un style de production. Écris « bande-son noir dans un Rio pluvieux ». Brahmstorm décode et remplit 9 champs catégorisés que tu peux réviser et ajuster.",
+    featA2_tag: 'Le Maestro',
+    featA2_title_pre: 'Génère un ',
+    featA2_title_em: 'EP cohérent de 5 morceaux',
+    featA2_title_post: ' en un clic.',
+    featA2_body: "Même univers sonore, morceaux variés. Chaque chanson a un rôle : ouverture, single, confession, sommet, clôture. Comme un vrai album, écrit en 30 secondes. Personne d'autre ne fait ça.",
+    featA3_tag: 'La Boussole',
+    featA3_title_pre: 'Colle une chanson que tu adores.',
+    featA3_title_mid: 'On extrait ',
+    featA3_title_em: 'les patterns',
+    featA3_title_post: ', jamais les paroles.',
+    featA3_body: "Tape titre et artiste (« Pearl Jam — Black »), ou colle les paroles complètes. Brahmstorm lit l'ADN — ambiance, structure, perspective, métrique — et le traduit en prompt. Résultat original, à chaque fois.",
+    twopaths_label: 'deux entrées',
+    twopaths_h_pre: 'Peu importe comment tu',
+    twopaths_h_accent: 'penses la musique.',
+    twopaths_lead: "Certains partent d'une histoire. D'autres d'un kick et d'un tempo. Brahmstorm gère les deux — et te laisse passer fluidement de l'un à l'autre.",
+    twopaths_path1_numlabel: 'voie / 01',
+    twopaths_path1_title: 'Le Poète',
+    twopaths_path1_subtitle: "Description d'abord",
+    twopaths_path1_body: "Écris ce que tu ressens. « Un dimanche après-midi de 1973, poussière dans la lumière, un piano ouvert. » L'IA traduit la prose en 9 champs techniques que tu peux relire, affiner ou réécrire.",
+    twopaths_path1_step1: 'Écris une émotion, une scène ou un souvenir',
+    twopaths_path1_step2: "L'IA remplit genre, ambiance, instruments, voix…",
+    twopaths_path1_step3: 'Édite ce que tu veux avant de générer',
+    twopaths_path2_numlabel: 'voie / 02',
+    twopaths_path2_title: 'Le Producteur',
+    twopaths_path2_subtitle: "Technique d'abord",
+    twopaths_path2_body: 'Choisis chaque paramètre à la main. Genre + ambiance + instruments + tempo + époque + production + type de voix + thème des paroles. Contrôle total, sans deviner.',
+    twopaths_path2_step1: 'Ouvre les blocs catégorisés',
+    twopaths_path2_step2: 'Multi-sélection pour ce qui colle, sélection unique pour ce qui ne doit pas entrer en conflit',
+    twopaths_path2_step3: 'Génère 3 variations ou un EP de 5 morceaux',
+    twopaths_close_pre: "Tu peux mélanger les deux à tout moment. Pars d'une émotion, affine les techniques.",
+    twopaths_close_em: 'Le meilleur des deux mondes.',
+    interlude_label: 'interlude',
+    interlude_pre: 'Chaque chanson commence comme ',
+    interlude_em: 'une idée',
+    interlude_post: '. On aide la tienne à se faire entendre.',
+    how_label: 'comment ça marche',
+    how_h_pre: "De l'émotion",
+    how_h_to: 'au ',
+    how_h_accent: 'prompt fini',
+    how_h_post: 'en 60 secondes.',
+    how_step1_title: 'Décris',
+    how_step1_body: 'Écris une émotion, colle une référence ou ouvre les blocs directement. Ce qui est le plus simple sur le moment.',
+    how_step2_title: 'Génère',
+    how_step2_body: "L'IA renvoie 3 variations ou un EP de 5 morceaux, tout sous les limites de caractères de Suno, prêt à coller.",
+    how_step3_title: 'Colle dans Suno',
+    how_step3_body: 'Le bouton « Ouvrir Suno » copie et ouvre le bon onglet en un clic. Cmd+V et tu es en ligne.',
+    how_cta: 'essaie le flux',
+    lib_label: 'ta bibliothèque',
+    lib_h_pre: 'Chaque prompt et parole',
+    lib_h_accent: 'reste avec toi.',
+    lib_lead: "Sauvegarde tes favoris. Parcours tes 50 dernières générations dans l'historique. Filtre par prompt ou paroles. Réutilise, remixe, construis sur ce qui a marché.",
+    lib_i1_title: 'Archive des favoris',
+    lib_i1_body: 'Un clic pour sauvegarder. Organisé par type. Toujours à portée de doigt.',
+    lib_i2_title: 'Historique automatique',
+    lib_i2_body: '50 dernières générations gardées automatiquement. Retrouve celle que tu as failli perdre.',
+    lib_i3_title: 'Le tien, en local',
+    lib_i3_body: 'Sauvegardé dans ton navigateur, pas dans une base de données. Privé par design. Export bientôt.',
+    why_photo_caption: 'fait pour les nuits blanches, pas pour les salles de réunion.',
+    why_label: 'pourquoi ça existe',
+    why_h_pre: "Ce n'est pas",
+    why_h_accent: 'un SaaS.',
+    why_p1_pre: 'Brahmstorm a été construit par ',
+    why_p1_em: 'une seule personne',
+    why_p1_post: ' qui en avait marre de ce que les outils existants donnaient. UX confuse. Murs de login. « Plans gratuits » qui sont des pièges.',
+    why_p2: "Tout tourne dans ton navigateur. Rien n'est stocké sur un serveur. Rien n'est traqué au-delà des pages vues anonymes. Juste un outil qui fait ce qu'il dit.",
+    why_p3_em: '5 générations gratuites par jour.',
+    why_p3_post: " Pas de carte de crédit. Pas d'upsell. Pas de dark patterns.",
+    prin_p1_title: 'Sans inscription',
+    prin_p1_body: 'Ouvre et utilise. Tes favoris restent dans ton navigateur, pas dans une base de données.',
+    prin_p2_title: 'Fait par un créateur',
+    prin_p2_body: "Construit pour les gens de musique, par quelqu'un qui utilise Suno chaque semaine.",
+    prin_p3_title: 'Multilingue',
+    prin_p3_body: 'Interface en anglais, portugais, espagnol et français. Paroles dans encore plus de langues.',
+    faq_label: 'questions',
+    faq_h_pre: 'Les choses que tu vas',
+    faq_h_accent: 'sûrement demander.',
+    faq_q1: "C'est vraiment gratuit ?",
+    faq_a1: "Oui. 5 générations par jour, tous les jours. Pas de carte, pas de période d'essai qui se termine. Si l'usage dépasse ce qu'une personne peut soutenir, des plans payants pourraient arriver — mais le gratuit reste.",
+    faq_q2: "Je dois m'inscrire ?",
+    faq_a2: "Non. Ouvre l'app et commence. Tes favoris et historique vivent dans ton navigateur, liés à ton appareil. Pas de compte, pas de collecte d'email, pas de mot de passe à oublier.",
+    faq_q3: 'Que se passe-t-il si je vide mon navigateur ?',
+    faq_a3: "Tu perds tes favoris et historique. C'est le prix du « sans inscription » réel. Un export est dans la roadmap pour que tu puisses sauvegarder ta bibliothèque dans un fichier.",
+    faq_q4: 'Comment vous comptez les 5 générations quotidiennes ?',
+    faq_a4: "Rate limiting anonyme par IP côté serveur. On ne traque pas ton identité, juste le nombre d'appels à l'API depuis ton réseau. Reset chaque jour à minuit UTC.",
+    faq_q5: 'Mes prompts et paroles sont partagés avec quelqu\'un ?',
+    faq_a5: "Non. Ils vont vers l'API d'Anthropic pour que l'IA les traite, puis reviennent à toi. Rien n'est stocké sur les serveurs Brahmstorm. Rien n'est utilisé pour l'entraînement.",
+    faq_q6: "Pourquoi ce n'est pas une fonctionnalité Suno ?",
+    faq_a6: "Suno est focalisé sur le modèle d'IA musical. Brahmstorm est une couche fine entre toi et Suno, t'aidant à décrire la musique comme Suno la comprend. Problèmes différents, équipes différentes.",
+    cta_h_pre: 'Ta prochaine chanson',
+    cta_h_accent: 'commence ici.',
+    cta_lead_pre: 'Gratuit. 5 générations chaque jour. Sans inscription.',
+    cta_lead_em: "Tu n'as qu'à l'ouvrir.",
+    cta_btn: 'Ouvrir Brahmstorm',
+    footer_disclaimer1: 'Brahmstorm est un outil indépendant, sans affiliation avec Suno Inc.',
+    footer_disclaimer2: 'Suno est une marque déposée de Suno Inc.',
+    mock_free_label: 'inspiration libre',
+    mock_free_hint: "décris une émotion, scène, souvenir — l'IA remplit tous les champs en bas.",
+    mock_free_example: '« bande-son noir dans un Rio de Janeiro pluvieux »',
+    mock_free_btn: "remplir les champs avec l'IA",
+    mock_block_genre: 'Genre',
+    mock_block_mood: 'Ambiance',
+    mock_block_vocals: 'Voix',
+    mock_block_production: 'Production',
+    mock_badge_melancholic: 'mélancolique',
+    mock_badge_tense: 'tendu',
+    mock_badge_reverb_whispers: 'chuchotements avec reverb',
+    mock_badge_cathedral: 'reverb cathédrale',
+    mock_album_header: 'EP de 5 morceaux généré',
+    mock_album_t1_title: 'Dernier Bus pour la Maison',
+    mock_album_t1_role: 'ouverture',
+    mock_album_t2_title: "Pièces Qu'on a Laissées Vides",
+    mock_album_t2_role: 'introduction',
+    mock_album_t3_title: 'La Confession',
+    mock_album_t3_role: 'point de bascule',
+    mock_album_t4_title: 'Statique & Sel',
+    mock_album_t4_role: 'descente',
+    mock_album_t5_title: 'Une Bonne Année pour le Silence',
+    mock_album_t5_role: 'clôture',
+    mock_ref_label: 'morceau de référence',
+    mock_ref_confidence: 'haute confiance',
+    mock_ref_hint: "tape le nom de la chanson et l'artiste, ou colle les paroles complètes — l'IA s'en sert comme boussole sonore sans copier.",
+    mock_ref_btn: 'analyser la référence',
+    mock_ref_result: 'Une ballade grunge des années 90 avec une voix rauque et intime, tempo lent et brumeux, atmosphère mélancolique et nostalgique.',
+    mock_fav_archive: 'archive',
+    mock_fav_title: 'favoris',
+    mock_fav_tab_fav: 'favoris · 12',
+    mock_fav_tab_hist: 'historique · 47',
+    mock_fav_tag_prompt: 'prompt',
+    mock_fav_tag_lyrics: 'paroles',
+    mock_fav_item1: 'Conduites nocturnes',
+    mock_fav_item2: 'La Confession',
+    mock_fav_item3: 'Rio noir trip-hop',
+    mock_fav_date: 'avr 24 · 19:42',
+    meta_title: 'Brahmstorm · Forge de Prompts pour Suno AI',
+  },
+};
+
+function detectLang() {
+  try {
+    const saved = localStorage.getItem('bs:lang');
+    if (saved && LANGUAGES.find(l => l.id === saved)) return saved;
+  } catch (e) {}
+  if (typeof navigator !== 'undefined' && navigator.language) {
+    const pref = navigator.language.toLowerCase().split('-')[0];
+    if (LANGUAGES.find(l => l.id === pref)) return pref;
+  }
+  return 'en';
+}
+
 const UI = {
   en: {
     subtitle: 'Prompt Forge · Studio', tips: 'tips', favorites: 'favorites', clear: 'clear',
     tab_prompt: 'Prompt', tab_prompt_sub: 'musical description',
-    tab_letra: 'Lyrics', tab_letra_sub: 'lyrics for Suno',
+    tab_letra: 'Lyrics', tab_letra_sub: 'lyrics for Suno', back_home: 'Back to home',
     customize: 'customize', customize_sub: 'more options', primary_only: 'showing essentials', show_all: 'show all options', hide_advanced: 'hide advanced',
     sheet_done: 'done',
     limit_hint: 'Suno works best with focus. Deselect to swap.',
@@ -1134,6 +1877,12 @@ const UI = {
     shortcuts_title: 'keyboard shortcuts',
     shortcuts_close: 'press esc or ? to close',
     shortcuts_btn: 'shortcuts',
+    shortcut_gen_prompt: 'Generate prompt', shortcut_gen_lyrics: 'Generate lyrics',
+    shortcut_gen_ep: 'Generate 5-track EP', shortcut_gen_ep_lyrics: 'Generate 5-track EP lyrics',
+    shortcut_switch_tab: 'Switch tab (Prompt ↔ Lyrics)',
+    shortcut_focus_brief: 'Focus inspiration brief',
+    shortcut_toggle_help: 'Toggle this help',
+    shortcut_close: 'Close any open modal or sheet',
     live_preview: 'live preview',
     live_preview_empty: 'select blocks to see your prompt build…',
     live_preview_over: 'over Suno character limit',
@@ -1236,7 +1985,7 @@ const UI = {
   pt: {
     subtitle: 'Forja de Prompts · Studio', tips: 'dicas', favorites: 'favoritos', clear: 'limpar',
     tab_prompt: 'Prompt', tab_prompt_sub: 'descrição musical',
-    tab_letra: 'Letra', tab_letra_sub: 'lyrics pro Suno',
+    tab_letra: 'Letra', tab_letra_sub: 'lyrics pro Suno', back_home: 'Voltar pra home',
     customize: 'customizar', customize_sub: 'mais opções', primary_only: 'mostrando o essencial', show_all: 'mostrar todas opções', hide_advanced: 'ocultar avançado',
     sheet_done: 'pronto',
     limit_hint: 'Suno funciona melhor com foco. Desmarque pra trocar.',
@@ -1247,6 +1996,12 @@ const UI = {
     shortcuts_title: 'atalhos de teclado',
     shortcuts_close: 'aperte esc ou ? para fechar',
     shortcuts_btn: 'atalhos',
+    shortcut_gen_prompt: 'Gerar prompt', shortcut_gen_lyrics: 'Gerar letra',
+    shortcut_gen_ep: 'Gerar EP de 5 faixas', shortcut_gen_ep_lyrics: 'Gerar letras do EP',
+    shortcut_switch_tab: 'Trocar aba (Prompt ↔ Letra)',
+    shortcut_focus_brief: 'Focar inspiração livre',
+    shortcut_toggle_help: 'Abrir/fechar essa ajuda',
+    shortcut_close: 'Fechar qualquer modal ou sheet aberto',
     live_preview: 'pré-visualização ao vivo',
     live_preview_empty: 'selecione blocos pra ver seu prompt formando…',
     live_preview_over: 'acima do limite do Suno',
@@ -1321,13 +2076,6 @@ const UI = {
     toast_prompt_saved: '✓ prompt salvo', toast_letra_saved: '✓ letra salva',
     fav_title: 'favoritos', fav_sub: 'arquivo', fav_empty: 'nenhum item salvo ainda.',
     fav_filter_all: 'todos', fav_filter_prompt: 'prompt', fav_filter_letra: 'letra',
-    ref_title: 'pista de referencia', ref_sub_prompt: 'escribe el nombre y artista, o pega la letra completa — la IA la usa como brújula sin copiar.', ref_sub_letra: 'pega una letra que te guste — la IA extrae patrones para aplicar a tu tema.',
-    ref_ph: 'ej: "Bésame Mucho — Consuelo Velázquez"  ·  pega la letra completa',
-    ref_analyze: 'analizar referencia', ref_analyzing: 'analizando…', ref_clear: 'limpiar referencia',
-    ref_confidence_high: 'alta confianza', ref_confidence_medium: 'confianza parcial', ref_confidence_low: 'referencia desconocida',
-    ref_unknown: 'no conozco bien esa referencia — prueba con una más conocida o pega la letra.',
-    ref_detected_track: 'canción detectada', ref_detected_lyrics: 'letra detectada', ref_detected_url: 'enlace detectado',
-    ref_warning: 'la referencia es brújula, no copia — tu resultado sigue siendo original',
     ref_title: 'faixa de referência', ref_sub_prompt: 'digite o nome da música e artista, ou cole a letra completa — a IA usa como bússola sonora sem copiar.', ref_sub_letra: 'cole uma letra que você curte — a IA extrai padrões (estrutura, métrica, perspectiva) pra aplicar no seu tema.',
     ref_ph: 'ex: "Wave — Tom Jobim"  ·  "Black — Pearl Jam"  ·  cole a letra inteira',
     ref_analyze: 'analisar referência', ref_analyzing: 'analisando…', ref_clear: 'limpar referência',
@@ -1356,7 +2104,7 @@ const UI = {
   es: {
     subtitle: 'Forja de Prompts · Studio', tips: 'consejos', favorites: 'favoritos', clear: 'limpiar',
     tab_prompt: 'Prompt', tab_prompt_sub: 'descripción musical',
-    tab_letra: 'Letra', tab_letra_sub: 'letra para Suno',
+    tab_letra: 'Letra', tab_letra_sub: 'letra para Suno', back_home: 'Volver al inicio',
     customize: 'personalizar', customize_sub: 'más opciones', primary_only: 'mostrando lo esencial', show_all: 'mostrar todas las opciones', hide_advanced: 'ocultar avanzado',
     sheet_done: 'listo',
     limit_hint: 'Suno funciona mejor con foco. Quita uno para cambiar.',
@@ -1367,6 +2115,12 @@ const UI = {
     shortcuts_title: 'atajos de teclado',
     shortcuts_close: 'pulsa esc o ? para cerrar',
     shortcuts_btn: 'atajos',
+    shortcut_gen_prompt: 'Generar prompt', shortcut_gen_lyrics: 'Generar letra',
+    shortcut_gen_ep: 'Generar EP de 5 pistas', shortcut_gen_ep_lyrics: 'Generar letras del EP',
+    shortcut_switch_tab: 'Cambiar pestaña (Prompt ↔ Letra)',
+    shortcut_focus_brief: 'Enfocar inspiración libre',
+    shortcut_toggle_help: 'Mostrar/ocultar esta ayuda',
+    shortcut_close: 'Cerrar cualquier modal o panel abierto',
     live_preview: 'vista previa en vivo',
     live_preview_empty: 'selecciona bloques para ver tu prompt formándose…',
     live_preview_over: 'sobre el límite de Suno',
@@ -1440,6 +2194,13 @@ const UI = {
     toast_prompt_saved: '✓ prompt guardado', toast_letra_saved: '✓ letra guardada',
     fav_title: 'favoritos', fav_sub: 'archivo', fav_empty: 'nada guardado todavía.',
     fav_filter_all: 'todos', fav_filter_prompt: 'prompt', fav_filter_letra: 'letra',
+    ref_title: 'pista de referencia', ref_sub_prompt: 'escribe el nombre y artista, o pega la letra completa — la IA la usa como brújula sin copiar.', ref_sub_letra: 'pega una letra que te guste — la IA extrae patrones para aplicar a tu tema.',
+    ref_ph: 'ej: "Bésame Mucho — Consuelo Velázquez"  ·  pega la letra completa',
+    ref_analyze: 'analizar referencia', ref_analyzing: 'analizando…', ref_clear: 'limpiar referencia',
+    ref_confidence_high: 'alta confianza', ref_confidence_medium: 'confianza parcial', ref_confidence_low: 'referencia desconocida',
+    ref_unknown: 'no conozco bien esa referencia — prueba con una más conocida o pega la letra.',
+    ref_detected_track: 'canción detectada', ref_detected_lyrics: 'letra detectada', ref_detected_url: 'enlace detectado',
+    ref_warning: 'la referencia es brújula, no copia — tu resultado sigue siendo original',
     history_title: 'historial', history_sub: 'últimas 50 generaciones', history_empty: 'sin generaciones aún.', history_clear: 'limpiar todo',
     view_favorites: 'favoritos', view_history: 'historial',
     tips_title: 'consejos de suno', tips_sub: 'aprender',
@@ -1461,7 +2222,7 @@ const UI = {
   fr: {
     subtitle: 'Forge de Prompts · Studio', tips: 'astuces', favorites: 'favoris', clear: 'effacer',
     tab_prompt: 'Prompt', tab_prompt_sub: 'description musicale',
-    tab_letra: 'Paroles', tab_letra_sub: 'paroles pour Suno',
+    tab_letra: 'Paroles', tab_letra_sub: 'paroles pour Suno', back_home: "Retour à l'accueil",
     customize: 'personnaliser', customize_sub: 'plus d\'options', primary_only: 'affichant l\'essentiel', show_all: 'tout afficher', hide_advanced: 'masquer avancé',
     sheet_done: 'terminé',
     limit_hint: 'Suno fonctionne mieux avec focus. Désélectionnez pour échanger.',
@@ -1472,6 +2233,12 @@ const UI = {
     shortcuts_title: 'raccourcis clavier',
     shortcuts_close: 'esc ou ? pour fermer',
     shortcuts_btn: 'raccourcis',
+    shortcut_gen_prompt: 'Générer le prompt', shortcut_gen_lyrics: 'Générer les paroles',
+    shortcut_gen_ep: 'Générer EP 5 morceaux', shortcut_gen_ep_lyrics: "Générer les paroles de l'EP",
+    shortcut_switch_tab: "Changer d'onglet (Prompt ↔ Paroles)",
+    shortcut_focus_brief: 'Focus inspiration libre',
+    shortcut_toggle_help: 'Afficher/masquer cette aide',
+    shortcut_close: 'Fermer tout modal ou panneau ouvert',
     live_preview: 'aperçu en direct',
     live_preview_empty: 'sélectionnez des blocs pour voir votre prompt se former…',
     live_preview_over: 'au-dessus de la limite Suno',
@@ -2253,69 +3020,102 @@ const TIPS = {
   ],
   es: [
     { categoria: 'versiones de Suno', icone: '🎚', items: [
-      'v3.5 (2024): estable, máx 4 min.',
-      'v4 (nov 2024): voz muy superior. Introdujo Extend, Cover y Persona.',
-      'v4.5 (mayo 2025): máx 8 min. Mejor adherencia al prompt.',
+      'v3.5 (2024): estable, máx 4 min. Buena para experimentación clásica.',
+      'v4 (nov 2024): calidad vocal muy superior a v3.5. Introdujo Extend, Cover y Persona.',
+      'v4.5 (mayo 2025): máx 8 min. Mucha mejor adherencia al prompt, voces expresivas, mashups de género funcionan bien.',
       'v4.5+ (jul 2025): añade Add Vocals y Add Instrumental.',
-      'v5 (2025): fidelidad mucho más alta.',
-      'v5.5 (mar 2026): clonación de voz, modelos personalizados.',
+      'v5 (2025): fidelidad de audio mucho más alta, voces más naturales.',
+      'v5.5 (mar 2026): clonación de voz, modelos personalizados, memoria de preferencias.',
+      'Tip: el mismo prompt en v4 vs v4.5 vs v5 produce canciones muy diferentes. Prueba al menos 2 versiones.',
     ]},
-    { categoria: 'prompt', icone: '✍', items: [
-      'Límite: ~1000 caracteres.',
-      'Sé sensorial y específico.',
-      'NO menciones artistas reales.',
-      'Combinaciones creativas funcionan en v4.5+.',
+    { categoria: 'prompt (campo Style)', icone: '✍', items: [
+      'Límite aproximado: 1000 caracteres.',
+      'Sé sensorial y específico: "lo-fi beats con vinyl crackle y piano Rhodes en reverb de catedral" supera a "música chill".',
+      'NO menciones artistas reales — Suno filtra referencias directas. Describe el estilo en su lugar.',
+      'Usa comas para separar elementos.',
+      'Combinaciones creativas funcionan genial en v4.5+: "EDM + folk", "canto gregoriano + trap".',
     ]},
     { categoria: 'etiquetas de letras', icone: '🏷', items: [
-      'Estructura: [Intro], [Verse 1], [Chorus], [Bridge], [Outro].',
-      'SIEMPRE usa etiquetas en inglés — Suno no reconoce otras y las canta.',
-      'Coros: paréntesis en la letra.',
+      'Estructura: [Intro], [Verse 1], [Pre-Chorus], [Chorus], [Bridge], [Outro].',
+      'Instrumental: [Instrumental], [Guitar Solo], [Drum Break], [Sax Solo].',
+      'Dirección vocal: [Whispered], [Shouted], [Spoken Word], [Falsetto].',
+      'Dinámica: [Build Up], [Drop], [Silence].',
+      'Coros: usa paréntesis en la letra: "Te extraño (te extraño tanto)".',
+      'SIEMPRE usa etiquetas en inglés — Suno no reconoce etiquetas en otros idiomas y las cantará como letra!',
     ]},
-    { categoria: 'modos', icone: '⚙', items: [
-      'Custom Mode: control total. USA ESTE para mejores resultados.',
+    { categoria: 'modos de Suno', icone: '⚙', items: [
+      'Simple: describe en lenguaje natural, Suno genera todo.',
+      'Custom Mode: control total. USA ESTE para mejores resultados (esta herramienta está hecha para eso).',
+      'Instrumental toggle: misma canción sin voces.',
     ]},
     { categoria: 'funciones avanzadas', icone: '🔁', items: [
-      'Extend: continúa desde cualquier segundo.',
-      'Cover: regenera en otro género.',
-      'Persona, Add Vocals, Stems.',
+      'Extend: continúa una canción desde cualquier segundo.',
+      'Cover: regenera la misma letra en otro género.',
+      'Persona (v4+): guarda voz y estilo para reutilizar.',
+      'Add Vocals / Add Instrumental (v4.5+).',
+      'Stems (de pago): exporta pistas separadas para mezclar en DAW.',
     ]},
     { categoria: 'idiomas', icone: '🌍', items: [
       'Inglés sigue siendo el mejor interpretado.',
-      'Español y portugués funcionan bien.',
+      'Portugués funciona muy bien en v4+.',
+      'Español y japonés dan buenos resultados. Francés es más irregular.',
     ]},
     { categoria: 'tips de oro', icone: '💎', items: [
-      'Genera 3-5 versiones — la mejor casi nunca es la primera.',
-      'Letras cortas tienden a mejor melodía.',
+      'Genera 3-5 versiones del mismo prompt — la mejor casi nunca es la primera.',
+      'Si una canción salió casi perfecta, usa Extend o Cover en lugar de empezar de cero.',
+      'Letras más cortas tienden a tener mejor melodía.',
+      'Describe al ingeniero de audio imaginario: "mezclado lo-fi cassette" cambia mucho.',
+      'Batería: "808" vs "kit acústico de jazz" cambia radicalmente la pista.',
     ]},
   ],
   fr: [
     { categoria: 'versions Suno', icone: '🎚', items: [
-      'v3.5 (2024): stable, max 4 min.',
-      'v4 (nov 2024): voix bien supérieure.',
-      'v4.5 (mai 2025): max 8 min. Meilleure adhérence au prompt.',
-      'v4.5+, v5, v5.5: évolutions successives.',
+      'v3.5 (2024) : stable, max 4 min. Bon pour de l\'expérimentation classique.',
+      'v4 (nov 2024) : qualité vocale bien supérieure à v3.5. Introduit Extend, Cover et Persona.',
+      'v4.5 (mai 2025) : max 8 min. Bien meilleure adhérence au prompt, voix expressives, mashups de genres marchent bien.',
+      'v4.5+ (juil 2025) : ajoute Add Vocals et Add Instrumental.',
+      'v5 (2025) : fidélité audio bien plus haute, voix plus naturelles.',
+      'v5.5 (mars 2026) : clonage vocal, modèles personnalisés, mémoire de préférences.',
+      'Astuce : le même prompt en v4 vs v4.5 vs v5 produit des chansons très différentes. Essaie au moins 2 versions.',
     ]},
-    { categoria: 'prompt', icone: '✍', items: [
-      'Limite: ~1000 caractères.',
-      'Soyez sensoriel et spécifique.',
-      'NE citez pas d\'artistes réels.',
+    { categoria: 'prompt (champ Style)', icone: '✍', items: [
+      'Limite approximative : 1000 caractères.',
+      'Sois sensoriel et précis : « lo-fi beats avec vinyl crackle et piano Rhodes en reverb cathédrale » bat « musique chill ».',
+      'NE cite PAS d\'artistes réels — Suno filtre les références directes. Décris le style à la place.',
+      'Utilise des virgules pour séparer les éléments.',
+      'Combinaisons créatives marchent super bien en v4.5+ : « EDM + folk », « chant grégorien + trap ».',
     ]},
     { categoria: 'balises de paroles', icone: '🏷', items: [
-      'Structure: [Intro], [Verse 1], [Chorus], [Bridge], [Outro].',
-      'TOUJOURS en anglais — Suno ne reconnaît pas les autres langues.',
+      'Structure : [Intro], [Verse 1], [Pre-Chorus], [Chorus], [Bridge], [Outro].',
+      'Instrumental : [Instrumental], [Guitar Solo], [Drum Break], [Sax Solo].',
+      'Direction vocale : [Whispered], [Shouted], [Spoken Word], [Falsetto].',
+      'Dynamique : [Build Up], [Drop], [Silence].',
+      'Chœurs : utilise des parenthèses dans les paroles : « Tu me manques (manques tellement) ».',
+      'TOUJOURS utiliser des balises en anglais — Suno ne reconnaît pas les balises dans d\'autres langues et les chantera comme paroles !',
     ]},
-    { categoria: 'modes', icone: '⚙', items: [
-      'Custom Mode: contrôle total. UTILISEZ-LE.',
+    { categoria: 'modes Suno', icone: '⚙', items: [
+      'Simple : décris en langage naturel, Suno génère tout.',
+      'Custom Mode : contrôle total. UTILISE-LE pour de meilleurs résultats (cet outil est fait pour ça).',
+      'Instrumental toggle : même chanson sans voix.',
     ]},
     { categoria: 'fonctionnalités avancées', icone: '🔁', items: [
-      'Extend, Cover, Persona, Add Vocals, Stems.',
+      'Extend : continue une chanson depuis n\'importe quelle seconde.',
+      'Cover : régénère les mêmes paroles dans un autre genre.',
+      'Persona (v4+) : sauvegarde voix et style pour réutiliser.',
+      'Add Vocals / Add Instrumental (v4.5+).',
+      'Stems (payant) : exporte les pistes séparées pour mixer en DAW.',
     ]},
     { categoria: 'langues', icone: '🌍', items: [
       'L\'anglais reste le mieux interprété.',
+      'Le portugais marche très bien en v4+.',
+      'L\'espagnol et le japonais donnent de bons résultats. Le français est plus inégal.',
     ]},
     { categoria: 'astuces d\'or', icone: '💎', items: [
-      'Générez 3-5 versions du même prompt.',
-      'Paroles courtes = meilleure mélodie.',
+      'Génère 3-5 versions du même prompt — la meilleure est rarement la première.',
+      'Si une chanson est sortie presque parfaite, utilise Extend ou Cover au lieu de tout recommencer.',
+      'Des paroles plus courtes ont tendance à avoir une mélodie plus forte.',
+      'Décris l\'ingé son imaginaire : « mixé lo-fi cassette » change beaucoup.',
+      'Batterie : « 808 » vs « kit acoustique jazz » change radicalement la piste.',
     ]},
   ],
 };
@@ -2480,7 +3280,7 @@ async function copiarParaClipboard(texto) {
 // Main component
 // ═══════════════════════════════════════════════════════════════════
 function BrahmstormApp({ onBack } = {}) {
-  const [lang, setLang] = useState('en');
+  const [lang, setLang] = useState(detectLang);
   const [langMenuOpen, setLangMenuOpen] = useState(false);
   const langBtnRef = useRef(null);
   const [langMenuPos, setLangMenuPos] = useState(null);
@@ -2841,8 +3641,6 @@ function BrahmstormApp({ onBack } = {}) {
         const parsedH = JSON.parse(histRaw);
         if (Array.isArray(parsedH)) setHistorico(parsedH);
       }
-      const langRaw = localStorage.getItem('bs:lang');
-      if (langRaw && LANGUAGES.find(l => l.id === langRaw)) setLang(langRaw);
     } catch (e) {}
   }, []);
 
@@ -3603,7 +4401,7 @@ Return ONLY this JSON, no preamble, no markdown:
               else { window.location.hash = ''; }
             }}
             className="flex items-center gap-3 group transition-opacity hover:opacity-80 active:scale-95"
-            title="Back to home">
+            title={t.back_home}>
             <Disc3 className="w-8 h-8 text-orange-500 spin-slow" strokeWidth={1.5} />
             <div className="text-left">
               <div className="font-mono text-[10px] tracking-[0.3em] text-stone-400 uppercase">{t.subtitle}</div>
@@ -4745,12 +5543,12 @@ Return ONLY this JSON, no preamble, no markdown:
             </div>
             <div className="px-6 py-5 space-y-3">
               {[
-                { keys: ['⌘', '↵'], desc: tab === 'prompt' ? 'Generate prompt' : 'Generate lyrics' },
-                { keys: ['⌘', '⇧', '↵'], desc: tab === 'prompt' ? 'Generate 5-track EP' : 'Generate 5-track EP lyrics' },
-                { keys: ['⌘', 'L'], desc: 'Switch tab (Prompt ↔ Lyrics)' },
-                { keys: ['/'], desc: 'Focus inspiration brief' },
-                { keys: ['?'], desc: 'Toggle this help' },
-                { keys: ['ESC'], desc: 'Close any open modal or sheet' },
+                { keys: ['⌘', '↵'], desc: tab === 'prompt' ? t.shortcut_gen_prompt : t.shortcut_gen_lyrics },
+                { keys: ['⌘', '⇧', '↵'], desc: tab === 'prompt' ? t.shortcut_gen_ep : t.shortcut_gen_ep_lyrics },
+                { keys: ['⌘', 'L'], desc: t.shortcut_switch_tab },
+                { keys: ['/'], desc: t.shortcut_focus_brief },
+                { keys: ['?'], desc: t.shortcut_toggle_help },
+                { keys: ['ESC'], desc: t.shortcut_close },
               ].map((s, i) => (
                 <div key={i} className="flex items-center justify-between gap-4 py-2 border-b border-stone-200 last:border-b-0">
                   <span className="font-display text-base text-stone-700">{s.desc}</span>
