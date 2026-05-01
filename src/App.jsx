@@ -299,7 +299,7 @@ function BrahmstormLanding({ onLaunch }) {
           HERO — dark, dramatic, bold but balanced typography
           Spacing follows 8px grid: pt-32 (128) · mb-8/16/24 stack
           ═══════════════════════════════════════════════════════════ */}
-      <section className="relative z-10 bg-stone-950 text-stone-50 flex flex-col justify-center px-6 md:px-12 lg:px-20 pt-24 pb-12 md:pt-28 md:pb-16 overflow-hidden">
+      <section className="relative z-10 bg-stone-950 text-stone-50 flex flex-col justify-center px-6 md:px-12 lg:px-20 pt-40 pb-12 md:pt-28 md:pb-16 overflow-hidden">
         {/* Atmospheric background photo */}
         <div className="absolute inset-0 z-0 pointer-events-none">
           <div className="absolute inset-0 bg-cover bg-center opacity-25"
