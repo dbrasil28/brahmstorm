@@ -250,49 +250,99 @@ function BrahmstormLanding({ onLaunch }) {
       {/* ═══════════════════════════════════════════════════════════
           NAV — floats over dark hero
           ═══════════════════════════════════════════════════════════ */}
-      <nav className={`absolute top-0 left-0 right-0 z-30 px-6 md:px-12 lg:px-20 py-6 flex items-center justify-between reveal ${mounted ? 'in' : ''}`}>
-        <a href="#" className="flex items-center gap-3">
-          <Disc3 className="w-7 h-7 text-orange-500 spin-slow" strokeWidth={1.5} />
-          <div className="font-display text-xl tracking-tight text-stone-50" style={{ fontWeight: 800, fontStyle: 'italic' }}>
-            Brahm<span className="text-orange-500">storm</span>
+      <nav className={`absolute top-0 left-0 right-0 z-30 px-6 md:px-12 lg:px-20 py-6 reveal ${mounted ? 'in' : ''}`}>
+        {/* ─── MOBILE NAV (stacked) ─── */}
+        <div className="md:hidden flex flex-col gap-4">
+          {/* Row 1: logo + compact lang button */}
+          <div className="flex items-center justify-between">
+            <a href="#" className="flex items-center gap-3">
+              <Disc3 className="w-7 h-7 text-orange-500 spin-slow" strokeWidth={1.5} />
+              <div className="font-display text-xl tracking-tight text-stone-50" style={{ fontWeight: 800, fontStyle: 'italic' }}>
+                Brahm<span className="text-orange-500">storm</span>
+              </div>
+            </a>
+            <div className="relative">
+              <button onClick={() => setLangMenuOpen(v => !v)}
+                aria-label={LANGUAGES.find(l => l.id === lang)?.full}
+                className="font-mono text-[11px] uppercase tracking-[0.2em] px-3 py-2 rounded-lg border border-stone-700 text-stone-300 hover:border-orange-500 hover:text-orange-400 transition-all active:scale-95 flex items-center gap-2">
+                <Globe className="w-3.5 h-3.5" />
+                <span>{LANGUAGES.find(l => l.id === lang)?.label}</span>
+                <ChevronDown className={`w-3 h-3 transition-transform ${langMenuOpen ? 'rotate-180' : ''}`} />
+              </button>
+              {langMenuOpen && (
+                <>
+                  <div className="fixed inset-0 z-[60]" onClick={() => setLangMenuOpen(false)} />
+                  <div className="absolute top-full right-0 mt-2 z-[70] bg-stone-900 border border-stone-700 min-w-[180px] shadow-2xl rounded-lg overflow-hidden">
+                    {LANGUAGES.map(l => (
+                      <button key={l.id} onClick={() => { setLang(l.id); setLangMenuOpen(false); }}
+                        className={`w-full text-left px-3 py-3 font-mono text-[11px] uppercase tracking-[0.2em] transition-all flex items-center gap-2 ${l.id === lang ? 'bg-orange-500/15 text-orange-400' : 'text-stone-300 hover:bg-stone-800 hover:text-stone-50'}`}>
+                        <span className="text-base">{l.flag}</span><span className="flex-1">{l.full}</span>
+                        {l.id === lang && <Check className="w-3.5 h-3.5 text-orange-500" />}
+                      </button>
+                    ))}
+                  </div>
+                </>
+              )}
+            </div>
           </div>
-        </a>
-        <div className="flex items-center gap-2 md:gap-6">
-          <a href="#what" onClick={(e) => { e.preventDefault(); document.getElementById('what')?.scrollIntoView({ behavior: 'smooth', block: 'start' }); }}
-            className="hidden md:block font-mono text-[11px] uppercase tracking-[0.2em] text-stone-400 hover:text-stone-50 transition-colors">{tL.nav_what}</a>
-          <a href="#how" onClick={(e) => { e.preventDefault(); document.getElementById('how')?.scrollIntoView({ behavior: 'smooth', block: 'start' }); }}
-            className="hidden md:block font-mono text-[11px] uppercase tracking-[0.2em] text-stone-400 hover:text-stone-50 transition-colors">{tL.nav_how}</a>
-          <a href="#why" onClick={(e) => { e.preventDefault(); document.getElementById('why')?.scrollIntoView({ behavior: 'smooth', block: 'start' }); }}
-            className="hidden md:block font-mono text-[11px] uppercase tracking-[0.2em] text-stone-400 hover:text-stone-50 transition-colors">{tL.nav_why}</a>
-          <div className="relative">
-            <button ref={langBtnRef} onClick={() => setLangMenuOpen(v => !v)}
-              aria-label={LANGUAGES.find(l => l.id === lang)?.full}
-              className="font-mono text-[11px] uppercase tracking-[0.2em] px-2.5 md:px-3 py-2.5 rounded-lg border border-stone-700 text-stone-300 hover:border-orange-500 hover:text-orange-400 transition-all active:scale-95 flex items-center gap-2 md:gap-2">
-              <Globe className="w-3.5 h-3.5 hidden md:block" />
-              <span className="text-base leading-none md:hidden">{LANGUAGES.find(l => l.id === lang)?.flag}</span>
-              <span className="hidden md:inline">{LANGUAGES.find(l => l.id === lang)?.label}</span>
-              <ChevronDown className={`w-3 h-3 hidden md:block transition-transform ${langMenuOpen ? 'rotate-180' : ''}`} />
+          {/* Row 2: 100% Free outline + ABRIR solid */}
+          <div className="flex items-center gap-2.5">
+            <span className="font-mono text-[12px] uppercase tracking-[0.2em] text-orange-500 border-[1.5px] border-orange-500 px-4 py-3 rounded-[10px] flex items-center gap-1.5"
+              style={{ fontWeight: 700 }}>
+              <Sparkles className="w-3 h-3" /> {tL.hero_badge_free}
+            </span>
+            <button onClick={openApp}
+              className="font-mono text-[13px] uppercase tracking-[0.2em] text-stone-900 bg-orange-500 hover:bg-orange-400 px-5 py-3 rounded-[10px] flex items-center gap-2.5 active:scale-95 transition-all glow-amber"
+              style={{ fontWeight: 700 }}>
+              {tL.nav_launch} <ArrowRight className="w-3.5 h-3.5" />
             </button>
-            {langMenuOpen && (
-              <>
-                <div className="fixed inset-0 z-[60]" onClick={() => setLangMenuOpen(false)} />
-                <div className="absolute top-full right-0 mt-2 z-[70] bg-stone-900 border border-stone-700 min-w-[180px] shadow-2xl rounded-lg overflow-hidden">
-                  {LANGUAGES.map(l => (
-                    <button key={l.id} onClick={() => { setLang(l.id); setLangMenuOpen(false); }}
-                      className={`w-full text-left px-3 py-3 font-mono text-[11px] uppercase tracking-[0.2em] transition-all flex items-center gap-2 ${l.id === lang ? 'bg-orange-500/15 text-orange-400' : 'text-stone-300 hover:bg-stone-800 hover:text-stone-50'}`}>
-                      <span className="text-base">{l.flag}</span><span className="flex-1">{l.full}</span>
-                      {l.id === lang && <Check className="w-3.5 h-3.5 text-orange-500" />}
-                    </button>
-                  ))}
-                </div>
-              </>
-            )}
           </div>
-          <button onClick={openApp}
-            className="font-mono text-[11px] uppercase tracking-[0.2em] px-4 py-2.5 rounded-lg bg-orange-500 hover:bg-orange-400 text-stone-900 transition-all active:scale-95 flex items-center gap-2 glow-amber"
-            style={{ fontWeight: 700 }}>
-            {tL.nav_launch} <ArrowRight className="w-3.5 h-3.5" />
-          </button>
+        </div>
+
+        {/* ─── DESKTOP NAV (unchanged) ─── */}
+        <div className="hidden md:flex items-center justify-between">
+          <a href="#" className="flex items-center gap-3">
+            <Disc3 className="w-7 h-7 text-orange-500 spin-slow" strokeWidth={1.5} />
+            <div className="font-display text-xl tracking-tight text-stone-50" style={{ fontWeight: 800, fontStyle: 'italic' }}>
+              Brahm<span className="text-orange-500">storm</span>
+            </div>
+          </a>
+          <div className="flex items-center gap-6">
+            <a href="#what" onClick={(e) => { e.preventDefault(); document.getElementById('what')?.scrollIntoView({ behavior: 'smooth', block: 'start' }); }}
+              className="font-mono text-[11px] uppercase tracking-[0.2em] text-stone-400 hover:text-stone-50 transition-colors">{tL.nav_what}</a>
+            <a href="#how" onClick={(e) => { e.preventDefault(); document.getElementById('how')?.scrollIntoView({ behavior: 'smooth', block: 'start' }); }}
+              className="font-mono text-[11px] uppercase tracking-[0.2em] text-stone-400 hover:text-stone-50 transition-colors">{tL.nav_how}</a>
+            <a href="#why" onClick={(e) => { e.preventDefault(); document.getElementById('why')?.scrollIntoView({ behavior: 'smooth', block: 'start' }); }}
+              className="font-mono text-[11px] uppercase tracking-[0.2em] text-stone-400 hover:text-stone-50 transition-colors">{tL.nav_why}</a>
+            <div className="relative">
+              <button ref={langBtnRef} onClick={() => setLangMenuOpen(v => !v)}
+                aria-label={LANGUAGES.find(l => l.id === lang)?.full}
+                className="font-mono text-[11px] uppercase tracking-[0.2em] px-3 py-2.5 rounded-lg border border-stone-700 text-stone-300 hover:border-orange-500 hover:text-orange-400 transition-all active:scale-95 flex items-center gap-2">
+                <Globe className="w-3.5 h-3.5" />
+                <span>{LANGUAGES.find(l => l.id === lang)?.label}</span>
+                <ChevronDown className={`w-3 h-3 transition-transform ${langMenuOpen ? 'rotate-180' : ''}`} />
+              </button>
+              {langMenuOpen && (
+                <>
+                  <div className="fixed inset-0 z-[60]" onClick={() => setLangMenuOpen(false)} />
+                  <div className="absolute top-full right-0 mt-2 z-[70] bg-stone-900 border border-stone-700 min-w-[180px] shadow-2xl rounded-lg overflow-hidden">
+                    {LANGUAGES.map(l => (
+                      <button key={l.id} onClick={() => { setLang(l.id); setLangMenuOpen(false); }}
+                        className={`w-full text-left px-3 py-3 font-mono text-[11px] uppercase tracking-[0.2em] transition-all flex items-center gap-2 ${l.id === lang ? 'bg-orange-500/15 text-orange-400' : 'text-stone-300 hover:bg-stone-800 hover:text-stone-50'}`}>
+                        <span className="text-base">{l.flag}</span><span className="flex-1">{l.full}</span>
+                        {l.id === lang && <Check className="w-3.5 h-3.5 text-orange-500" />}
+                      </button>
+                    ))}
+                  </div>
+                </>
+              )}
+            </div>
+            <button onClick={openApp}
+              className="font-mono text-[11px] uppercase tracking-[0.2em] px-4 py-2.5 rounded-lg bg-orange-500 hover:bg-orange-400 text-stone-900 transition-all active:scale-95 flex items-center gap-2 glow-amber"
+              style={{ fontWeight: 700 }}>
+              {tL.nav_launch} <ArrowRight className="w-3.5 h-3.5" />
+            </button>
+          </div>
         </div>
       </nav>
 
@@ -300,7 +350,7 @@ function BrahmstormLanding({ onLaunch }) {
           HERO — dark, dramatic, bold but balanced typography
           Spacing follows 8px grid: pt-32 (128) · mb-8/16/24 stack
           ═══════════════════════════════════════════════════════════ */}
-      <section className="relative z-10 bg-stone-950 text-stone-50 flex flex-col justify-center px-6 md:px-12 lg:px-20 pt-24 pb-12 md:pt-28 md:pb-16 overflow-hidden">
+      <section className="relative z-10 bg-stone-950 text-stone-50 flex flex-col justify-center px-6 md:px-12 lg:px-20 pt-40 pb-12 md:pt-28 md:pb-16 overflow-hidden">
         {/* Atmospheric background photo */}
         <div className="absolute inset-0 z-0 pointer-events-none">
           <div className="absolute inset-0 bg-cover bg-center opacity-25"
@@ -331,11 +381,11 @@ function BrahmstormLanding({ onLaunch }) {
           {/* Top: FREE badge + descriptor (mb-12 = 64px) */}
           <div className={`flex flex-wrap items-center gap-3 mb-6 md:mb-8 reveal ${mounted ? 'in' : ''}`}
             style={{ transitionDelay: '0.1s' }}>
-            <span className="inline-flex items-center gap-1.5 bg-orange-500 text-stone-900 px-3 py-1.5 rounded-md font-mono text-xs uppercase tracking-[0.25em]"
+            <span className="hidden md:inline-flex items-center gap-1.5 bg-orange-500 text-stone-900 px-3 py-1.5 rounded-md font-mono text-xs uppercase tracking-[0.25em]"
               style={{ fontWeight: 700 }}>
               <Sparkles className="w-3 h-3" /> {tL.hero_badge_free}
             </span>
-            <span className="hidden sm:block w-8 h-px bg-stone-700" />
+            <span className="hidden md:block w-8 h-px bg-stone-700" />
             <span className="font-mono text-[11px] uppercase tracking-[0.3em] text-stone-400">
               {tL.hero_descriptor}
             </span>
@@ -4416,11 +4466,8 @@ Return ONLY this JSON, no preamble, no markdown:
           <div className="flex items-center gap-2 relative">
             <div className="relative">
               <button ref={langBtnRef} onClick={() => setLangMenuOpen(v => !v)}
-                aria-label={LANGUAGES.find(l => l.id === lang)?.full}
-                className="font-mono text-xs uppercase tracking-widest px-2.5 md:px-3 py-2 border border-stone-700 hover:border-orange-500 hover:text-orange-400 transition-all active:scale-95 flex items-center gap-2 rounded-lg">
-                <Globe className="w-3.5 h-3.5 hidden md:block" />
-                <span className="text-base leading-none md:hidden">{LANGUAGES.find(l => l.id === lang)?.flag}</span>
-                <span className="hidden md:inline">{LANGUAGES.find(l => l.id === lang)?.label}</span>
+                className="font-mono text-xs uppercase tracking-widest px-3 py-2 border border-stone-700 hover:border-orange-500 hover:text-orange-400 transition-all active:scale-95 flex items-center gap-2 rounded-lg">
+                <Globe className="w-3.5 h-3.5" /> {LANGUAGES.find(l => l.id === lang)?.label}
               </button>
               {langMenuOpen && langMenuPos && (
                 <>
@@ -4442,14 +4489,12 @@ Return ONLY this JSON, no preamble, no markdown:
               )}
             </div>
             <button onClick={() => setTipsOpen(true)}
-              aria-label={t.tips}
-              className="font-mono text-xs uppercase tracking-widest px-2.5 md:px-3 py-2 border border-stone-700 hover:border-orange-500 hover:text-orange-400 transition-all active:scale-95 flex items-center gap-2 rounded-lg">
-              <Lightbulb className="w-3.5 h-3.5" /> <span className="hidden md:inline">{t.tips}</span>
+              className="font-mono text-xs uppercase tracking-widest px-3 py-2 border border-stone-700 hover:border-orange-500 hover:text-orange-400 transition-all active:scale-95 flex items-center gap-2 rounded-lg">
+              <Lightbulb className="w-3.5 h-3.5" /> {t.tips}
             </button>
             <button onClick={() => setDrawerOpen(true)}
-              aria-label={`${t.favorites} · ${favoritos.length}`}
-              className="font-mono text-xs uppercase tracking-widest px-2.5 md:px-3 py-2 border border-stone-700 hover:border-orange-500 hover:text-orange-400 transition-all active:scale-95 flex items-center gap-2 rounded-lg">
-              <Archive className="w-3.5 h-3.5" /> <span className="hidden md:inline">{t.favorites} · </span>{favoritos.length}
+              className="font-mono text-xs uppercase tracking-widest px-3 py-2 border border-stone-700 hover:border-orange-500 hover:text-orange-400 transition-all active:scale-95 flex items-center gap-2 rounded-lg">
+              <Archive className="w-3.5 h-3.5" /> {t.favorites} · {favoritos.length}
             </button>
             <button onClick={() => setShortcutsOpen(true)} title={t.shortcuts_title}
               data-desktop-only="true"
