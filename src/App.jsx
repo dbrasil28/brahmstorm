@@ -116,7 +116,7 @@ function BrahmstormLanding({ onLaunch }) {
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
-  const [lang, setLang] = useState(detectLandingLang);
+  const [lang, setLang] = useState(detectLang);
   const [langMenuOpen, setLangMenuOpen] = useState(false);
   const langBtnRef = useRef(null);
   const tL = LANDING_UI[lang] || LANDING_UI.en;
@@ -1850,7 +1850,7 @@ const LANDING_UI = {
   },
 };
 
-function detectLandingLang() {
+function detectLang() {
   try {
     const saved = localStorage.getItem('bs:lang');
     if (saved && LANGUAGES.find(l => l.id === saved)) return saved;
@@ -3280,7 +3280,7 @@ async function copiarParaClipboard(texto) {
 // Main component
 // ═══════════════════════════════════════════════════════════════════
 function BrahmstormApp({ onBack } = {}) {
-  const [lang, setLang] = useState('en');
+  const [lang, setLang] = useState(detectLang);
   const [langMenuOpen, setLangMenuOpen] = useState(false);
   const langBtnRef = useRef(null);
   const [langMenuPos, setLangMenuPos] = useState(null);
@@ -3641,8 +3641,6 @@ function BrahmstormApp({ onBack } = {}) {
         const parsedH = JSON.parse(histRaw);
         if (Array.isArray(parsedH)) setHistorico(parsedH);
       }
-      const langRaw = localStorage.getItem('bs:lang');
-      if (langRaw && LANGUAGES.find(l => l.id === langRaw)) setLang(langRaw);
     } catch (e) {}
   }, []);
 
