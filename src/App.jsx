@@ -4759,8 +4759,17 @@ Return ONLY this JSON, no preamble, no markdown:
                 className="w-full bg-orange-500 hover:bg-orange-400 disabled:bg-stone-300 disabled:text-stone-500 text-stone-900 font-mono text-xs uppercase tracking-[0.2em] px-4 py-3 rounded-xl flex items-center justify-center gap-3 transition-all active:scale-[0.98] disabled:cursor-not-allowed">
                 {loadingPreencher ? <><Loader2 className="w-4 h-4 animate-spin" /> {t.interpreting}</> : <><Wand2 className="w-4 h-4" /> {t.fill_with_ai}</>}
               </button>
-              {errorMsg && errorMsg === t.err_interpret && (
-                <p className="font-mono text-[11px] text-red-600 text-center mt-3">{errorMsg}</p>
+              {errorMsg && (
+                <div className="font-mono text-[11px] text-red-600 text-center mt-3 flex items-center justify-center gap-2">
+                  {errorMsg === t.err_daily_limit ? (
+                    <>
+                      <AlertTriangle className="w-3 h-3 flex-shrink-0" />
+                      <span>{errorMsg} <strong className="font-mono">{formatTimeUntilReset(msUntilNextUTCMidnight())}</strong></span>
+                    </>
+                  ) : (
+                    <p>{errorMsg}</p>
+                  )}
+                </div>
               )}
             </div>
 
