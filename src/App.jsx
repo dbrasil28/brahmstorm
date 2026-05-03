@@ -3565,6 +3565,61 @@ function BrahmstormApp({ onBack } = {}) {
   const savedScrollRef = useRef(0);
   const outputRef = useRef(null);
   const blocksRef = useRef(null);
+  // Turnstile: render the widget once on mount; reuse via reset() for each
+  // AI call. Calling render() repeatedly on the same container silently
+  // breaks Turnstile, which is why non-owners hit verification_failed on
+  // their second generation.
+  const turnstileWidgetIdRef = useRef(null);
+  const turnstileTokenResolverRef = useRef(null);
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const sitekey = import.meta.env.VITE_TURNSTILE_SITE_KEY;
+    if (!sitekey) return;
+    let cancelled = false;
+    let pollId = null;
+    const tryRender = () => {
+      if (cancelled) return;
+      if (!window.turnstile) {
+        pollId = setTimeout(tryRender, 200);
+        return;
+      }
+      const container = document.getElementById('turnstile-container');
+      if (!container) return;
+      try {
+        turnstileWidgetIdRef.current = window.turnstile.render('#turnstile-container', {
+          sitekey,
+          size: 'invisible',
+          callback: (token) => {
+            const resolve = turnstileTokenResolverRef.current;
+            turnstileTokenResolverRef.current = null;
+            if (resolve) resolve(token || '');
+          },
+          'error-callback': () => {
+            const resolve = turnstileTokenResolverRef.current;
+            turnstileTokenResolverRef.current = null;
+            if (resolve) resolve('');
+          },
+          'expired-callback': () => {
+            // Token expired — next call will reset() to refresh.
+          },
+        });
+      } catch (e) {
+        console.warn('Turnstile render failed', e);
+      }
+    };
+    tryRender();
+    return () => {
+      cancelled = true;
+      if (pollId) clearTimeout(pollId);
+      try {
+        if (window.turnstile && turnstileWidgetIdRef.current) {
+          window.turnstile.remove(turnstileWidgetIdRef.current);
+        }
+      } catch (e) {}
+      turnstileWidgetIdRef.current = null;
+      turnstileTokenResolverRef.current = null;
+    };
+  }, []);
   useEffect(() => {
     const anySheetOpen = mobileSheetKey || drawerOpen || tipsOpen;
     if (anySheetOpen) {
@@ -3895,20 +3950,29 @@ function BrahmstormApp({ onBack } = {}) {
     const useProxy = typeof window !== 'undefined' && window.location.hostname !== 'localhost';
 
     if (useProxy) {
+      // Get a fresh Turnstile token from the persistent widget rendered on mount.
+      // Each token is one-time-use, so we reset() before every call to refresh.
       let turnstileToken = '';
-      try {
-        if (window.turnstile && import.meta.env.VITE_TURNSTILE_SITE_KEY) {
-          turnstileToken = await new Promise((resolve, reject) => {
-            window.turnstile.render('#turnstile-container', {
-              sitekey: import.meta.env.VITE_TURNSTILE_SITE_KEY,
-              callback: (token) => resolve(token),
-              'error-callback': () => reject(new Error('turnstile-failed')),
-            });
-            setTimeout(() => resolve(''), 5000);
-          });
-        }
-      } catch (e) {
-        console.warn('Turnstile failed', e);
+      if (window.turnstile && turnstileWidgetIdRef.current && import.meta.env.VITE_TURNSTILE_SITE_KEY) {
+        turnstileToken = await new Promise((resolve) => {
+          turnstileTokenResolverRef.current = resolve;
+          try {
+            window.turnstile.reset(turnstileWidgetIdRef.current);
+          } catch (e) {
+            turnstileTokenResolverRef.current = null;
+            resolve('');
+            return;
+          }
+          // Safety timeout — if Turnstile doesn't fire callback within 8s,
+          // proceed with empty token (server will reject with verification_failed
+          // if turnstile is required, surfacing the issue rather than hanging).
+          setTimeout(() => {
+            if (turnstileTokenResolverRef.current === resolve) {
+              turnstileTokenResolverRef.current = null;
+              resolve('');
+            }
+          }, 8000);
+        });
       }
 
       const fingerprint = btoa(
