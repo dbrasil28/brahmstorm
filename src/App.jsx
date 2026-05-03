@@ -1189,6 +1189,16 @@ const LANGUAGES = [
   { id: 'fr', label: 'FR', full: 'Français',   flag: '🇫🇷' },
 ];
 
+// Full English names of each UI language — used inside AI system prompts so the
+// AI knows which language to write natural-language fields in (regardless of
+// what language the user typed their input in).
+const LANG_NAMES = {
+  en: 'English',
+  pt: 'Brazilian Portuguese',
+  es: 'Spanish',
+  fr: 'French',
+};
+
 // Landing-page translations. Auto-detected from browser locale on first
 // visit, then persisted to bs:lang (shared with the studio app).
 // Strings are added incrementally — sections still in en are placeholders.
@@ -3980,6 +3990,8 @@ function BrahmstormApp({ onBack } = {}) {
 USER INSPIRATION (any language):
 "${briefLivre.trim()}"
 
+USER UI LANGUAGE: ${LANG_NAMES[lang] || 'English'} — write all natural-language fields ("tema") in this language regardless of what language the user typed their inspiration in.
+
 VOCABULARY (use EXACT English keys):
 generos: ${GENEROS_FLAT.join(' | ')}
 moods: ${MOODS_KEYS.join(' | ')}
@@ -3991,7 +4003,7 @@ tempos: ${TEMPO_KEYS_FLAT.join(' | ')}
 RULES:
 1. Use ONLY exact strings from lists.
 2. 1-3 items per field, up to 5 for instrumentos.
-3. "tema": 1 sentence (max 20 words) in user's language.
+3. "tema": 1 sentence (max 20 words) in ${LANG_NAMES[lang] || 'English'}.
 
 Return ONLY JSON, no markdown:
 {"generos":[],"moods":[],"instrumentos":[],"vozes":[],"eras":[],"producoes":[],"tempos":[],"tema":""}`;
@@ -4033,6 +4045,8 @@ Return ONLY JSON, no markdown:
 INSPIRATION:
 "${briefLivre.trim()}"
 
+USER UI LANGUAGE: ${LANG_NAMES[lang] || 'English'} — write all natural-language fields ("tema", "elementos", "refraoChave") in this language regardless of what language the user typed their inspiration in.
+
 VOCABULARY (EXACT English keys):
 generos: ${GENEROS_FLAT.join(' | ')}
 moods: ${MOODS_KEYS.join(' | ')}
@@ -4048,7 +4062,7 @@ tamanhoLetra IDs: ${TAMANHOS_LETRA.map(tm => tm.id).join(' | ')}
 RULES:
 1. Use ONLY exact strings.
 2. 1-3 items per field.
-3. "tema", "elementos", "refraoChave" in user's language.
+3. "tema", "elementos", "refraoChave" in ${LANG_NAMES[lang] || 'English'}.
 4. "tamanhoLetra": pick by density.
 
 Return ONLY JSON:
@@ -4106,6 +4120,7 @@ Return ONLY JSON:
     const systemPrompt = `You are a music director. The user provided a REFERENCE (a song name, artist, or full lyrics) to use as a sound/style compass — NOT to copy. Your job is to extract the underlying patterns and translate them into our fixed Suno vocabulary.
 
 REFERENCE TYPE DETECTED: ${tipo}
+USER UI LANGUAGE: ${LANG_NAMES[lang] || 'English'} — write the "message" field in this language regardless of what language the reference text is in.
 ${isLyricsTab ? 'CONTEXT: user is working on LYRICS — focus on lyrical patterns (perspective, structure, meter, rhyme, mood, imagery).' : 'CONTEXT: user is working on PROMPT — focus on sonic patterns (genre, mood, instruments, vocals, era, production, tempo).'}
 
 REFERENCE CONTENT:
@@ -4142,7 +4157,7 @@ metricas: ${METRICAS_KEYS.join(' | ')}` : ''}
 Return ONLY this JSON, no preamble:
 {
   "confidence": "high" | "medium" | "low",
-  "message": "1-2 sentence honest summary of what you recognized (in user's language)",
+  "message": "1-2 sentence honest summary of what you recognized — write in ${LANG_NAMES[lang] || 'English'}",
   "fields": {
     "generos": [], "moods": [], "instrumentos": [], "vozes": [], "eras": [],
     "producoes": [], "tempos": [], "duracoes": [], "idiomas": []${isLyricsTab ? ',\n    "perspectivas": [], "estruturas": [], "rimas": [], "metricas": []' : ''}
