@@ -2596,38 +2596,126 @@ const INSTR_LABELS = {
     'radio static':'parasites','hall reverb':'réverb','old film samples':'samples vieux films','vinyl crackle':'craquement vinyle' },
 };
 
-const VOZES_KEYS = ['crystal auto-tune','gospel choir','male-female duet','emotional falsetto','three-part harmonies',
-  'cadenced rap flow','no vocals (instrumental)','reverb whispers','robotic vocoder','ethereal high female voice',
-  'angelic child voice','deep intimate male voice','raspy bar voice',
-  'breathy intimate vocals','soulful belt','operatic soprano','smoky jazz vocals',
-  'aggressive scream','folk storyteller','melodic chant','distorted lo-fi vocals',
-  'spoken word'];
+const VOZES_CATS_KEYS = {
+  female: ['female pop diva','female ethereal high','female soulful belt','female operatic soprano',
+    'female smoky jazz','female breathy intimate','female folk storyteller','female aggressive scream'],
+  male: ['male intimate baritone','male raspy bar','male emotional falsetto','male folk storyteller',
+    'male cadenced rap flow','male crooner','male aggressive scream','male spoken word'],
+  hybrid: ['male-female duet','three-part harmonies','gospel choir','crystal auto-tune',
+    'robotic vocoder','reverb whispers','melodic chant','distorted lo-fi vocals',
+    'angelic child voice','no vocals (instrumental)'],
+};
+
+// Single source of truth — flattened from the categorized list above.
+const VOZES_KEYS = [
+  ...VOZES_CATS_KEYS.female,
+  ...VOZES_CATS_KEYS.male,
+  ...VOZES_CATS_KEYS.hybrid,
+];
+
+// Legacy keys from older versions of the UI map to the nearest new
+// categorized key, so saved favorites / cached AI fills with old keys
+// still resolve to a valid selection. Ambiguous gender-less keys
+// (aggressive scream, folk storyteller) default to male.
+const VOZES_LEGACY_MAP = {
+  'ethereal high female voice': 'female ethereal high',
+  'deep intimate male voice':   'male intimate baritone',
+  'breathy intimate vocals':    'female breathy intimate',
+  'soulful belt':               'female soulful belt',
+  'operatic soprano':           'female operatic soprano',
+  'smoky jazz vocals':          'female smoky jazz',
+  'cadenced rap flow':          'male cadenced rap flow',
+  'emotional falsetto':         'male emotional falsetto',
+  'raspy bar voice':            'male raspy bar',
+  'aggressive scream':          'male aggressive scream',
+  'folk storyteller':           'male folk storyteller',
+  'spoken word':                'male spoken word',
+};
+
+function migrateVozesArray(arr) {
+  if (!Array.isArray(arr)) return [];
+  const seen = new Set();
+  const out = [];
+  for (const k of arr) {
+    const mapped = VOZES_LEGACY_MAP[k] || k;
+    if (!seen.has(mapped) && VOZES_KEYS.includes(mapped)) {
+      seen.add(mapped);
+      out.push(mapped);
+    }
+  }
+  return out;
+}
 
 const VOZES_LABELS = {
-  pt: { 'crystal auto-tune':'auto-tune cristalino','gospel choir':'coro gospel','male-female duet':'dueto masculino e feminino',
-    'emotional falsetto':'falsete emocionado','three-part harmonies':'harmonias em três vozes','cadenced rap flow':'rap cadenciado',
-    'no vocals (instrumental)':'sem vocais','reverb whispers':'sussurros com reverb','robotic vocoder':'vocoder robótico',
-    'ethereal high female voice':'voz feminina etérea','angelic child voice':'voz infantil angelical',
-    'deep intimate male voice':'voz masculina grave','raspy bar voice':'voz rouca de bar',
-    'breathy intimate vocals':'vocal sussurrado íntimo','soulful belt':'belt soul','operatic soprano':'soprano operístico',
-    'smoky jazz vocals':'vocal jazz fumegante','aggressive scream':'scream agressivo','folk storyteller':'contador folk',
-    'melodic chant':'cântico melódico','distorted lo-fi vocals':'vocal lo-fi distorcido','spoken word':'spoken word' },
-  es: { 'crystal auto-tune':'auto-tune cristalino','gospel choir':'coro gospel','male-female duet':'dúo',
-    'emotional falsetto':'falsete emotivo','three-part harmonies':'armonías a tres voces','cadenced rap flow':'flow rap',
-    'no vocals (instrumental)':'sin voces','reverb whispers':'susurros','robotic vocoder':'vocoder',
-    'ethereal high female voice':'voz femenina etérea','angelic child voice':'voz infantil',
-    'deep intimate male voice':'voz masculina grave','raspy bar voice':'voz ronca',
-    'breathy intimate vocals':'voz susurrada íntima','soulful belt':'belt soul','operatic soprano':'soprano operístico',
-    'smoky jazz vocals':'voz jazz humeante','aggressive scream':'grito agresivo','folk storyteller':'narrador folk',
-    'melodic chant':'cántico melódico','distorted lo-fi vocals':'voz lo-fi distorsionada','spoken word':'palabra hablada' },
-  fr: { 'crystal auto-tune':'auto-tune cristallin','gospel choir':'chœur gospel','male-female duet':'duo',
-    'emotional falsetto':'fausset émotionnel','three-part harmonies':'harmonies à trois voix','cadenced rap flow':'flow rap',
-    'no vocals (instrumental)':'sans voix','reverb whispers':'chuchotements','robotic vocoder':'vocodeur',
-    'ethereal high female voice':'voix féminine éthérée','angelic child voice':'voix enfantine',
-    'deep intimate male voice':'voix masculine grave','raspy bar voice':'voix éraillée',
-    'breathy intimate vocals':'voix soufflée intime','soulful belt':'belt soul','operatic soprano':'soprano opératique',
-    'smoky jazz vocals':'voix jazz fumée','aggressive scream':'cri agressif','folk storyteller':'conteur folk',
-    'melodic chant':'chant mélodique','distorted lo-fi vocals':'voix lo-fi distordue','spoken word':'parole parlée' },
+  pt: {
+    // categorized keys (current)
+    'female pop diva':'diva pop','female ethereal high':'voz feminina etérea aguda',
+    'female soulful belt':'belt soul feminino','female operatic soprano':'soprano operístico',
+    'female smoky jazz':'vocal jazz fumegante','female breathy intimate':'vocal feminino sussurrado',
+    'female folk storyteller':'contadora folk','female aggressive scream':'scream agressivo feminino',
+    'male intimate baritone':'barítono íntimo','male raspy bar':'voz rouca de bar',
+    'male emotional falsetto':'falsete masculino emocionado','male folk storyteller':'contador folk',
+    'male cadenced rap flow':'rap cadenciado','male crooner':'crooner',
+    'male aggressive scream':'scream agressivo masculino','male spoken word':'spoken word masculino',
+    'male-female duet':'dueto masculino e feminino','three-part harmonies':'harmonias em três vozes',
+    'gospel choir':'coro gospel','crystal auto-tune':'auto-tune cristalino',
+    'robotic vocoder':'vocoder robótico','reverb whispers':'sussurros com reverb',
+    'melodic chant':'cântico melódico','distorted lo-fi vocals':'vocal lo-fi distorcido',
+    'angelic child voice':'voz infantil angelical','no vocals (instrumental)':'sem vocais',
+    // legacy keys (fallback for any stored data not yet migrated)
+    'ethereal high female voice':'voz feminina etérea','deep intimate male voice':'voz masculina grave',
+    'breathy intimate vocals':'vocal sussurrado íntimo','soulful belt':'belt soul',
+    'operatic soprano':'soprano operístico','smoky jazz vocals':'vocal jazz fumegante',
+    'cadenced rap flow':'rap cadenciado','emotional falsetto':'falsete emocionado',
+    'raspy bar voice':'voz rouca de bar','aggressive scream':'scream agressivo',
+    'folk storyteller':'contador folk','spoken word':'spoken word',
+  },
+  es: {
+    // categorized keys (current)
+    'female pop diva':'diva pop','female ethereal high':'voz femenina etérea aguda',
+    'female soulful belt':'belt soul femenino','female operatic soprano':'soprano operístico',
+    'female smoky jazz':'voz jazz humeante','female breathy intimate':'voz femenina susurrada',
+    'female folk storyteller':'narradora folk','female aggressive scream':'grito agresivo femenino',
+    'male intimate baritone':'barítono íntimo','male raspy bar':'voz masculina ronca',
+    'male emotional falsetto':'falsete masculino emotivo','male folk storyteller':'narrador folk',
+    'male cadenced rap flow':'flow rap masculino','male crooner':'crooner',
+    'male aggressive scream':'grito agresivo masculino','male spoken word':'palabra hablada masculina',
+    'male-female duet':'dúo','three-part harmonies':'armonías a tres voces',
+    'gospel choir':'coro gospel','crystal auto-tune':'auto-tune cristalino',
+    'robotic vocoder':'vocoder','reverb whispers':'susurros',
+    'melodic chant':'cántico melódico','distorted lo-fi vocals':'voz lo-fi distorsionada',
+    'angelic child voice':'voz infantil','no vocals (instrumental)':'sin voces',
+    // legacy keys (fallback)
+    'ethereal high female voice':'voz femenina etérea','deep intimate male voice':'voz masculina grave',
+    'breathy intimate vocals':'voz susurrada íntima','soulful belt':'belt soul',
+    'operatic soprano':'soprano operístico','smoky jazz vocals':'voz jazz humeante',
+    'cadenced rap flow':'flow rap','emotional falsetto':'falsete emotivo',
+    'raspy bar voice':'voz ronca','aggressive scream':'grito agresivo',
+    'folk storyteller':'narrador folk','spoken word':'palabra hablada',
+  },
+  fr: {
+    // categorized keys (current)
+    'female pop diva':'diva pop','female ethereal high':'voix féminine éthérée aiguë',
+    'female soulful belt':'belt soul féminin','female operatic soprano':'soprano opératique',
+    'female smoky jazz':'voix jazz fumée','female breathy intimate':'voix féminine soufflée',
+    'female folk storyteller':'conteuse folk','female aggressive scream':'cri agressif féminin',
+    'male intimate baritone':'baryton intime','male raspy bar':'voix masculine éraillée',
+    'male emotional falsetto':'fausset masculin émotionnel','male folk storyteller':'conteur folk',
+    'male cadenced rap flow':'flow rap masculin','male crooner':'crooner',
+    'male aggressive scream':'cri agressif masculin','male spoken word':'parole parlée masculine',
+    'male-female duet':'duo','three-part harmonies':'harmonies à trois voix',
+    'gospel choir':'chœur gospel','crystal auto-tune':'auto-tune cristallin',
+    'robotic vocoder':'vocodeur','reverb whispers':'chuchotements',
+    'melodic chant':'chant mélodique','distorted lo-fi vocals':'voix lo-fi distordue',
+    'angelic child voice':'voix enfantine','no vocals (instrumental)':'sans voix',
+    // legacy keys (fallback)
+    'ethereal high female voice':'voix féminine éthérée','deep intimate male voice':'voix masculine grave',
+    'breathy intimate vocals':'voix soufflée intime','soulful belt':'belt soul',
+    'operatic soprano':'soprano opératique','smoky jazz vocals':'voix jazz fumée',
+    'cadenced rap flow':'flow rap','emotional falsetto':'fausset émotionnel',
+    'raspy bar voice':'voix éraillée','aggressive scream':'cri agressif',
+    'folk storyteller':'conteur folk','spoken word':'parole parlée',
+  },
 };
 
 const ERAS_KEYS = ['psychedelic 60s','warm analog 70s','synthesized 80s','dirty lo-fi 90s','digital 2000s',
@@ -2662,16 +2750,6 @@ const PROD_LABELS = {
     'pristine hi-fi':'hi-fi cristallin','lo-fi cassette tape':'lo-fi cassette','mastered for vinyl':'masterisé vinyle',
     'dry minimalist':'minimaliste sec','shoegaze wall of sound':'mur shoegaze','punchy compressed':'punchy compressé',
     'raw live in studio':'live brut','dirty and distorted':'sale et distordu' },
-};
-
-const VOZES_CATS_KEYS = {
-  female: ['female pop diva','female ethereal high','female soulful belt','female operatic soprano',
-    'female smoky jazz','female breathy intimate','female folk storyteller','female aggressive scream'],
-  male: ['male intimate baritone','male raspy bar','male emotional falsetto','male folk storyteller',
-    'male cadenced rap flow','male crooner','male aggressive scream','male spoken word'],
-  hybrid: ['male-female duet','three-part harmonies','gospel choir','crystal auto-tune',
-    'robotic vocoder','reverb whispers','melodic chant','distorted lo-fi vocals',
-    'angelic child voice','no vocals (instrumental)'],
 };
 
 const VOZES_CAT_LABELS = {
@@ -3631,7 +3709,7 @@ function BrahmstormApp({ onBack } = {}) {
     setGeneros((preset.generos || []).filter(x => GENEROS_FLAT.includes(x)).slice(0, MULTI_LIMITS.generos));
     setMoods((preset.moods || []).filter(x => MOODS_KEYS.includes(x)).slice(0, MULTI_LIMITS.moods));
     setInstrumentos((preset.instrumentos || []).filter(x => INSTRUMENTOS_FLAT.includes(x)).slice(0, MULTI_LIMITS.instrumentos));
-    setVozes((preset.vozes || []).filter(x => VOZES_KEYS.includes(x)).slice(0, MULTI_LIMITS.vozes));
+    setVozes(migrateVozesArray(preset.vozes).slice(0, MULTI_LIMITS.vozes));
     setEras((preset.eras || []).filter(x => ERAS_KEYS.includes(x)).slice(0, MULTI_LIMITS.eras));
     setProducoes((preset.producoes || []).filter(x => PRODUCOES_KEYS.includes(x)).slice(0, MULTI_LIMITS.producoes));
     setTempos((preset.tempos || []).filter(x => TEMPO_KEYS_FLAT.includes(x)).slice(0, 1));
@@ -3923,7 +4001,7 @@ Return ONLY JSON, no markdown:
       setGeneros((p.generos || []).filter(x => GENEROS_FLAT.includes(x)));
       setMoods((p.moods || []).filter(x => MOODS_KEYS.includes(x)));
       setInstrumentos((p.instrumentos || []).filter(x => INSTRUMENTOS_FLAT.includes(x)));
-      setVozes((p.vozes || []).filter(x => VOZES_KEYS.includes(x)));
+      setVozes(migrateVozesArray(p.vozes));
       setEras((p.eras || []).filter(x => ERAS_KEYS.includes(x)));
       setProducoes((p.producoes || []).filter(x => PRODUCOES_KEYS.includes(x)));
       setTempos((p.tempos || []).filter(x => TEMPO_KEYS_FLAT.includes(x)).slice(0, 1));
@@ -4081,7 +4159,7 @@ Return ONLY this JSON, no preamble:
       if (Array.isArray(f.generos))      setGeneros(f.generos.filter(x => GENEROS_FLAT.includes(x)));
       if (Array.isArray(f.moods))        setMoods(f.moods.filter(x => MOODS_KEYS.includes(x)));
       if (Array.isArray(f.instrumentos)) setInstrumentos(f.instrumentos.filter(x => INSTRUMENTOS_FLAT.includes(x)));
-      if (Array.isArray(f.vozes))        setVozes(f.vozes.filter(x => VOZES_KEYS.includes(x)));
+      if (Array.isArray(f.vozes))        setVozes(migrateVozesArray(f.vozes));
       if (Array.isArray(f.eras))         setEras(f.eras.filter(x => ERAS_KEYS.includes(x)));
       if (Array.isArray(f.producoes))    setProducoes(f.producoes.filter(x => PRODUCOES_KEYS.includes(x)));
       if (Array.isArray(f.tempos))       setTempos(f.tempos.filter(x => TEMPO_KEYS_FLAT.includes(x)).slice(0, 1));
