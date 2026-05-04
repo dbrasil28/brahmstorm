@@ -430,7 +430,7 @@ function BrahmstormLanding({ onLaunch }) {
             style={{ transitionDelay: '0.56s' }}>
             <HeroStat number="5" label={tL.hero_stat_per_day} />
             <HeroStat number="0" label={tL.hero_stat_signup} />
-            <HeroStat number="4" label={tL.hero_stat_langs} />
+            <HeroStat number="24" label={tL.hero_stat_langs} />
             <HeroStat number="∞" label={tL.hero_stat_creativity} subtle />
           </div>
         </div>
@@ -1218,7 +1218,7 @@ const LANDING_UI = {
     hero_cta_see: 'see how it works',
     hero_stat_per_day: 'generations / day',
     hero_stat_signup: 'signup required',
-    hero_stat_langs: 'languages',
+    hero_stat_langs: 'lyric languages',
     hero_stat_creativity: 'creativity',
     hero_scroll: 'scroll',
     problem_photo_caption: 'the gear was simpler. the rules, hidden.',
@@ -1395,7 +1395,7 @@ const LANDING_UI = {
     hero_cta_see: 'veja como funciona',
     hero_stat_per_day: 'gerações / dia',
     hero_stat_signup: 'cadastro necessário',
-    hero_stat_langs: 'idiomas',
+    hero_stat_langs: 'idiomas pra letras',
     hero_stat_creativity: 'criatividade',
     hero_scroll: 'role',
     problem_photo_caption: 'os equipamentos eram mais simples. as regras, escondidas.',
@@ -1572,7 +1572,7 @@ const LANDING_UI = {
     hero_cta_see: 'mira cómo funciona',
     hero_stat_per_day: 'generaciones / día',
     hero_stat_signup: 'registros requeridos',
-    hero_stat_langs: 'idiomas',
+    hero_stat_langs: 'idiomas para letras',
     hero_stat_creativity: 'creatividad',
     hero_scroll: 'desliza',
     problem_photo_caption: 'el equipo era más simple. las reglas, ocultas.',
@@ -1749,7 +1749,7 @@ const LANDING_UI = {
     hero_cta_see: 'voir comment ça marche',
     hero_stat_per_day: 'générations / jour',
     hero_stat_signup: 'inscription requise',
-    hero_stat_langs: 'langues',
+    hero_stat_langs: 'langues pour paroles',
     hero_stat_creativity: 'créativité',
     hero_scroll: 'défile',
     problem_photo_caption: 'le matériel était plus simple. les règles, cachées.',
