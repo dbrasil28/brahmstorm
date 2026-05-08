@@ -3469,6 +3469,11 @@ function BrahmstormApp({ onBack } = {}) {
   const [moodsLetra, setMoodsLetra] = useState([]);
   const [erasLetra, setErasLetra] = useState([]);
   const [idiomasLetra, setIdiomasLetra] = useState([]);
+  // Defensive: a song is sung in exactly one language. If older state from a
+  // pre-fix session ever has >1 entry, snap back to the first valid one.
+  useEffect(() => {
+    if (idiomasLetra.length > 1) setIdiomasLetra(idiomasLetra.slice(0, 1));
+  }, [idiomasLetra]);
   const [duracoesLetra, setDuracoesLetra] = useState([]);
   const [temaLetra, setTemaLetra] = useState('');
 
