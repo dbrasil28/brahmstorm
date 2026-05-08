@@ -4126,8 +4126,9 @@ tamanhoLetra IDs: ${TAMANHOS_LETRA.map(tm => tm.id).join(' | ')}
 RULES:
 1. Use ONLY exact strings.
 2. 1-3 items per field.
-3. "tema", "elementos", "refraoChave" in ${LANG_NAMES[lang] || 'English'}.
-4. "tamanhoLetra": pick by density.
+3. "idiomas": pick EXACTLY ONE — the language the song's lyrics will be SUNG in (the user's stated intention; do not also include the UI language).
+4. "tema", "elementos", "refraoChave" in ${LANG_NAMES[lang] || 'English'}.
+5. "tamanhoLetra": pick by density.
 
 Return ONLY JSON:
 {"generos":[],"moods":[],"eras":[],"perspectivas":[],"estruturas":[],"rimas":[],"duracoes":[],"idiomas":[],"metricas":[],"tamanhoLetra":"media","tema":"","elementos":"","refraoChave":""}`;
@@ -4142,7 +4143,9 @@ Return ONLY JSON:
       setRimas((p.rimas || []).filter(x => RIMAS_KEYS.includes(x)).slice(0, 1));
       setDuracoes((p.duracoes || []).filter(x => DURACOES_KEYS.includes(x)));
       setMetricas((p.metricas || []).filter(x => METRICAS_KEYS.includes(x)).slice(0, 1));
-      const idsOk = (p.idiomas || []).filter(x => IDIOMAS_KEYS.includes(x));
+      // A song is sung in exactly one language. AI sometimes returns both
+      // the user-input language and the UI language — keep only the first.
+      const idsOk = (p.idiomas || []).filter(x => IDIOMAS_KEYS.includes(x)).slice(0, 1);
       setIdiomas(idsOk);
       if (p.tema) setTema(p.tema);
       if (p.elementos) setElementos(p.elementos);
@@ -4304,6 +4307,27 @@ Return ONLY JSON:
     setLoadingPrompt(true); setLoadingKind('album'); setErrorMsg(''); setAiVariantsKind('album');
     const stopPhases = startPhaseCycle(t.phases_album);
     try {
+      // Collect titles from past album/lyrics-album generations so the AI knows
+      // not to repeat them. Without this it converges on the same set every call.
+      const previousAlbumTitles = promptGenerations
+        .filter(g => g.kind === 'album')
+        .flatMap(g => (g.items || []).map(v => v && v.titulo).filter(Boolean))
+        .slice(0, 30);
+      const avoidBlock = previousAlbumTitles.length
+        ? `\nALREADY-GENERATED TITLES IN THIS SESSION (do NOT reuse, do NOT use close variations):\n${previousAlbumTitles.map(s => `- ${s}`).join('\n')}\n`
+        : '';
+      // Random creative angle nudges the AI toward a different shape every call.
+      const angles = [
+        'lean into the after-midnight hours of the album arc',
+        'frame this EP around motion (commute, drive, train)',
+        'frame this EP around a single room across time',
+        'frame this EP around weather shifts and seasonal mood',
+        'frame this EP as overheard letters or voicemails',
+        'frame this EP around objects (a guitar, a postcard, a key)',
+        'lean into pre-dawn quiet versus mid-day intensity',
+        'frame this EP as a single conversation broken across 5 songs',
+      ];
+      const angle = angles[Math.floor(Math.random() * angles.length)];
       const brief = `You are a music director designing a 5-track cohesive EP/album. All tracks share the same SONIC UNIVERSE (genre, vocals, production, era) but each track has a distinct emotional arc, BPM, and lyrical theme — like tracks 1-5 of a real album.
 
 Think of it as: same band, same producer, same studio session, but 5 different songs with different roles in the album narrative (opener, single, ballad, peak, closer).
@@ -4316,11 +4340,14 @@ STRICT RULES:
 - DO NOT mention real artists
 - DO NOT include lyrics
 - Write everything in ENGLISH
+- Track titles MUST be original — never reuse generic placeholders like "The Confession", "Peak Moment", "Slow Fade"
 
+CREATIVE ANGLE FOR THIS EP: ${angle}
+${avoidBlock}
 User brief (the sonic universe):
 ${promptComposto}
 
-Generate 5 tracks. Each title should hint at its role in the album (e.g. "Opening Statement", "Late Night Single", "The Confession", "Peak Moment", "Slow Fade").
+Generate 5 tracks. Each title should be original, evocative, and hint at its role in the album.
 
 Return ONLY JSON:
 {"variacoes":[{"titulo":"track 1 · role hint","prompt":"..."},{"titulo":"track 2 · role hint","prompt":"..."},{"titulo":"track 3 · role hint","prompt":"..."},{"titulo":"track 4 · role hint","prompt":"..."},{"titulo":"track 5 · role hint","prompt":"..."}]}`;
@@ -4429,8 +4456,18 @@ The TITLE line is for our app to display the song name — it will not be sent t
     const stopPhases = startPhaseCycle(t.phases_letras_album);
     const tc = TAMANHOS_LETRA.find(x => x.id === tamanhoLetra) || TAMANHOS_LETRA[2];
     const targetIdiomas = idiomas.length ? idiomas.join(' / ') : 'Brazilian Portuguese';
+    // Collect titles from past EP-lyric generations so the AI doesn't repeat
+    // them when the user re-rolls with the same brief.
+    const previousAlbumTitles = lyricsGenerations
+      .filter(g => g.kind === 'letrasAlbum')
+      .flatMap(g => (g.items || []).map(v => v && v.titulo).filter(Boolean))
+      .slice(0, 30);
+    const avoidBlock = previousAlbumTitles.length
+      ? `\nALREADY-GENERATED TITLES IN THIS SESSION (do NOT reuse, do NOT use close variations):\n${previousAlbumTitles.map(s => `- ${s}`).join('\n')}\n`
+      : '';
     try {
       const brief = `You are a songwriter writing the LYRICS for a 5-track cohesive EP. The user has set a sonic universe and a thematic core. Write 5 ORIGINAL songs that share the same emotional/conceptual world but explore DIFFERENT facets of it — like an album narrative arc.
+${avoidBlock}
 
 ━━━ CRITICAL: VARY THE SUBJECT MATTER ━━━
 The 5 tracks must NOT repeat the same topic. They share the same UNIVERSE but each song looks at it from a DIFFERENT angle, character, time period, or perspective.
