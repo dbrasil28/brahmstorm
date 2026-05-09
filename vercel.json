@@ -3,6 +3,8 @@
     { "source": "/blog", "destination": "https://brahmstorm-blog.vercel.app/blog" },
     { "source": "/blog/", "destination": "https://brahmstorm-blog.vercel.app/blog/" },
     { "source": "/blog/:path*/", "destination": "https://brahmstorm-blog.vercel.app/blog/:path*/" },
-    { "source": "/blog/:path*", "destination": "https://brahmstorm-blog.vercel.app/blog/:path*" }
+    { "source": "/blog/:path*", "destination": "https://brahmstorm-blog.vercel.app/blog/:path*" },
+    { "source": "/cms", "destination": "https://brahmstorm-cms.vercel.app/cms" },
+    { "source": "/cms/:path*", "destination": "https://brahmstorm-cms.vercel.app/cms/:path*" }
   ]
 }
