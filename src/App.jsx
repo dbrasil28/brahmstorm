@@ -3054,6 +3054,63 @@ const MULTI_LIMITS = {
   mics: 2,         // mic combinations are usually 1-2
 };
 
+// ─── Visual grouping for the configuration blocks ──────────────────────────
+// 3 "families" so the user can scan groups at a glance when many blocks
+// are open. Each block carries a 3px left-edge stripe in its family color
+// and tints its count badge accordingly; the rest of the visual stays
+// neutral so the brand identity isn't fragmented.
+//
+//   sound  — orange-500  — sonic palette (genre, mood, instruments, era,
+//                          production, tempo, drum machines, synths, mics,
+//                          negative tags)
+//   voice  — amber-600   — vocal performance (the vocals block)
+//   lyric  — rose-600    — words & structure (theme, hook, elements, size,
+//                          verse count, meter, perspective, structure,
+//                          rhyme, language)
+const BLOCK_FAMILIES = {
+  // Producer tab
+  genero: 'sound', mood: 'sound', instr: 'sound', voz: 'voice',
+  era: 'sound', prod: 'sound', tempo: 'sound', tema: 'lyric', negativos: 'sound',
+  // Advanced sub-tab
+  drumMachines: 'sound', synths: 'sound', mics: 'sound',
+  // Lyrics tab
+  ltema: 'lyric', lmood: 'lyric', lgen: 'lyric', ltam: 'lyric',
+  lcount: 'lyric', lmetr: 'lyric', persp: 'lyric', estr: 'lyric',
+  rima: 'lyric', lera: 'lyric', lidi: 'lyric', elem: 'lyric', refrao: 'lyric',
+};
+
+// All classes are listed as full strings so Tailwind's JIT picks them up.
+// Families currently all share the same orange treatment — the structural
+// hook (BLOCK_FAMILIES + getBlockFamily) stays in place so per-family
+// theming can be reintroduced by swapping these tokens later.
+const FAMILY_STYLES = {
+  sound: {
+    borderL: 'border-l-[5px] border-l-orange-500',
+    sheetTop: 'border-t-[5px] border-t-orange-500',
+    borderActive: 'border-orange-500/30',
+    badge: 'bg-orange-500 text-stone-900',
+    rule: 'text-orange-700',
+  },
+  voice: {
+    borderL: 'border-l-[5px] border-l-orange-500',
+    sheetTop: 'border-t-[5px] border-t-orange-500',
+    borderActive: 'border-orange-500/30',
+    badge: 'bg-orange-500 text-stone-900',
+    rule: 'text-orange-700',
+  },
+  lyric: {
+    borderL: 'border-l-[5px] border-l-orange-500',
+    sheetTop: 'border-t-[5px] border-t-orange-500',
+    borderActive: 'border-orange-500/30',
+    badge: 'bg-orange-500 text-stone-900',
+    rule: 'text-orange-700',
+  },
+};
+
+function getBlockFamily(keyId) {
+  return BLOCK_FAMILIES[keyId] || 'sound';
+}
+
 const TAMANHOS_LETRA = [
   { id: 'micro', chars: 250,  versos: 8,  refroes: 0 },
   { id: 'curta', chars: 500,  versos: 4,  refroes: 1 },
@@ -5723,11 +5780,11 @@ Return ONLY this JSON, no preamble, no markdown:
             style={{ position: 'absolute', left: 0, right: 0, bottom: 0, height: '85dvh', maxHeight: '85vh' }}
             className="bg-stone-100 rounded-t-3xl border-t border-stone-300 flex flex-col sheet-up shadow-2xl">
             <div className="flex justify-center pt-2 pb-1 flex-shrink-0"><div className="w-10 h-1 rounded-full bg-stone-400/60" /></div>
-            <div className="flex items-center justify-between gap-3 px-5 py-3 border-b border-stone-300 flex-shrink-0">
+            <div className={`flex items-center justify-between gap-3 px-5 py-3 border-b border-stone-300 flex-shrink-0 ${FAMILY_STYLES[getBlockFamily(mobileSheetData.keyId)].sheetTop}`}>
               <div className="flex items-center gap-3 min-w-0 flex-1">
                 <span className="font-display italic text-2xl text-stone-900 truncate" style={{ fontWeight: 700 }}>{mobileSheetData.label}</span>
                 {mobileSheetData.count > 0 && (
-                  <span className="font-mono text-[10px] uppercase tracking-widest flex-shrink-0 tabular-nums rounded-sm px-2 py-0.5 bg-orange-500 text-stone-900">
+                  <span className={`font-mono text-[10px] uppercase tracking-widest flex-shrink-0 tabular-nums rounded-sm px-2 py-0.5 ${FAMILY_STYLES[getBlockFamily(mobileSheetData.keyId)].badge}`}>
                     {mobileSheetData.max ? `${mobileSheetData.count}/${mobileSheetData.max}` : mobileSheetData.count}
                   </span>
                 )}
@@ -5856,6 +5913,8 @@ Return ONLY this JSON, no preamble, no markdown:
 function Block({ keyId, label, count, max, preview = [], open, onToggle, onClear, tClear, tOpen, children, className = '', mobileSheetKey, setMobileSheetKey, setMobileSheetData, limitHint }) {
   const previewArr = Array.isArray(preview) ? preview : [];
   const atLimit = max && count >= max;
+  const family = getBlockFamily(keyId);
+  const fam = FAMILY_STYLES[family];
   // When this block IS the active mobile sheet, refresh its data when stable values change.
   // We exclude `children` and `onClear` from deps to avoid infinite loop (those are new refs every render).
   // We include `preview` (joined as a string) so single-select changes also trigger re-sync
@@ -5868,7 +5927,7 @@ function Block({ keyId, label, count, max, preview = [], open, onToggle, onClear
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [mobileSheetKey, keyId, count, max, label, tClear, previewSig]);
   return (
-    <div data-section={keyId} className={`scroll-mt-24 rounded-xl border transition-colors min-w-0 overflow-hidden ${count > 0 ? 'border-orange-500/30' : 'border-stone-400/50'} ${className}`}>
+    <div data-section={keyId} className={`scroll-mt-24 rounded-xl border transition-colors min-w-0 overflow-hidden ${count > 0 ? fam.borderActive : 'border-stone-400/50'} ${fam.borderL} ${className}`}>
       <div className="flex items-stretch">
         <button
           onClick={() => {
@@ -5887,7 +5946,7 @@ function Block({ keyId, label, count, max, preview = [], open, onToggle, onClear
             <ChevronDown className="w-4 h-4 text-stone-500 flex-shrink-0 md:hidden -rotate-90" />
             <span className="font-display italic text-lg text-stone-900 flex-shrink-0" style={{ fontWeight: 600 }}>{label}</span>
             {count > 0 && (
-              <span className="font-mono text-[9px] uppercase tracking-widest flex-shrink-0 tabular-nums rounded-sm px-1.5 py-0.5 bg-orange-500 text-stone-900">
+              <span className={`font-mono text-[9px] uppercase tracking-widest flex-shrink-0 tabular-nums rounded-sm px-1.5 py-0.5 ${fam.badge}`}>
                 {max ? `${count}/${max}` : count}
               </span>
             )}
