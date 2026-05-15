@@ -253,36 +253,42 @@ function BrahmstormLanding({ onLaunch }) {
       <nav className={`absolute top-0 left-0 right-0 z-30 px-6 md:px-12 lg:px-20 py-6 reveal ${mounted ? 'in' : ''}`}>
         {/* ─── MOBILE NAV (stacked) ─── */}
         <div className="md:hidden flex flex-col gap-4">
-          {/* Row 1: logo + compact lang button */}
-          <div className="flex items-center justify-between">
-            <a href="#" className="flex items-center gap-3">
-              <Disc3 className="w-7 h-7 text-orange-500 spin-slow" strokeWidth={1.5} />
+          {/* Row 1: logo + blog icon link + compact lang button */}
+          <div className="flex items-center justify-between gap-2">
+            <a href="#" className="flex items-center gap-3 min-w-0">
+              <Disc3 className="w-7 h-7 text-orange-500 spin-slow flex-shrink-0" strokeWidth={1.5} />
               <div className="font-display text-xl tracking-tight text-stone-50" style={{ fontWeight: 800, fontStyle: 'italic' }}>
                 Brahm<span className="text-orange-500">storm</span>
               </div>
             </a>
-            <div className="relative">
-              <button onClick={() => setLangMenuOpen(v => !v)}
-                aria-label={LANGUAGES.find(l => l.id === lang)?.full}
-                className="font-mono text-[11px] uppercase tracking-[0.2em] px-3 py-2 rounded-lg border border-stone-700 text-stone-300 hover:border-orange-500 hover:text-orange-400 transition-all active:scale-95 flex items-center gap-2">
-                <Globe className="w-3.5 h-3.5" />
-                <span>{LANGUAGES.find(l => l.id === lang)?.label}</span>
-                <ChevronDown className={`w-3 h-3 transition-transform ${langMenuOpen ? 'rotate-180' : ''}`} />
-              </button>
-              {langMenuOpen && (
-                <>
-                  <div className="fixed inset-0 z-[60]" onClick={() => setLangMenuOpen(false)} />
-                  <div className="absolute top-full right-0 mt-2 z-[70] bg-stone-900 border border-stone-700 min-w-[180px] shadow-2xl rounded-lg overflow-hidden">
-                    {LANGUAGES.map(l => (
-                      <button key={l.id} onClick={() => { setLang(l.id); setLangMenuOpen(false); }}
-                        className={`w-full text-left px-3 py-3 font-mono text-[11px] uppercase tracking-[0.2em] transition-all flex items-center gap-2 ${l.id === lang ? 'bg-orange-500/15 text-orange-400' : 'text-stone-300 hover:bg-stone-800 hover:text-stone-50'}`}>
-                        <span className="text-base">{l.flag}</span><span className="flex-1">{l.full}</span>
-                        {l.id === lang && <Check className="w-3.5 h-3.5 text-orange-500" />}
-                      </button>
-                    ))}
-                  </div>
-                </>
-              )}
+            <div className="flex items-center gap-2">
+              <a href="/blog/" aria-label="Blog"
+                className="font-mono text-[11px] uppercase tracking-[0.2em] px-3 py-2 rounded-lg border border-stone-700 text-stone-300 hover:border-orange-500 hover:text-orange-400 transition-all active:scale-95 flex items-center">
+                <BookOpen className="w-3.5 h-3.5" />
+              </a>
+              <div className="relative">
+                <button onClick={() => setLangMenuOpen(v => !v)}
+                  aria-label={LANGUAGES.find(l => l.id === lang)?.full}
+                  className="font-mono text-[11px] uppercase tracking-[0.2em] px-3 py-2 rounded-lg border border-stone-700 text-stone-300 hover:border-orange-500 hover:text-orange-400 transition-all active:scale-95 flex items-center gap-2">
+                  <Globe className="w-3.5 h-3.5" />
+                  <span>{LANGUAGES.find(l => l.id === lang)?.label}</span>
+                  <ChevronDown className={`w-3 h-3 transition-transform ${langMenuOpen ? 'rotate-180' : ''}`} />
+                </button>
+                {langMenuOpen && (
+                  <>
+                    <div className="fixed inset-0 z-[60]" onClick={() => setLangMenuOpen(false)} />
+                    <div className="absolute top-full right-0 mt-2 z-[70] bg-stone-900 border border-stone-700 min-w-[180px] shadow-2xl rounded-lg overflow-hidden">
+                      {LANGUAGES.map(l => (
+                        <button key={l.id} onClick={() => { setLang(l.id); setLangMenuOpen(false); }}
+                          className={`w-full text-left px-3 py-3 font-mono text-[11px] uppercase tracking-[0.2em] transition-all flex items-center gap-2 ${l.id === lang ? 'bg-orange-500/15 text-orange-400' : 'text-stone-300 hover:bg-stone-800 hover:text-stone-50'}`}>
+                          <span className="text-base">{l.flag}</span><span className="flex-1">{l.full}</span>
+                          {l.id === lang && <Check className="w-3.5 h-3.5 text-orange-500" />}
+                        </button>
+                      ))}
+                    </div>
+                  </>
+                )}
+              </div>
             </div>
           </div>
           {/* Row 2: 100% Free outline + ABRIR solid */}
