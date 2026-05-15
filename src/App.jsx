@@ -4976,15 +4976,15 @@ Return ONLY JSON, no preamble:
               </div>
             </div>
           </div>
-          {/* Row 2: tips + favorites */}
+          {/* Row 2: tips (compact) + favorites (takes the rest) */}
           <div className="flex items-center gap-2">
             <button onClick={() => setTipsOpen(true)}
-              className="flex-1 font-mono text-[11px] uppercase tracking-[0.2em] px-3 py-2 rounded-lg border border-stone-700 text-stone-300 hover:border-orange-500 hover:text-orange-400 transition-all active:scale-95 flex items-center justify-center gap-2">
+              className="flex-shrink-0 font-mono text-[11px] uppercase tracking-[0.2em] px-3 py-2 rounded-lg border border-stone-700 text-stone-300 hover:border-orange-500 hover:text-orange-400 transition-all active:scale-95 flex items-center justify-center gap-2">
               <Lightbulb className="w-3.5 h-3.5" /> {t.tips}
             </button>
             <button onClick={() => setDrawerOpen(true)}
-              className="flex-1 font-mono text-[11px] uppercase tracking-[0.2em] px-3 py-2 rounded-lg border border-stone-700 text-stone-300 hover:border-orange-500 hover:text-orange-400 transition-all active:scale-95 flex items-center justify-center gap-2">
-              <Archive className="w-3.5 h-3.5" /> {t.favorites} · {favoritos.length}
+              className="flex-1 min-w-0 font-mono text-[11px] uppercase tracking-[0.2em] px-3 py-2 rounded-lg border border-stone-700 text-stone-300 hover:border-orange-500 hover:text-orange-400 transition-all active:scale-95 flex items-center justify-center gap-2 whitespace-nowrap">
+              <Archive className="w-3.5 h-3.5 flex-shrink-0" /> <span className="truncate">{t.favorites} · {favoritos.length}</span>
             </button>
           </div>
         </div>
