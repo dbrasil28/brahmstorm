@@ -3711,6 +3711,12 @@ function BrahmstormApp({ onBack } = {}) {
   const [mobileShowAdvanced, setMobileShowAdvanced] = useState(false);
   const [mobileSheetKey, setMobileSheetKey] = useState(null);
   const [mobileSheetData, setMobileSheetData] = useState(null);
+  // Search query inside the mobile sheet. Desktop Blocks own their own
+  // local query state, but the mobile sheet renders as a separate JSX tree
+  // at the root so the query has to live here. Reset whenever the active
+  // sheet changes (open a new block → clean slate).
+  const [mobileSheetQuery, setMobileSheetQuery] = useState('');
+  useEffect(() => { setMobileSheetQuery(''); }, [mobileSheetKey]);
 
   // Lock body scroll using position:fixed pattern (preserves scroll position natively)
   const savedScrollRef = useRef(0);
@@ -6234,9 +6240,27 @@ Return ONLY JSON, no preamble:
                 <span className="font-mono text-[10px] text-red-700 italic">{mobileSheetData.limitHint}</span>
               </div>
             )}
-            <div className="overflow-y-auto scrollbar-thin px-5 py-4 flex-1 min-h-0">
-              {mobileSheetData.children}
-            </div>
+            {mobileSheetData.searchable && (
+              <div className="px-5 pt-3 pb-2 flex-shrink-0 border-b border-stone-300">
+                <div className="relative">
+                  <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-stone-400 pointer-events-none" />
+                  <input type="text" value={mobileSheetQuery} onChange={(e) => setMobileSheetQuery(e.target.value)}
+                    placeholder={mobileSheetData.searchPlaceholder || t.search_placeholder || 'search…'}
+                    className="w-full bg-white border border-stone-300 focus:border-orange-500 focus:outline-none rounded-md pl-8 pr-7 py-2 font-mono text-[12px] placeholder:text-stone-400 transition-colors" />
+                  {mobileSheetQuery && (
+                    <button onClick={() => setMobileSheetQuery('')} aria-label="clear search"
+                      className="absolute right-1.5 top-1/2 -translate-y-1/2 w-6 h-6 rounded text-stone-400 hover:text-stone-700 hover:bg-stone-200 transition-colors flex items-center justify-center">
+                      <X className="w-3.5 h-3.5" />
+                    </button>
+                  )}
+                </div>
+              </div>
+            )}
+            <BlockSearchContext.Provider value={mobileSheetData.searchable ? mobileSheetQuery : ''}>
+              <div className="overflow-y-auto scrollbar-thin px-5 py-4 flex-1 min-h-0">
+                {mobileSheetData.children}
+              </div>
+            </BlockSearchContext.Provider>
             {mobileSheetData.onClear && mobileSheetData.count > 0 && (
               <div className="border-t border-stone-300 px-5 py-3 flex-shrink-0">
                 <button onClick={() => { mobileSheetData.onClear(); }}
@@ -6360,7 +6384,7 @@ function Block({ keyId, label, count, max, preview = [], open, onToggle, onClear
   const previewSig = previewArr.map(p => typeof p === 'string' ? p : (p?.label || '')).join('|');
   useEffect(() => {
     if (mobileSheetKey === keyId && setMobileSheetData) {
-      setMobileSheetData({ keyId, label, count, max, children, onClear, tClear, limitHint });
+      setMobileSheetData({ keyId, label, count, max, children, onClear, tClear, limitHint, searchable, searchPlaceholder });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [mobileSheetKey, keyId, count, max, label, tClear, previewSig]);
@@ -6371,7 +6395,7 @@ function Block({ keyId, label, count, max, preview = [], open, onToggle, onClear
           onClick={() => {
             if (typeof window !== 'undefined' && window.innerWidth < 768 && setMobileSheetKey) {
               if (setMobileSheetData) {
-                setMobileSheetData({ keyId, label, count, max, children, onClear, tClear, limitHint });
+                setMobileSheetData({ keyId, label, count, max, children, onClear, tClear, limitHint, searchable, searchPlaceholder });
               }
               setMobileSheetKey(keyId);
             } else {
