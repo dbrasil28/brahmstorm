@@ -5823,7 +5823,7 @@ Return ONLY JSON, no preamble:
                                           </div>
                                         </div>
                                         <div className="p-5 max-h-[500px] overflow-y-auto scrollbar-thin">
-                                          <pre className="font-display text-[15px] leading-relaxed text-stone-900 whitespace-pre-wrap wrap-any" style={{ fontFamily: "'Fraunces', Georgia, serif" }}>{it.letra}</pre>
+                                          <pre className="font-display text-sm leading-relaxed text-stone-900 whitespace-pre-wrap wrap-any" style={{ fontFamily: "'Fraunces', Georgia, serif" }}>{it.letra}</pre>
                                         </div>
                                         {excedeLimite && (
                                           <div className="border-t border-red-200 bg-red-50 px-4 py-2 flex items-start gap-2">
