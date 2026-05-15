@@ -4927,7 +4927,64 @@ Return ONLY JSON, no preamble:
       <div className="grain absolute inset-0 pointer-events-none z-0" />
 
       <header style={{ backgroundColor: '#0c0a09', borderBottomColor: '#292524' }} className="relative z-[60] border-b px-5 md:px-10 py-5 text-stone-300">
-        <div className="flex items-center justify-between gap-4 flex-wrap">
+        {/* ─── MOBILE HEADER (stacked, mirrors landing) ─── */}
+        <div className="md:hidden flex flex-col gap-3">
+          {/* Row 1: logo (small, no subtitle) + blog icon + compact lang */}
+          <div className="flex items-center justify-between gap-2">
+            <button
+              onClick={() => { if (onBack) onBack(); else { window.location.hash = ''; } }}
+              className="flex items-center gap-3 min-w-0 group transition-opacity hover:opacity-80 active:scale-95"
+              title={t.back_home}>
+              <Disc3 className="w-7 h-7 text-orange-500 spin-slow flex-shrink-0" strokeWidth={1.5} />
+              <h1 className="font-display text-xl tracking-tight leading-none text-stone-50" style={{ fontWeight: 800, fontStyle: 'italic' }}>
+                Brahm<span className="text-orange-500">storm</span>
+              </h1>
+            </button>
+            <div className="flex items-center gap-2">
+              <a href="/blog/" aria-label={t.blog}
+                className="font-mono text-[11px] uppercase tracking-[0.2em] px-3 py-2 rounded-lg border border-stone-700 text-stone-300 hover:border-orange-500 hover:text-orange-400 transition-all active:scale-95 flex items-center">
+                <BookOpen className="w-3.5 h-3.5" />
+              </a>
+              <div className="relative">
+                <button onClick={() => setLangMenuOpen(v => !v)}
+                  aria-label={LANGUAGES.find(l => l.id === lang)?.full}
+                  className="font-mono text-[11px] uppercase tracking-[0.2em] px-3 py-2 rounded-lg border border-stone-700 text-stone-300 hover:border-orange-500 hover:text-orange-400 transition-all active:scale-95 flex items-center gap-2">
+                  <Globe className="w-3.5 h-3.5" />
+                  <span>{LANGUAGES.find(l => l.id === lang)?.label}</span>
+                  <ChevronDown className={`w-3 h-3 transition-transform ${langMenuOpen ? 'rotate-180' : ''}`} />
+                </button>
+                {langMenuOpen && (
+                  <>
+                    <div className="fixed inset-0 z-[74]" onClick={() => setLangMenuOpen(false)} />
+                    <div className="absolute top-full right-0 mt-2 z-[75] bg-stone-900 border border-stone-700 min-w-[180px] shadow-2xl rounded-lg overflow-hidden">
+                      {LANGUAGES.map(l => (
+                        <button key={l.id} onClick={() => { setLang(l.id); setLangMenuOpen(false); }}
+                          className={`w-full text-left px-3 py-3 font-mono text-[11px] uppercase tracking-[0.2em] transition-all flex items-center gap-2 ${l.id === lang ? 'bg-orange-500/15 text-orange-400' : 'text-stone-300 hover:bg-stone-800 hover:text-stone-50'}`}>
+                          <span className="text-base">{l.flag}</span><span className="flex-1">{l.full}</span>
+                          {l.id === lang && <Check className="w-3.5 h-3.5 text-orange-500" />}
+                        </button>
+                      ))}
+                    </div>
+                  </>
+                )}
+              </div>
+            </div>
+          </div>
+          {/* Row 2: tips + favorites */}
+          <div className="flex items-center gap-2">
+            <button onClick={() => setTipsOpen(true)}
+              className="flex-1 font-mono text-[11px] uppercase tracking-[0.2em] px-3 py-2 rounded-lg border border-stone-700 text-stone-300 hover:border-orange-500 hover:text-orange-400 transition-all active:scale-95 flex items-center justify-center gap-2">
+              <Lightbulb className="w-3.5 h-3.5" /> {t.tips}
+            </button>
+            <button onClick={() => setDrawerOpen(true)}
+              className="flex-1 font-mono text-[11px] uppercase tracking-[0.2em] px-3 py-2 rounded-lg border border-stone-700 text-stone-300 hover:border-orange-500 hover:text-orange-400 transition-all active:scale-95 flex items-center justify-center gap-2">
+              <Archive className="w-3.5 h-3.5" /> {t.favorites} · {favoritos.length}
+            </button>
+          </div>
+        </div>
+
+        {/* ─── DESKTOP HEADER (unchanged) ─── */}
+        <div className="hidden md:flex items-center justify-between gap-4 flex-wrap">
           <button
             onClick={() => {
               if (onBack) onBack();
@@ -4982,7 +5039,7 @@ Return ONLY JSON, no preamble:
             </button>
             <button onClick={() => setShortcutsOpen(true)} title={t.shortcuts_title}
               data-desktop-only="true"
-              className="hidden md:flex font-mono text-xs uppercase tracking-widest w-8 h-8 border border-stone-700 hover:border-orange-500 hover:text-orange-400 transition-all active:scale-95 items-center justify-center rounded-lg" style={{ fontWeight: 700 }}>
+              className="flex font-mono text-xs uppercase tracking-widest w-8 h-8 border border-stone-700 hover:border-orange-500 hover:text-orange-400 transition-all active:scale-95 items-center justify-center rounded-lg" style={{ fontWeight: 700 }}>
               ?
             </button>
           </div>
