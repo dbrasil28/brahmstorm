@@ -4,7 +4,7 @@ import {
   X, Trash2, ChevronDown, Disc3, Radio, FileText, MessageSquareQuote,
   AlertTriangle, Wand2, Lightbulb, Eraser, Globe, ExternalLink,
   ArrowRight, Lock, Zap, Heart, Code, AtSign, Mail, Settings2,
-  Feather, Sliders, Download,
+  Feather, Sliders, Download, BookOpen,
 } from 'lucide-react';
 import { Analytics } from '@vercel/analytics/react';
 import { SpeedInsights } from '@vercel/speed-insights/react';
@@ -253,36 +253,42 @@ function BrahmstormLanding({ onLaunch }) {
       <nav className={`absolute top-0 left-0 right-0 z-30 px-6 md:px-12 lg:px-20 py-6 reveal ${mounted ? 'in' : ''}`}>
         {/* ─── MOBILE NAV (stacked) ─── */}
         <div className="md:hidden flex flex-col gap-4">
-          {/* Row 1: logo + compact lang button */}
-          <div className="flex items-center justify-between">
-            <a href="#" className="flex items-center gap-3">
-              <Disc3 className="w-7 h-7 text-orange-500 spin-slow" strokeWidth={1.5} />
+          {/* Row 1: logo + blog icon link + compact lang button */}
+          <div className="flex items-center justify-between gap-2">
+            <a href="#" className="flex items-center gap-3 min-w-0">
+              <Disc3 className="w-7 h-7 text-orange-500 spin-slow flex-shrink-0" strokeWidth={1.5} />
               <div className="font-display text-xl tracking-tight text-stone-50" style={{ fontWeight: 800, fontStyle: 'italic' }}>
                 Brahm<span className="text-orange-500">storm</span>
               </div>
             </a>
-            <div className="relative">
-              <button onClick={() => setLangMenuOpen(v => !v)}
-                aria-label={LANGUAGES.find(l => l.id === lang)?.full}
-                className="font-mono text-[11px] uppercase tracking-[0.2em] px-3 py-2 rounded-lg border border-stone-700 text-stone-300 hover:border-orange-500 hover:text-orange-400 transition-all active:scale-95 flex items-center gap-2">
-                <Globe className="w-3.5 h-3.5" />
-                <span>{LANGUAGES.find(l => l.id === lang)?.label}</span>
-                <ChevronDown className={`w-3 h-3 transition-transform ${langMenuOpen ? 'rotate-180' : ''}`} />
-              </button>
-              {langMenuOpen && (
-                <>
-                  <div className="fixed inset-0 z-[60]" onClick={() => setLangMenuOpen(false)} />
-                  <div className="absolute top-full right-0 mt-2 z-[70] bg-stone-900 border border-stone-700 min-w-[180px] shadow-2xl rounded-lg overflow-hidden">
-                    {LANGUAGES.map(l => (
-                      <button key={l.id} onClick={() => { setLang(l.id); setLangMenuOpen(false); }}
-                        className={`w-full text-left px-3 py-3 font-mono text-[11px] uppercase tracking-[0.2em] transition-all flex items-center gap-2 ${l.id === lang ? 'bg-orange-500/15 text-orange-400' : 'text-stone-300 hover:bg-stone-800 hover:text-stone-50'}`}>
-                        <span className="text-base">{l.flag}</span><span className="flex-1">{l.full}</span>
-                        {l.id === lang && <Check className="w-3.5 h-3.5 text-orange-500" />}
-                      </button>
-                    ))}
-                  </div>
-                </>
-              )}
+            <div className="flex items-center gap-2">
+              <a href="/blog/" aria-label="Blog"
+                className="font-mono text-[11px] uppercase tracking-[0.2em] px-3 py-2 rounded-lg border border-stone-700 text-stone-300 hover:border-orange-500 hover:text-orange-400 transition-all active:scale-95 flex items-center">
+                <BookOpen className="w-3.5 h-3.5" />
+              </a>
+              <div className="relative">
+                <button onClick={() => setLangMenuOpen(v => !v)}
+                  aria-label={LANGUAGES.find(l => l.id === lang)?.full}
+                  className="font-mono text-[11px] uppercase tracking-[0.2em] px-3 py-2 rounded-lg border border-stone-700 text-stone-300 hover:border-orange-500 hover:text-orange-400 transition-all active:scale-95 flex items-center gap-2">
+                  <Globe className="w-3.5 h-3.5" />
+                  <span>{LANGUAGES.find(l => l.id === lang)?.label}</span>
+                  <ChevronDown className={`w-3 h-3 transition-transform ${langMenuOpen ? 'rotate-180' : ''}`} />
+                </button>
+                {langMenuOpen && (
+                  <>
+                    <div className="fixed inset-0 z-[60]" onClick={() => setLangMenuOpen(false)} />
+                    <div className="absolute top-full right-0 mt-2 z-[70] bg-stone-900 border border-stone-700 min-w-[180px] shadow-2xl rounded-lg overflow-hidden">
+                      {LANGUAGES.map(l => (
+                        <button key={l.id} onClick={() => { setLang(l.id); setLangMenuOpen(false); }}
+                          className={`w-full text-left px-3 py-3 font-mono text-[11px] uppercase tracking-[0.2em] transition-all flex items-center gap-2 ${l.id === lang ? 'bg-orange-500/15 text-orange-400' : 'text-stone-300 hover:bg-stone-800 hover:text-stone-50'}`}>
+                          <span className="text-base">{l.flag}</span><span className="flex-1">{l.full}</span>
+                          {l.id === lang && <Check className="w-3.5 h-3.5 text-orange-500" />}
+                        </button>
+                      ))}
+                    </div>
+                  </>
+                )}
+              </div>
             </div>
           </div>
           {/* Row 2: 100% Free outline + ABRIR solid */}
@@ -314,6 +320,8 @@ function BrahmstormLanding({ onLaunch }) {
               className="font-mono text-[11px] uppercase tracking-[0.2em] text-stone-400 hover:text-stone-50 transition-colors">{tL.nav_how}</a>
             <a href="#why" onClick={(e) => { e.preventDefault(); document.getElementById('why')?.scrollIntoView({ behavior: 'smooth', block: 'start' }); }}
               className="font-mono text-[11px] uppercase tracking-[0.2em] text-stone-400 hover:text-stone-50 transition-colors">{tL.nav_why}</a>
+            <a href="/blog/"
+              className="font-mono text-[11px] uppercase tracking-[0.2em] text-stone-400 hover:text-stone-50 transition-colors">{tL.nav_blog}</a>
             <div className="relative">
               <button ref={langBtnRef} onClick={() => setLangMenuOpen(v => !v)}
                 aria-label={LANGUAGES.find(l => l.id === lang)?.full}
@@ -1204,7 +1212,7 @@ const LANG_NAMES = {
 // Strings are added incrementally — sections still in en are placeholders.
 const LANDING_UI = {
   en: {
-    nav_what: 'what', nav_how: 'how', nav_why: 'why', nav_launch: 'launch',
+    nav_what: 'what', nav_how: 'how', nav_why: 'why', nav_blog: 'blog', nav_launch: 'launch',
     hero_badge_free: '100% Free',
     hero_descriptor: 'prompt forge for Suno AI',
     hero_h1_line1: 'Write Suno prompts',
@@ -1381,7 +1389,7 @@ const LANDING_UI = {
     meta_title: 'Brahmstorm · Prompt Forge for Suno AI',
   },
   pt: {
-    nav_what: 'o quê', nav_how: 'como', nav_why: 'por quê', nav_launch: 'abrir',
+    nav_what: 'o quê', nav_how: 'como', nav_why: 'por quê', nav_blog: 'blog', nav_launch: 'abrir',
     hero_badge_free: '100% Grátis',
     hero_descriptor: 'forja de prompts pra Suno AI',
     hero_h1_line1: 'Escreva prompts pro Suno',
@@ -1558,7 +1566,7 @@ const LANDING_UI = {
     meta_title: 'Brahmstorm · Forja de Prompts pra Suno AI',
   },
   es: {
-    nav_what: 'qué', nav_how: 'cómo', nav_why: 'por qué', nav_launch: 'abrir',
+    nav_what: 'qué', nav_how: 'cómo', nav_why: 'por qué', nav_blog: 'blog', nav_launch: 'abrir',
     hero_badge_free: '100% Gratis',
     hero_descriptor: 'forja de prompts para Suno AI',
     hero_h1_line1: 'Escribe prompts para Suno',
@@ -1735,7 +1743,7 @@ const LANDING_UI = {
     meta_title: 'Brahmstorm · Forja de Prompts para Suno AI',
   },
   fr: {
-    nav_what: 'quoi', nav_how: 'comment', nav_why: 'pourquoi', nav_launch: 'ouvrir',
+    nav_what: 'quoi', nav_how: 'comment', nav_why: 'pourquoi', nav_blog: 'blog', nav_launch: 'ouvrir',
     hero_badge_free: '100% Gratuit',
     hero_descriptor: 'forge de prompts pour Suno AI',
     hero_h1_line1: 'Écris des prompts Suno',
@@ -1927,7 +1935,7 @@ function detectLang() {
 
 const UI = {
   en: {
-    subtitle: 'Prompt Forge · Studio', tips: 'tips', favorites: 'favorites', clear: 'clear',
+    subtitle: 'Prompt Forge · Studio', tips: 'tips', favorites: 'favorites', clear: 'clear', blog: 'blog',
     tab_prompt: 'Prompt', tab_prompt_sub: 'musical description',
     tab_letra: 'Lyrics', tab_letra_sub: 'lyrics for Suno', back_home: 'Back to home',
     customize: 'customize', customize_sub: 'more options', primary_only: 'showing essentials', show_all: 'show all options', hide_advanced: 'hide advanced',
@@ -2046,7 +2054,7 @@ const UI = {
     duration_long: '~4 minutes (long)', duration_extended: '5+ minutes (extended)',
   },
   pt: {
-    subtitle: 'Forja de Prompts · Studio', tips: 'dicas', favorites: 'favoritos', clear: 'limpar',
+    subtitle: 'Forja de Prompts · Studio', tips: 'dicas', favorites: 'favoritos', clear: 'limpar', blog: 'blog',
     tab_prompt: 'Prompt', tab_prompt_sub: 'descrição musical',
     tab_letra: 'Letra', tab_letra_sub: 'lyrics pro Suno', back_home: 'Voltar pra home',
     customize: 'customizar', customize_sub: 'mais opções', primary_only: 'mostrando o essencial', show_all: 'mostrar todas opções', hide_advanced: 'ocultar avançado',
@@ -2165,7 +2173,7 @@ const UI = {
     duration_long: '~4 minutos (longa)', duration_extended: '5+ minutos (estendida)',
   },
   es: {
-    subtitle: 'Forja de Prompts · Studio', tips: 'consejos', favorites: 'favoritos', clear: 'limpiar',
+    subtitle: 'Forja de Prompts · Studio', tips: 'consejos', favorites: 'favoritos', clear: 'limpiar', blog: 'blog',
     tab_prompt: 'Prompt', tab_prompt_sub: 'descripción musical',
     tab_letra: 'Letra', tab_letra_sub: 'letra para Suno', back_home: 'Volver al inicio',
     customize: 'personalizar', customize_sub: 'más opciones', primary_only: 'mostrando lo esencial', show_all: 'mostrar todas las opciones', hide_advanced: 'ocultar avanzado',
@@ -2283,7 +2291,7 @@ const UI = {
     duration_long: '~4 minutos (larga)', duration_extended: '5+ minutos (extendida)',
   },
   fr: {
-    subtitle: 'Forge de Prompts · Studio', tips: 'astuces', favorites: 'favoris', clear: 'effacer',
+    subtitle: 'Forge de Prompts · Studio', tips: 'astuces', favorites: 'favoris', clear: 'effacer', blog: 'blog',
     tab_prompt: 'Prompt', tab_prompt_sub: 'description musicale',
     tab_letra: 'Paroles', tab_letra_sub: 'paroles pour Suno', back_home: "Retour à l'accueil",
     customize: 'personnaliser', customize_sub: 'plus d\'options', primary_only: 'affichant l\'essentiel', show_all: 'tout afficher', hide_advanced: 'masquer avancé',
@@ -4687,6 +4695,10 @@ Return ONLY this JSON, no preamble, no markdown:
                 </>
               )}
             </div>
+            <a href="/blog/"
+              className="font-mono text-xs uppercase tracking-widest px-3 py-2 border border-stone-700 hover:border-orange-500 hover:text-orange-400 transition-all active:scale-95 flex items-center gap-2 rounded-lg">
+              <BookOpen className="w-3.5 h-3.5" /> {t.blog}
+            </a>
             <button onClick={() => setTipsOpen(true)}
               className="font-mono text-xs uppercase tracking-widest px-3 py-2 border border-stone-700 hover:border-orange-500 hover:text-orange-400 transition-all active:scale-95 flex items-center gap-2 rounded-lg">
               <Lightbulb className="w-3.5 h-3.5" /> {t.tips}
