@@ -5596,7 +5596,7 @@ Return ONLY JSON, no preamble:
                                             </div>
                                             <div className="border-t border-stone-300 p-2 flex gap-2 flex-wrap">
                                               <button onClick={() => copiarEAbrirSuno(cl.letra, `${clKey}_open`, 'lyrics')}
-                                                className="flex-1 min-w-[140px] font-mono text-[10px] uppercase tracking-widest px-2.5 py-1.5 rounded-md bg-orange-500 hover:bg-orange-400 text-stone-900 transition-all active:scale-95 flex items-center justify-center gap-1.5">
+                                                className="font-mono text-[10px] uppercase tracking-widest px-2.5 py-1.5 rounded-md bg-orange-500 hover:bg-orange-400 text-stone-900 transition-all active:scale-95 flex items-center gap-1.5">
                                                 {copiedKey === `${clKey}_open` ? <><Check className="w-3 h-3" /> {t.out_copied}</> : <><ExternalLink className="w-3 h-3" /> {t.open_suno_lyrics}</>}
                                               </button>
                                               <button onClick={() => copiar(cl.letra, `${clKey}_copy`)}
@@ -5751,20 +5751,20 @@ Return ONLY JSON, no preamble:
                                             )}
                                             <div className="border-t border-stone-300 p-3 flex gap-2 flex-wrap">
                                               <button onClick={() => copiarEAbrirSuno(tr.letra, `${gen.id}-tr-open-${i}`, 'lyrics')}
-                                                className="flex-1 min-w-[140px] font-mono text-[10px] uppercase tracking-widest px-3 py-2 rounded-lg bg-orange-500 hover:bg-orange-400 text-stone-900 transition-all active:scale-95 flex items-center justify-center gap-2">
+                                                className="font-mono text-[10px] uppercase tracking-widest px-2.5 py-1.5 rounded-md bg-orange-500 hover:bg-orange-400 text-stone-900 transition-all active:scale-95 flex items-center gap-1.5">
                                                 {copiedKey === `${gen.id}-tr-open-${i}` ? <><Check className="w-3 h-3" /> {t.out_copied}</> : <><ExternalLink className="w-3 h-3" /> {t.open_suno_lyrics}</>}
                                               </button>
                                               <button onClick={() => copiar(tr.letra, `${gen.id}-tr-copy-${i}`)}
-                                                className="font-mono text-[10px] uppercase tracking-widest px-2.5 py-2 rounded-md border border-stone-400 btn-fill-orange transition-all active:scale-95 flex items-center gap-1.5">
+                                                className="font-mono text-[10px] uppercase tracking-widest px-2.5 py-1.5 rounded-md border border-stone-400 btn-fill-orange transition-all active:scale-95 flex items-center gap-1.5">
                                                 {copiedKey === `${gen.id}-tr-copy-${i}` ? <><Check className="w-3 h-3" /> {t.out_copied}</> : <><Copy className="w-3 h-3" /> {t.out_copy}</>}
                                               </button>
                                               <button onClick={() => salvar(tr.letra, 'letra', tr.titulo, `${gen.id}-tr-save-${i}`)}
-                                                className="font-mono text-[10px] uppercase tracking-widest px-2.5 py-2 rounded-md border border-stone-400 btn-fill-orange transition-all active:scale-95 flex items-center gap-1.5">
+                                                className="font-mono text-[10px] uppercase tracking-widest px-2.5 py-1.5 rounded-md border border-stone-400 btn-fill-orange transition-all active:scale-95 flex items-center gap-1.5">
                                                 {savedKey === `${gen.id}-tr-save-${i}` ? <><Check className="w-3 h-3" /> {t.out_saved}</> : <><Save className="w-3 h-3" /> {t.out_save}</>}
                                               </button>
                                               <button onClick={() => gerarPromptDeLetra(tr.letra, tr.titulo, `${gen.id}-tr-${i}`)}
                                                 disabled={loadingCross[`${gen.id}-tr-${i}`] || isQuotaExhausted}
-                                                className="font-mono text-[10px] uppercase tracking-widest px-2.5 py-2 rounded-md border border-stone-400 btn-fill-orange transition-all active:scale-95 flex items-center gap-1.5 disabled:opacity-50 disabled:cursor-not-allowed">
+                                                className="font-mono text-[10px] uppercase tracking-widest px-2.5 py-1.5 rounded-md border border-stone-400 btn-fill-orange transition-all active:scale-95 flex items-center gap-1.5 disabled:opacity-50 disabled:cursor-not-allowed">
                                                 {loadingCross[`${gen.id}-tr-${i}`] === 'prompt'
                                                   ? <><Loader2 className="w-3 h-3 animate-spin" /> {t.out_forging || '…'}</>
                                                   : <><FileText className="w-3 h-3" /> {t.out_to_prompt}</>}
@@ -5789,7 +5789,7 @@ Return ONLY JSON, no preamble:
                                                     <p className="font-display text-sm leading-relaxed text-stone-800 p-3 wrap-any">{cp.prompt}</p>
                                                     <div className="border-t border-stone-300 p-2 flex gap-2 flex-wrap">
                                                       <button onClick={() => copiarEAbrirSuno(cp.prompt, `${cpKey}_open`, 'style')}
-                                                        className="flex-1 min-w-[140px] font-mono text-[10px] uppercase tracking-widest px-2.5 py-1.5 rounded-md bg-orange-500 hover:bg-orange-400 text-stone-900 transition-all active:scale-95 flex items-center justify-center gap-1.5">
+                                                        className="font-mono text-[10px] uppercase tracking-widest px-2.5 py-1.5 rounded-md bg-orange-500 hover:bg-orange-400 text-stone-900 transition-all active:scale-95 flex items-center gap-1.5">
                                                         {copiedKey === `${cpKey}_open` ? <><Check className="w-3 h-3" /> {t.out_copied}</> : <><ExternalLink className="w-3 h-3" /> {t.open_suno}</>}
                                                       </button>
                                                       <button onClick={() => copiar(cp.prompt, `${cpKey}_copy`)}
@@ -5833,23 +5833,23 @@ Return ONLY JSON, no preamble:
                                         )}
                                         <div className="border-t border-stone-300 p-3 flex gap-2 flex-wrap">
                                           <button onClick={() => copiarEAbrirSuno(it.letra, `${gen.id}-letra-open-${i}`, 'lyrics')}
-                                            className="flex-1 min-w-[140px] font-mono text-[11px] uppercase tracking-widest px-3 py-2 rounded-lg bg-orange-500 hover:bg-orange-400 text-stone-900 transition-all active:scale-95 flex items-center justify-center gap-2">
-                                            {copiedKey === `${gen.id}-letra-open-${i}` ? <><Check className="w-3.5 h-3.5" /> {t.out_copied}</> : <><ExternalLink className="w-3.5 h-3.5" /> {t.open_suno_lyrics}</>}
+                                            className="font-mono text-[10px] uppercase tracking-widest px-2.5 py-1.5 rounded-md bg-orange-500 hover:bg-orange-400 text-stone-900 transition-all active:scale-95 flex items-center gap-1.5">
+                                            {copiedKey === `${gen.id}-letra-open-${i}` ? <><Check className="w-3 h-3" /> {t.out_copied}</> : <><ExternalLink className="w-3 h-3" /> {t.open_suno_lyrics}</>}
                                           </button>
                                           <button onClick={() => copiar(it.letra, `${gen.id}-letra-copy-${i}`)}
-                                            className="font-mono text-[11px] uppercase tracking-widest px-3 py-2 rounded-lg border border-stone-400 btn-fill-orange transition-all active:scale-95 flex items-center gap-2">
-                                            {copiedKey === `${gen.id}-letra-copy-${i}` ? <><Check className="w-3.5 h-3.5" /> {t.out_copied}</> : <><Copy className="w-3.5 h-3.5" /> {t.out_copy_letra}</>}
+                                            className="font-mono text-[10px] uppercase tracking-widest px-2.5 py-1.5 rounded-md border border-stone-400 btn-fill-orange transition-all active:scale-95 flex items-center gap-1.5">
+                                            {copiedKey === `${gen.id}-letra-copy-${i}` ? <><Check className="w-3 h-3" /> {t.out_copied}</> : <><Copy className="w-3 h-3" /> {t.out_copy_letra}</>}
                                           </button>
                                           <button onClick={() => salvar(it.letra, 'letra', it.titulo, `${gen.id}-letra-save-${i}`)}
-                                            className="font-mono text-[11px] uppercase tracking-widest px-3 py-2 border border-stone-700 hover:border-orange-500 hover:text-orange-400 transition-all active:scale-95 flex items-center gap-2 rounded-lg">
-                                            {savedKey === `${gen.id}-letra-save-${i}` ? <><Check className="w-3.5 h-3.5" /> {t.out_saved}</> : <><Save className="w-3.5 h-3.5" /> {t.out_save}</>}
+                                            className="font-mono text-[10px] uppercase tracking-widest px-2.5 py-1.5 rounded-md border border-stone-400 btn-fill-orange transition-all active:scale-95 flex items-center gap-1.5">
+                                            {savedKey === `${gen.id}-letra-save-${i}` ? <><Check className="w-3 h-3" /> {t.out_saved}</> : <><Save className="w-3 h-3" /> {t.out_save}</>}
                                           </button>
                                           <button onClick={() => gerarPromptDeLetra(it.letra, it.titulo, `${gen.id}-letra-${i}`)}
                                             disabled={loadingCross[`${gen.id}-letra-${i}`] || isQuotaExhausted}
-                                            className="font-mono text-[11px] uppercase tracking-widest px-3 py-2 rounded-lg border border-stone-400 btn-fill-orange transition-all active:scale-95 flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed">
+                                            className="font-mono text-[10px] uppercase tracking-widest px-2.5 py-1.5 rounded-md border border-stone-400 btn-fill-orange transition-all active:scale-95 flex items-center gap-1.5 disabled:opacity-50 disabled:cursor-not-allowed">
                                             {loadingCross[`${gen.id}-letra-${i}`] === 'prompt'
-                                              ? <><Loader2 className="w-3.5 h-3.5 animate-spin" /> {t.out_forging || '…'}</>
-                                              : <><FileText className="w-3.5 h-3.5" /> {t.out_to_prompt}</>}
+                                              ? <><Loader2 className="w-3 h-3 animate-spin" /> {t.out_forging || '…'}</>
+                                              : <><FileText className="w-3 h-3" /> {t.out_to_prompt}</>}
                                           </button>
                                         </div>
                                         {/* Inline cross-generated prompt */}
@@ -5871,7 +5871,7 @@ Return ONLY JSON, no preamble:
                                                 <p className="font-display text-sm leading-relaxed text-stone-800 p-3 wrap-any">{cp.prompt}</p>
                                                 <div className="border-t border-stone-300 p-2 flex gap-2 flex-wrap">
                                                   <button onClick={() => copiarEAbrirSuno(cp.prompt, `${cpKey}_open`, 'style')}
-                                                    className="flex-1 min-w-[140px] font-mono text-[10px] uppercase tracking-widest px-2.5 py-1.5 rounded-md bg-orange-500 hover:bg-orange-400 text-stone-900 transition-all active:scale-95 flex items-center justify-center gap-1.5">
+                                                    className="font-mono text-[10px] uppercase tracking-widest px-2.5 py-1.5 rounded-md bg-orange-500 hover:bg-orange-400 text-stone-900 transition-all active:scale-95 flex items-center gap-1.5">
                                                     {copiedKey === `${cpKey}_open` ? <><Check className="w-3 h-3" /> {t.out_copied}</> : <><ExternalLink className="w-3 h-3" /> {t.open_suno}</>}
                                                   </button>
                                                   <button onClick={() => copiar(cp.prompt, `${cpKey}_copy`)}
