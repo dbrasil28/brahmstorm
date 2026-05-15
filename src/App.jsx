@@ -2935,6 +2935,21 @@ const METR_LABELS = {
 // Quick-start presets — combinations of selections that work well together.
 // Organized by category so we can render a categorized picker.
 // Each preset is curated to use only vocab keys that exist in the app.
+// Mono-line icons (lucide) by preset category. Replaces the per-preset emoji
+// so the quick-start strip matches the rest of the app's iconography
+// (stone / orange line glyphs) instead of multi-colour emoji clipart.
+const PRESET_CATEGORY_ICONS = {
+  cinematic: Disc3,
+  brazilian: Flame,
+  electronic: Zap,
+  acoustic: Feather,
+  urban: Radio,
+};
+
+function getPresetIcon(p) {
+  return PRESET_CATEGORY_ICONS[p && p.category] || Sparkles;
+}
+
 const PRESETS = [
   // ─── CINEMATIC & ATMOSPHERIC ───
   { id: 'lofi-sunset', label: 'Lo-fi Sunset', icon: '🌅', category: 'cinematic',
@@ -5132,13 +5147,16 @@ Return ONLY JSON, no preamble:
                   <div className="font-mono text-[10px] uppercase tracking-[0.15em] text-stone-400 italic">· {t.presets_sub}</div>
                 </div>
                 <div className="flex flex-wrap gap-2">
-                  {PRESETS.filter(p => FEATURED_PRESET_IDS.includes(p.id)).map(p => (
-                    <button key={p.id} onClick={() => applyPreset(p)}
-                      className="font-mono text-[11px] uppercase tracking-[0.15em] px-3 py-2 rounded-lg border border-stone-300 text-stone-700 btn-fill-orange transition-all active:scale-[0.97] flex items-center gap-2">
-                      <span className="text-base leading-none">{p.icon}</span>
-                      <span>{p.label}</span>
-                    </button>
-                  ))}
+                  {PRESETS.filter(p => FEATURED_PRESET_IDS.includes(p.id)).map(p => {
+                    const Icon = getPresetIcon(p);
+                    return (
+                      <button key={p.id} onClick={() => applyPreset(p)}
+                        className="font-mono text-[11px] uppercase tracking-[0.15em] px-3 py-2 rounded-lg border border-stone-300 text-stone-700 btn-fill-orange transition-all active:scale-[0.97] flex items-center gap-2">
+                        <Icon className="w-3.5 h-3.5 text-orange-600 flex-shrink-0" />
+                        <span>{p.label}</span>
+                      </button>
+                    );
+                  })}
                   <button onClick={() => setPresetsModalOpen(true)}
                     className="font-mono text-[11px] uppercase tracking-[0.15em] px-3 py-2 rounded-lg border border-orange-500/40 bg-orange-500/5 text-orange-700 btn-fill-orange transition-all active:scale-[0.97] flex items-center gap-2">
                     <span>{t.presets_browse_all || 'browse all'} ({PRESETS.length}) →</span>
@@ -6186,13 +6204,16 @@ Return ONLY JSON, no preamble:
                       {catLabels[lang] || catLabels.en}
                     </div>
                     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2">
-                      {catPresets.map(p => (
-                        <button key={p.id} onClick={() => { applyPreset(p); setPresetsModalOpen(false); }}
-                          className="font-mono text-[11px] uppercase tracking-[0.15em] px-3 py-3 rounded-lg border border-stone-300 bg-white text-stone-700 btn-fill-orange transition-all active:scale-[0.97] flex items-center gap-2 text-left">
-                          <span className="text-lg leading-none flex-shrink-0">{p.icon}</span>
-                          <span className="truncate">{p.label}</span>
-                        </button>
-                      ))}
+                      {catPresets.map(p => {
+                        const Icon = getPresetIcon(p);
+                        return (
+                          <button key={p.id} onClick={() => { applyPreset(p); setPresetsModalOpen(false); }}
+                            className="font-mono text-[11px] uppercase tracking-[0.15em] px-3 py-3 rounded-lg border border-stone-300 bg-white text-stone-700 btn-fill-orange transition-all active:scale-[0.97] flex items-center gap-2 text-left">
+                            <Icon className="w-4 h-4 text-orange-600 flex-shrink-0" />
+                            <span className="truncate">{p.label}</span>
+                          </button>
+                        );
+                      })}
                     </div>
                   </div>
                 );
