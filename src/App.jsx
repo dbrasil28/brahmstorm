@@ -1,10 +1,10 @@
-import { useState, useEffect, useMemo, useRef } from 'react';
+import { useState, useEffect, useMemo, useRef, createContext, useContext } from 'react';
 import {
   Sparkles, Copy, Save, Music2, Flame, Archive, Check, Loader2,
   X, Trash2, ChevronDown, Disc3, Radio, FileText, MessageSquareQuote,
   AlertTriangle, Wand2, Lightbulb, Eraser, Globe, ExternalLink,
   ArrowRight, Lock, Zap, Heart, Code, AtSign, Mail, Settings2,
-  Feather, Sliders, Download, BookOpen,
+  Feather, Sliders, Download, BookOpen, Search,
 } from 'lucide-react';
 import { Analytics } from '@vercel/analytics/react';
 import { SpeedInsights } from '@vercel/speed-insights/react';
@@ -16,6 +16,10 @@ import { SpeedInsights } from '@vercel/speed-insights/react';
 //   - Empty hash  → Landing
 //   - "#app"      → App (Brahmstorm prompt forge)
 // ═══════════════════════════════════════════════════════════════════
+
+// Carries the current Block's search query down to ListSelect / GridSelect so
+// they can filter options without the option-renderers needing to lift state.
+const BlockSearchContext = createContext('');
 
 const VIEW_LANDING = 'landing';
 const VIEW_APP = 'app';
@@ -1995,6 +1999,7 @@ const UI = {
     out_generate_prompt: 'generate 3 AI variations', out_generate_letra: 'generate lyrics with AI',
     out_to_lyrics: 'turn into lyrics', out_to_prompt: 'turn into prompt',
     out_cross_lyric_label: 'lyric from this prompt', out_cross_prompt_label: 'prompt from this lyric',
+    search_placeholder: 'search…',
     out_forging: 'forging…', out_writing: 'writing lyrics…', out_composing: 'composing verses…',
     phases_prompt: ["reading your context…", "drafting angles…", "polishing the strongest…"], phases_album: ["mapping the sonic universe…", "weaving track 1, 2, 3…", "calibrating coherence…"], phases_letra: ["interpreting the theme…", "finding the voice…", "shaping verses…", "polishing the chorus…"], phases_letras_album: ["building the narrative arc…", "writing track 1…", "writing track 2…", "writing track 3…", "writing track 4…", "writing track 5…", "weaving echoes between tracks…"], phases_ref: ["recognizing the reference…", "extracting patterns…", "mapping to vocabulary…"],
     out_3_variants: '3 variations generated', out_album_generated: '5-track EP generated', out_lines: 'lines',
@@ -2116,6 +2121,7 @@ const UI = {
     out_generate_prompt: 'gerar 3 variações com IA', out_generate_letra: 'gerar letra com IA',
     out_to_lyrics: 'transformar em letra', out_to_prompt: 'transformar em prompt',
     out_cross_lyric_label: 'letra deste prompt', out_cross_prompt_label: 'prompt desta letra',
+    search_placeholder: 'buscar…',
     out_forging: 'forjando…', out_writing: 'escrevendo letra…', out_composing: 'compondo versos…',
     phases_prompt: ["lendo seu contexto…", "rascunhando ângulos…", "polindo o mais forte…"], phases_album: ["mapeando o universo sonoro…", "tecendo faixa 1, 2, 3…", "calibrando coerência…"], phases_letra: ["interpretando o tema…", "encontrando a voz…", "moldando versos…", "polindo o refrão…"], phases_letras_album: ["construindo o arco narrativo…", "escrevendo faixa 1…", "escrevendo faixa 2…", "escrevendo faixa 3…", "escrevendo faixa 4…", "escrevendo faixa 5…", "tecendo ecos entre as faixas…"], phases_ref: ["reconhecendo a referência…", "extraindo padrões…", "mapeando pro vocabulário…"],
     out_3_variants: '3 variações geradas', out_album_generated: 'EP de 5 faixas gerado', out_lines: 'linhas',
@@ -2237,6 +2243,7 @@ const UI = {
     out_generate_prompt: 'generar 3 variaciones con IA', out_generate_letra: 'generar letra con IA',
     out_to_lyrics: 'convertir en letra', out_to_prompt: 'convertir en prompt',
     out_cross_lyric_label: 'letra de este prompt', out_cross_prompt_label: 'prompt de esta letra',
+    search_placeholder: 'buscar…',
     out_forging: 'forjando…', out_writing: 'escribiendo…', out_composing: 'componiendo…',
     phases_prompt: ["leyendo el contexto…", "esbozando ángulos…", "puliendo el más fuerte…"], phases_album: ["mapeando el universo sonoro…", "tejiendo pista 1, 2, 3…", "calibrando coherencia…"], phases_letra: ["interpretando el tema…", "encontrando la voz…", "modelando versos…", "puliendo el estribillo…"], phases_letras_album: ["construyendo el arco narrativo…", "escribiendo pista 1…", "escribiendo pista 2…", "escribiendo pista 3…", "escribiendo pista 4…", "escribiendo pista 5…", "tejiendo ecos entre pistas…"], phases_ref: ["reconociendo la referencia…", "extrayendo patrones…", "mapeando al vocabulario…"],
     out_3_variants: '3 variaciones generadas', out_album_generated: 'EP de 5 pistas generado', out_lines: 'líneas',
@@ -2357,6 +2364,7 @@ const UI = {
     out_generate_prompt: 'générer 3 variantes avec l\'IA', out_generate_letra: 'générer les paroles',
     out_to_lyrics: 'transformer en paroles', out_to_prompt: 'transformer en prompt',
     out_cross_lyric_label: 'paroles de ce prompt', out_cross_prompt_label: 'prompt de ces paroles',
+    search_placeholder: 'rechercher…',
     out_forging: 'forgeage…', out_writing: 'rédaction…', out_composing: 'composition…',
     phases_prompt: ["lecture du contexte…", "esquisse des angles…", "polissage du plus fort…"], phases_album: ["cartographie de l'univers sonore…", "tissage des titres 1, 2, 3…", "calibrage de la cohérence…"], phases_letra: ["interprétation du thème…", "recherche de la voix…", "modelage des couplets…", "polissage du refrain…"], phases_letras_album: ["construction de l'arc narratif…", "écriture du titre 1…", "écriture du titre 2…", "écriture du titre 3…", "écriture du titre 4…", "écriture du titre 5…", "tissage d'échos entre les titres…"], phases_ref: ["reconnaissance de la référence…", "extraction de patterns…", "mapping au vocabulaire…"],
     out_3_variants: '3 variantes générées', out_album_generated: 'EP de 5 titres généré', out_lines: 'lignes',
@@ -5144,7 +5152,7 @@ Return ONLY JSON, no preamble:
 
             {tab === 'prompt' && producerTab === 'producer' && (
               <>
-                <Block mobileSheetKey={mobileSheetKey} setMobileSheetKey={setMobileSheetKey} setMobileSheetData={setMobileSheetData} keyId="genero" label={t.lbl_genre} count={generos.length} max={MULTI_LIMITS.generos} limitHint={t.limit_hint}
+                <Block mobileSheetKey={mobileSheetKey} setMobileSheetKey={setMobileSheetKey} setMobileSheetData={setMobileSheetData} keyId="genero" label={t.lbl_genre} count={generos.length} max={MULTI_LIMITS.generos} limitHint={t.limit_hint} searchable searchPlaceholder={t.search_placeholder}
                   preview={generos.map(k => getGenreLabel(k, lang))} open={openBlocks.genero} onToggle={toggleBlock}
                   onClear={() => setGeneros([])} tClear={t.block_clear} tOpen={t.block_open}>
                   {Object.entries(GENEROS_CATS_KEYS).map(([catKey, items]) => (
@@ -5171,13 +5179,13 @@ Return ONLY JSON, no preamble:
                   ))}
                 </Block>
 
-                <Block mobileSheetKey={mobileSheetKey} setMobileSheetKey={setMobileSheetKey} setMobileSheetData={setMobileSheetData} keyId="mood" label={t.lbl_mood} count={moods.length} max={MULTI_LIMITS.moods} limitHint={t.limit_hint} preview={moods.map(k => getMoodLabel(k, lang))}
+                <Block mobileSheetKey={mobileSheetKey} setMobileSheetKey={setMobileSheetKey} setMobileSheetData={setMobileSheetData} keyId="mood" label={t.lbl_mood} count={moods.length} max={MULTI_LIMITS.moods} limitHint={t.limit_hint} preview={moods.map(k => getMoodLabel(k, lang))} searchable searchPlaceholder={t.search_placeholder}
                   open={openBlocks.mood} onToggle={toggleBlock} onClear={() => setMoods([])} tClear={t.block_clear} tOpen={t.block_open}>
                   <GridSelect options={sortByLabel(MOODS_KEYS, getMoodLabel, lang)} values={moods}
                     onToggle={(k) => toggleItem(moods, setMoods, k, MULTI_LIMITS.moods)} getLabel={(k) => getMoodLabel(k, lang)} />
                 </Block>
 
-                <Block mobileSheetKey={mobileSheetKey} setMobileSheetKey={setMobileSheetKey} setMobileSheetData={setMobileSheetData} className={advancedBlockClass} keyId="instr" label={t.lbl_instruments} count={instrumentos.length} max={MULTI_LIMITS.instrumentos} limitHint={t.limit_hint} preview={instrumentos.map(k => getInstrLabel(k, lang))}
+                <Block mobileSheetKey={mobileSheetKey} setMobileSheetKey={setMobileSheetKey} setMobileSheetData={setMobileSheetData} className={advancedBlockClass} keyId="instr" label={t.lbl_instruments} count={instrumentos.length} max={MULTI_LIMITS.instrumentos} limitHint={t.limit_hint} preview={instrumentos.map(k => getInstrLabel(k, lang))} searchable searchPlaceholder={t.search_placeholder}
                   open={openBlocks.instr} onToggle={toggleBlock} onClear={() => setInstrumentos([])} tClear={t.block_clear} tOpen={t.block_open}>
                   {Object.entries(INSTRUMENTOS_CATS_KEYS).map(([catKey, items]) => (
                     <div key={catKey} className="mb-5 last:mb-0">
@@ -5190,7 +5198,7 @@ Return ONLY JSON, no preamble:
                   ))}
                 </Block>
 
-                <Block mobileSheetKey={mobileSheetKey} setMobileSheetKey={setMobileSheetKey} setMobileSheetData={setMobileSheetData} className={advancedBlockClass} keyId="voz" label={t.lbl_vocals} count={vozes.length} max={MULTI_LIMITS.vozes} limitHint={t.limit_hint} preview={vozes.map(k => getVozLabel(k, lang))}
+                <Block mobileSheetKey={mobileSheetKey} setMobileSheetKey={setMobileSheetKey} setMobileSheetData={setMobileSheetData} className={advancedBlockClass} keyId="voz" label={t.lbl_vocals} count={vozes.length} max={MULTI_LIMITS.vozes} limitHint={t.limit_hint} preview={vozes.map(k => getVozLabel(k, lang))} searchable searchPlaceholder={t.search_placeholder}
                   open={openBlocks.voz} onToggle={toggleBlock} onClear={() => setVozes([])} tClear={t.block_clear} tOpen={t.block_open}>
                   {Object.entries(VOZES_CATS_KEYS).map(([catKey, items]) => (
                     <div key={catKey} className="mb-5 last:mb-0">
@@ -5205,13 +5213,13 @@ Return ONLY JSON, no preamble:
                   ))}
                 </Block>
 
-                <Block mobileSheetKey={mobileSheetKey} setMobileSheetKey={setMobileSheetKey} setMobileSheetData={setMobileSheetData} className={advancedBlockClass} keyId="era" label={t.lbl_era} count={eras.length} max={MULTI_LIMITS.eras} limitHint={t.limit_hint} preview={eras.map(k => getEraLabel(k, lang))}
+                <Block mobileSheetKey={mobileSheetKey} setMobileSheetKey={setMobileSheetKey} setMobileSheetData={setMobileSheetData} className={advancedBlockClass} keyId="era" label={t.lbl_era} count={eras.length} max={MULTI_LIMITS.eras} limitHint={t.limit_hint} preview={eras.map(k => getEraLabel(k, lang))} searchable searchPlaceholder={t.search_placeholder}
                   open={openBlocks.era} onToggle={toggleBlock} onClear={() => setEras([])} tClear={t.block_clear} tOpen={t.block_open}>
                   <ListSelect options={ERAS_KEYS} values={eras}
                     onToggle={(k) => toggleItem(eras, setEras, k, MULTI_LIMITS.eras)} getLabel={(k) => getEraLabel(k, lang)} />
                 </Block>
 
-                <Block mobileSheetKey={mobileSheetKey} setMobileSheetKey={setMobileSheetKey} setMobileSheetData={setMobileSheetData} className={advancedBlockClass} keyId="prod" label={t.lbl_production} count={producoes.length} max={MULTI_LIMITS.producoes} limitHint={t.limit_hint} preview={producoes.map(k => getProdLabel(k, lang))}
+                <Block mobileSheetKey={mobileSheetKey} setMobileSheetKey={setMobileSheetKey} setMobileSheetData={setMobileSheetData} className={advancedBlockClass} keyId="prod" label={t.lbl_production} count={producoes.length} max={MULTI_LIMITS.producoes} limitHint={t.limit_hint} preview={producoes.map(k => getProdLabel(k, lang))} searchable searchPlaceholder={t.search_placeholder}
                   open={openBlocks.prod} onToggle={toggleBlock} onClear={() => setProducoes([])} tClear={t.block_clear} tOpen={t.block_open}>
                   <ListSelect options={sortByLabel(PRODUCOES_KEYS, getProdLabel, lang)} values={producoes}
                     onToggle={(k) => toggleItem(producoes, setProducoes, k, MULTI_LIMITS.producoes)} getLabel={(k) => getProdLabel(k, lang)} />
@@ -5268,7 +5276,7 @@ Return ONLY JSON, no preamble:
                 </div>
 
                 <Block mobileSheetKey={mobileSheetKey} setMobileSheetKey={setMobileSheetKey} setMobileSheetData={setMobileSheetData}
-                  keyId="drumMachines" label={t.lbl_drum_machines || 'Drum machines'} count={drumMachines.length} max={MULTI_LIMITS.drum_machines} limitHint={t.limit_hint}
+                  keyId="drumMachines" label={t.lbl_drum_machines || 'Drum machines'} count={drumMachines.length} max={MULTI_LIMITS.drum_machines} limitHint={t.limit_hint} searchable searchPlaceholder={t.search_placeholder}
                   preview={drumMachines} open={openBlocks.drumMachines} onToggle={toggleBlock}
                   onClear={() => setDrumMachines([])} tClear={t.block_clear} tOpen={t.block_open}>
                   <ListSelect options={DRUM_MACHINES_KEYS} values={drumMachines}
@@ -5277,7 +5285,7 @@ Return ONLY JSON, no preamble:
                 </Block>
 
                 <Block mobileSheetKey={mobileSheetKey} setMobileSheetKey={setMobileSheetKey} setMobileSheetData={setMobileSheetData}
-                  keyId="synths" label={t.lbl_synths || 'Vintage synths & keys'} count={synths.length} max={MULTI_LIMITS.synths} limitHint={t.limit_hint}
+                  keyId="synths" label={t.lbl_synths || 'Vintage synths & keys'} count={synths.length} max={MULTI_LIMITS.synths} limitHint={t.limit_hint} searchable searchPlaceholder={t.search_placeholder}
                   preview={synths} open={openBlocks.synths} onToggle={toggleBlock}
                   onClear={() => setSynths([])} tClear={t.block_clear} tOpen={t.block_open}>
                   <ListSelect options={SYNTHS_KEYS} values={synths}
@@ -5286,7 +5294,7 @@ Return ONLY JSON, no preamble:
                 </Block>
 
                 <Block mobileSheetKey={mobileSheetKey} setMobileSheetKey={setMobileSheetKey} setMobileSheetData={setMobileSheetData}
-                  keyId="mics" label={t.lbl_mics || 'Microphones · recording'} count={mics.length} max={MULTI_LIMITS.mics} limitHint={t.limit_hint}
+                  keyId="mics" label={t.lbl_mics || 'Microphones · recording'} count={mics.length} max={MULTI_LIMITS.mics} limitHint={t.limit_hint} searchable searchPlaceholder={t.search_placeholder}
                   preview={mics} open={openBlocks.mics} onToggle={toggleBlock}
                   onClear={() => setMics([])} tClear={t.block_clear} tOpen={t.block_open}>
                   <ListSelect options={MICS_KEYS} values={mics}
@@ -5304,13 +5312,13 @@ Return ONLY JSON, no preamble:
                     className="wrap-any w-full max-w-full bg-stone-200 border border-stone-300 focus:border-orange-500 focus:outline-none p-3 rounded-lg font-display text-base placeholder:text-stone-400 resize-none transition-colors" />
                 </Block>
 
-                <Block mobileSheetKey={mobileSheetKey} setMobileSheetKey={setMobileSheetKey} setMobileSheetData={setMobileSheetData} keyId="lmood" label={t.lbl_mood_letra} count={moods.length} max={MULTI_LIMITS.moods} limitHint={t.limit_hint} preview={moods.map(k => getMoodLabel(k, lang))}
+                <Block mobileSheetKey={mobileSheetKey} setMobileSheetKey={setMobileSheetKey} setMobileSheetData={setMobileSheetData} keyId="lmood" label={t.lbl_mood_letra} count={moods.length} max={MULTI_LIMITS.moods} limitHint={t.limit_hint} preview={moods.map(k => getMoodLabel(k, lang))} searchable searchPlaceholder={t.search_placeholder}
                   open={openBlocks.lmood} onToggle={toggleBlock} onClear={() => setMoods([])} tClear={t.block_clear} tOpen={t.block_open}>
                   <GridSelect options={sortByLabel(MOODS_KEYS, getMoodLabel, lang)} values={moods}
                     onToggle={(k) => toggleItem(moods, setMoods, k, MULTI_LIMITS.moods)} getLabel={(k) => getMoodLabel(k, lang)} />
                 </Block>
 
-                <Block mobileSheetKey={mobileSheetKey} setMobileSheetKey={setMobileSheetKey} setMobileSheetData={setMobileSheetData} className={advancedBlockClass} keyId="lgen" label={t.lbl_genre_letra} count={generos.length} max={MULTI_LIMITS.generos} limitHint={t.limit_hint} preview={generos.map(k => getGenreLabel(k, lang))}
+                <Block mobileSheetKey={mobileSheetKey} setMobileSheetKey={setMobileSheetKey} setMobileSheetData={setMobileSheetData} className={advancedBlockClass} keyId="lgen" label={t.lbl_genre_letra} count={generos.length} max={MULTI_LIMITS.generos} limitHint={t.limit_hint} preview={generos.map(k => getGenreLabel(k, lang))} searchable searchPlaceholder={t.search_placeholder}
                   open={openBlocks.lgen} onToggle={toggleBlock} onClear={() => setGeneros([])} tClear={t.block_clear} tOpen={t.block_open}>
                   {Object.entries(GENEROS_CATS_KEYS).map(([catKey, items]) => (
                     <div key={catKey} className="mb-5 last:mb-0">
@@ -5391,13 +5399,13 @@ Return ONLY JSON, no preamble:
                     onToggle={(k) => toggleSingle(rimas, setRimas, k)} getLabel={(k) => getRimaLabel(k, lang)} single />
                 </Block>
 
-                <Block mobileSheetKey={mobileSheetKey} setMobileSheetKey={setMobileSheetKey} setMobileSheetData={setMobileSheetData} className={advancedBlockClass} keyId="lera" label={t.lbl_era} count={eras.length} max={MULTI_LIMITS.eras} limitHint={t.limit_hint} preview={eras.map(k => getEraLabel(k, lang))}
+                <Block mobileSheetKey={mobileSheetKey} setMobileSheetKey={setMobileSheetKey} setMobileSheetData={setMobileSheetData} className={advancedBlockClass} keyId="lera" label={t.lbl_era} count={eras.length} max={MULTI_LIMITS.eras} limitHint={t.limit_hint} preview={eras.map(k => getEraLabel(k, lang))} searchable searchPlaceholder={t.search_placeholder}
                   open={openBlocks.lera} onToggle={toggleBlock} onClear={() => setEras([])} tClear={t.block_clear} tOpen={t.block_open}>
                   <ListSelect options={ERAS_KEYS} values={eras}
                     onToggle={(k) => toggleItem(eras, setEras, k, MULTI_LIMITS.eras)} getLabel={(k) => getEraLabel(k, lang)} />
                 </Block>
 
-                <Block mobileSheetKey={mobileSheetKey} setMobileSheetKey={setMobileSheetKey} setMobileSheetData={setMobileSheetData} className={advancedBlockClass} keyId="lidi" label={t.lbl_language} count={idiomas.length} preview={idiomas.map(k => getIdiomaLabel(k, lang))}
+                <Block mobileSheetKey={mobileSheetKey} setMobileSheetKey={setMobileSheetKey} setMobileSheetData={setMobileSheetData} className={advancedBlockClass} keyId="lidi" label={t.lbl_language} count={idiomas.length} preview={idiomas.map(k => getIdiomaLabel(k, lang))} searchable searchPlaceholder={t.search_placeholder}
                   open={openBlocks.lidi} onToggle={toggleBlock} onClear={() => setIdiomas([])} tClear={t.block_clear} tOpen={t.block_open}>
                   <GridSelect options={sortByLabel(IDIOMAS_KEYS, getIdiomaLabel, lang)} values={idiomas}
                     onToggle={(k) => toggleSingle(idiomas, setIdiomas, k)} getLabel={(k) => getIdiomaLabel(k, lang)} single />
@@ -6189,11 +6197,12 @@ Return ONLY JSON, no preamble:
 // Subcomponents
 // ═══════════════════════════════════════════════════════════════════
 
-function Block({ keyId, label, count, max, preview = [], open, onToggle, onClear, tClear, tOpen, children, className = '', mobileSheetKey, setMobileSheetKey, setMobileSheetData, limitHint }) {
+function Block({ keyId, label, count, max, preview = [], open, onToggle, onClear, tClear, tOpen, children, className = '', mobileSheetKey, setMobileSheetKey, setMobileSheetData, limitHint, searchable = false, searchPlaceholder = 'search…' }) {
   const previewArr = Array.isArray(preview) ? preview : [];
   const atLimit = max && count >= max;
   const family = getBlockFamily(keyId);
   const fam = FAMILY_STYLES[family];
+  const [query, setQuery] = useState('');
   // When this block IS the active mobile sheet, refresh its data when stable values change.
   // We exclude `children` and `onClear` from deps to avoid infinite loop (those are new refs every render).
   // We include `preview` (joined as a string) so single-select changes also trigger re-sync
@@ -6262,7 +6271,25 @@ function Block({ keyId, label, count, max, preview = [], open, onToggle, onClear
             <span className="font-mono text-[10px] text-red-700 italic">{limitHint}</span>
           </div>
         )}
-        <div className="p-4">{children}</div>
+        {searchable && (
+          <div className="px-4 pt-3 pb-1">
+            <div className="relative">
+              <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-stone-400 pointer-events-none" />
+              <input type="text" value={query} onChange={(e) => setQuery(e.target.value)}
+                placeholder={searchPlaceholder}
+                className="w-full bg-white border border-stone-300 focus:border-orange-500 focus:outline-none rounded-md pl-8 pr-7 py-1.5 font-mono text-[11px] placeholder:text-stone-400 transition-colors" />
+              {query && (
+                <button onClick={() => setQuery('')} aria-label="clear search"
+                  className="absolute right-1.5 top-1/2 -translate-y-1/2 w-5 h-5 rounded text-stone-400 hover:text-stone-700 hover:bg-stone-200 transition-colors flex items-center justify-center">
+                  <X className="w-3 h-3" />
+                </button>
+              )}
+            </div>
+          </div>
+        )}
+        <BlockSearchContext.Provider value={searchable ? query : ''}>
+          <div className="p-4">{children}</div>
+        </BlockSearchContext.Provider>
       </div>}
     </div>
   );
@@ -6437,11 +6464,28 @@ function RadioDot({ active }) {
   );
 }
 
+// Filter options by query against label + (optional) hint. Always keeps
+// already-selected options visible so the user doesn't lose visual
+// confirmation of what they picked when typing in the search field.
+function applyBlockSearch(options, query, values, getLabel, getHint) {
+  const q = (query || '').trim().toLowerCase();
+  if (!q) return options;
+  return options.filter((o) => {
+    if (values && values.includes(o)) return true;
+    const label = (getLabel ? getLabel(o) : String(o)) || '';
+    if (label.toLowerCase().includes(q)) return true;
+    const hint = getHint ? (getHint(o) || '') : '';
+    return hint.toLowerCase().includes(q);
+  });
+}
+
 function GridSelect({ options, values, onToggle, getLabel, single }) {
   const Indicator = single ? RadioDot : CheckBox;
+  const query = useContext(BlockSearchContext);
+  const filtered = applyBlockSearch(options, query, values, getLabel);
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-1 min-w-0">
-      {options.map(o => {
+      {filtered.map(o => {
         const active = values.includes(o);
         return (
           <button key={o} onClick={() => onToggle(o)}
@@ -6451,15 +6495,20 @@ function GridSelect({ options, values, onToggle, getLabel, single }) {
           </button>
         );
       })}
+      {query && filtered.length === 0 && (
+        <div className="col-span-full font-mono text-[10px] uppercase tracking-widest text-stone-400 italic py-2 text-center">no match</div>
+      )}
     </div>
   );
 }
 
 function ListSelect({ options, values, onToggle, getLabel, getHint, single }) {
   const Indicator = single ? RadioDot : CheckBox;
+  const query = useContext(BlockSearchContext);
+  const filtered = applyBlockSearch(options, query, values, getLabel, getHint);
   return (
     <div className="space-y-1 min-w-0">
-      {options.map(o => {
+      {filtered.map(o => {
         const active = values.includes(o);
         const hint = getHint ? getHint(o) : '';
         return (
@@ -6475,6 +6524,9 @@ function ListSelect({ options, values, onToggle, getLabel, getHint, single }) {
           </button>
         );
       })}
+      {query && filtered.length === 0 && (
+        <div className="font-mono text-[10px] uppercase tracking-widest text-stone-400 italic py-2 text-center">no match</div>
+      )}
     </div>
   );
 }
