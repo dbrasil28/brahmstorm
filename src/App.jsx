@@ -5155,28 +5155,42 @@ Return ONLY JSON, no preamble:
                 <Block mobileSheetKey={mobileSheetKey} setMobileSheetKey={setMobileSheetKey} setMobileSheetData={setMobileSheetData} keyId="genero" label={t.lbl_genre} count={generos.length} max={MULTI_LIMITS.generos} limitHint={t.limit_hint} searchable searchPlaceholder={t.search_placeholder}
                   preview={generos.map(k => getGenreLabel(k, lang))} open={openBlocks.genero} onToggle={toggleBlock}
                   onClear={() => setGeneros([])} tClear={t.block_clear} tOpen={t.block_open}>
-                  {Object.entries(GENEROS_CATS_KEYS).map(([catKey, items]) => (
-                    <div key={catKey} className="mb-5 last:mb-0">
-                      <div className="font-mono text-[11px] uppercase tracking-[0.2em] text-orange-700 font-bold mb-2 pb-1 border-b border-stone-300">
-                        {CAT_LABELS[lang][catKey]}
-                      </div>
-                      <div className="grid grid-cols-1 gap-1 min-w-0">
-                        {sortByLabel(items, getGenreLabel, lang).map(o => {
-                          const active = generos.includes(o.key);
-                          return (
-                            <button key={o.key} onClick={() => toggleItem(generos, setGeneros, o.key, MULTI_LIMITS.generos)}
-                              className={`flex items-start gap-2 px-2.5 py-2 rounded-md border text-left transition-all active:scale-[0.98] min-w-0 ${active ? 'border-orange-500 bg-orange-500/15' : 'border-stone-300 hover:border-stone-500 hover:bg-stone-200'}`}>
-                              <span className="pt-0.5 flex-shrink-0"><CheckBox active={active} /></span>
-                              <span className="min-w-0 flex-1 flex items-baseline gap-2 flex-wrap">
-                                <span className={`font-mono text-[11px] leading-4 wrap-any ${active ? 'text-orange-800' : 'text-stone-700'}`}>{getGenreLabel(o.key, lang)}</span>
-                                <span className={`font-display italic text-[11px] leading-4 wrap-any ${active ? 'text-orange-700/60' : 'text-stone-500/70'}`}>{o.refs}</span>
-                              </span>
-                            </button>
-                          );
-                        })}
-                      </div>
-                    </div>
-                  ))}
+                  <BlockSearchContext.Consumer>
+                    {(query) => {
+                      const q = (query || '').trim().toLowerCase();
+                      return Object.entries(GENEROS_CATS_KEYS).map(([catKey, items]) => {
+                        const sorted = sortByLabel(items, getGenreLabel, lang);
+                        const visible = !q ? sorted : sorted.filter(o => {
+                          if (generos.includes(o.key)) return true;
+                          if (getGenreLabel(o.key, lang).toLowerCase().includes(q)) return true;
+                          return (o.refs || '').toLowerCase().includes(q);
+                        });
+                        if (q && visible.length === 0) return null;
+                        return (
+                          <div key={catKey} className="mb-5 last:mb-0">
+                            <div className="font-mono text-[11px] uppercase tracking-[0.2em] text-orange-700 font-bold mb-2 pb-1 border-b border-stone-300">
+                              {CAT_LABELS[lang][catKey]}
+                            </div>
+                            <div className="grid grid-cols-1 gap-1 min-w-0">
+                              {visible.map(o => {
+                                const active = generos.includes(o.key);
+                                return (
+                                  <button key={o.key} onClick={() => toggleItem(generos, setGeneros, o.key, MULTI_LIMITS.generos)}
+                                    className={`flex items-start gap-2 px-2.5 py-2 rounded-md border text-left transition-all active:scale-[0.98] min-w-0 ${active ? 'border-orange-500 bg-orange-500/15' : 'border-stone-300 bg-white hover:border-stone-500 hover:bg-stone-100'}`}>
+                                    <span className="pt-0.5 flex-shrink-0"><CheckBox active={active} /></span>
+                                    <span className="min-w-0 flex-1 flex items-baseline gap-2 flex-wrap">
+                                      <span className={`font-mono text-[11px] leading-4 wrap-any ${active ? 'text-orange-800' : 'text-stone-700'}`}>{getGenreLabel(o.key, lang)}</span>
+                                      <span className={`font-display italic text-[11px] leading-4 wrap-any ${active ? 'text-orange-700/60' : 'text-stone-500/70'}`}>{o.refs}</span>
+                                    </span>
+                                  </button>
+                                );
+                              })}
+                            </div>
+                          </div>
+                        );
+                      });
+                    }}
+                  </BlockSearchContext.Consumer>
                 </Block>
 
                 <Block mobileSheetKey={mobileSheetKey} setMobileSheetKey={setMobileSheetKey} setMobileSheetData={setMobileSheetData} keyId="mood" label={t.lbl_mood} count={moods.length} max={MULTI_LIMITS.moods} limitHint={t.limit_hint} preview={moods.map(k => getMoodLabel(k, lang))} searchable searchPlaceholder={t.search_placeholder}
@@ -5320,28 +5334,42 @@ Return ONLY JSON, no preamble:
 
                 <Block mobileSheetKey={mobileSheetKey} setMobileSheetKey={setMobileSheetKey} setMobileSheetData={setMobileSheetData} className={advancedBlockClass} keyId="lgen" label={t.lbl_genre_letra} count={generos.length} max={MULTI_LIMITS.generos} limitHint={t.limit_hint} preview={generos.map(k => getGenreLabel(k, lang))} searchable searchPlaceholder={t.search_placeholder}
                   open={openBlocks.lgen} onToggle={toggleBlock} onClear={() => setGeneros([])} tClear={t.block_clear} tOpen={t.block_open}>
-                  {Object.entries(GENEROS_CATS_KEYS).map(([catKey, items]) => (
-                    <div key={catKey} className="mb-5 last:mb-0">
-                      <div className="font-mono text-[11px] uppercase tracking-[0.2em] text-orange-700 font-bold mb-2 pb-1 border-b border-stone-300">
-                        {CAT_LABELS[lang][catKey]}
-                      </div>
-                      <div className="grid grid-cols-1 gap-1 min-w-0">
-                        {sortByLabel(items, getGenreLabel, lang).map(o => {
-                          const active = generos.includes(o.key);
-                          return (
-                            <button key={o.key} onClick={() => toggleItem(generos, setGeneros, o.key, MULTI_LIMITS.generos)}
-                              className={`flex items-start gap-2 px-2.5 py-2 rounded-md border text-left transition-all active:scale-[0.98] min-w-0 ${active ? 'border-orange-500 bg-orange-500/15' : 'border-stone-300 hover:border-stone-500 hover:bg-stone-200'}`}>
-                              <span className="pt-0.5 flex-shrink-0"><CheckBox active={active} /></span>
-                              <span className="min-w-0 flex-1 flex items-baseline gap-2 flex-wrap">
-                                <span className={`font-mono text-[11px] leading-4 wrap-any ${active ? 'text-orange-800' : 'text-stone-700'}`}>{getGenreLabel(o.key, lang)}</span>
-                                <span className={`font-display italic text-[11px] leading-4 wrap-any ${active ? 'text-orange-700/60' : 'text-stone-500/70'}`}>{o.refs}</span>
-                              </span>
-                            </button>
-                          );
-                        })}
-                      </div>
-                    </div>
-                  ))}
+                  <BlockSearchContext.Consumer>
+                    {(query) => {
+                      const q = (query || '').trim().toLowerCase();
+                      return Object.entries(GENEROS_CATS_KEYS).map(([catKey, items]) => {
+                        const sorted = sortByLabel(items, getGenreLabel, lang);
+                        const visible = !q ? sorted : sorted.filter(o => {
+                          if (generos.includes(o.key)) return true;
+                          if (getGenreLabel(o.key, lang).toLowerCase().includes(q)) return true;
+                          return (o.refs || '').toLowerCase().includes(q);
+                        });
+                        if (q && visible.length === 0) return null;
+                        return (
+                          <div key={catKey} className="mb-5 last:mb-0">
+                            <div className="font-mono text-[11px] uppercase tracking-[0.2em] text-orange-700 font-bold mb-2 pb-1 border-b border-stone-300">
+                              {CAT_LABELS[lang][catKey]}
+                            </div>
+                            <div className="grid grid-cols-1 gap-1 min-w-0">
+                              {visible.map(o => {
+                                const active = generos.includes(o.key);
+                                return (
+                                  <button key={o.key} onClick={() => toggleItem(generos, setGeneros, o.key, MULTI_LIMITS.generos)}
+                                    className={`flex items-start gap-2 px-2.5 py-2 rounded-md border text-left transition-all active:scale-[0.98] min-w-0 ${active ? 'border-orange-500 bg-orange-500/15' : 'border-stone-300 bg-white hover:border-stone-500 hover:bg-stone-100'}`}>
+                                    <span className="pt-0.5 flex-shrink-0"><CheckBox active={active} /></span>
+                                    <span className="min-w-0 flex-1 flex items-baseline gap-2 flex-wrap">
+                                      <span className={`font-mono text-[11px] leading-4 wrap-any ${active ? 'text-orange-800' : 'text-stone-700'}`}>{getGenreLabel(o.key, lang)}</span>
+                                      <span className={`font-display italic text-[11px] leading-4 wrap-any ${active ? 'text-orange-700/60' : 'text-stone-500/70'}`}>{o.refs}</span>
+                                    </span>
+                                  </button>
+                                );
+                              })}
+                            </div>
+                          </div>
+                        );
+                      });
+                    }}
+                  </BlockSearchContext.Consumer>
                 </Block>
 
                 <Block mobileSheetKey={mobileSheetKey} setMobileSheetKey={setMobileSheetKey} setMobileSheetData={setMobileSheetData} keyId="ltam" label={t.lbl_size} count={tamanhoLetra ? 1 : 0} preview={tamanhoLetra ? [t[`size_${tamanhoLetra}`]] : []}
@@ -6489,7 +6517,7 @@ function GridSelect({ options, values, onToggle, getLabel, single }) {
         const active = values.includes(o);
         return (
           <button key={o} onClick={() => onToggle(o)}
-            className={`flex items-center gap-2 px-2.5 py-2 rounded-md border text-left transition-all active:scale-[0.98] min-w-0 ${active ? 'border-orange-500 bg-orange-500/15' : 'border-stone-300 hover:border-stone-500 hover:bg-stone-200'}`}>
+            className={`flex items-center gap-2 px-2.5 py-2 rounded-md border text-left transition-all active:scale-[0.98] min-w-0 ${active ? 'border-orange-500 bg-orange-500/15' : 'border-stone-300 bg-white hover:border-stone-500 hover:bg-stone-100'}`}>
             <Indicator active={active} />
             <span className={`font-mono text-[11px] leading-4 wrap-any min-w-0 ${active ? 'text-orange-800' : 'text-stone-700'}`}>{getLabel ? getLabel(o) : o}</span>
           </button>
@@ -6513,7 +6541,7 @@ function ListSelect({ options, values, onToggle, getLabel, getHint, single }) {
         const hint = getHint ? getHint(o) : '';
         return (
           <button key={o} onClick={() => onToggle(o)}
-            className={`w-full flex items-start gap-3 px-3 py-2.5 rounded-md border text-left transition-all active:scale-[0.99] min-w-0 ${active ? 'border-orange-500 bg-orange-500/15' : 'border-stone-300 hover:border-stone-500 hover:bg-stone-200'}`}>
+            className={`w-full flex items-start gap-3 px-3 py-2.5 rounded-md border text-left transition-all active:scale-[0.99] min-w-0 ${active ? 'border-orange-500 bg-orange-500/15' : 'border-stone-300 bg-white hover:border-stone-500 hover:bg-stone-100'}`}>
             <span className="flex-shrink-0 mt-0.5"><Indicator active={active} /></span>
             <div className="min-w-0 flex-1">
               <span className={`font-display text-sm leading-tight wrap-any block ${active ? 'text-orange-800' : 'text-stone-800'}`} style={{ fontWeight: 500 }}>{getLabel ? getLabel(o) : o}</span>
