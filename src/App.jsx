@@ -3072,27 +3072,30 @@ const BLOCK_FAMILIES = {
 };
 
 // All classes are listed as full strings so Tailwind's JIT picks them up.
+// Families currently all share the same orange treatment — the structural
+// hook (BLOCK_FAMILIES + getBlockFamily) stays in place so per-family
+// theming can be reintroduced by swapping these tokens later.
 const FAMILY_STYLES = {
   sound: {
-    borderL: 'border-l-[3px] border-l-orange-500',
-    sheetTop: 'border-t-[3px] border-t-orange-500',
+    borderL: 'border-l-[5px] border-l-orange-500',
+    sheetTop: 'border-t-[5px] border-t-orange-500',
     borderActive: 'border-orange-500/30',
-    badge: 'bg-orange-500',
+    badge: 'bg-orange-500 text-stone-900',
     rule: 'text-orange-700',
   },
   voice: {
-    borderL: 'border-l-[3px] border-l-amber-600',
-    sheetTop: 'border-t-[3px] border-t-amber-600',
-    borderActive: 'border-amber-600/40',
-    badge: 'bg-amber-600',
-    rule: 'text-amber-700',
+    borderL: 'border-l-[5px] border-l-orange-500',
+    sheetTop: 'border-t-[5px] border-t-orange-500',
+    borderActive: 'border-orange-500/30',
+    badge: 'bg-orange-500 text-stone-900',
+    rule: 'text-orange-700',
   },
   lyric: {
-    borderL: 'border-l-[3px] border-l-rose-600',
-    sheetTop: 'border-t-[3px] border-t-rose-600',
-    borderActive: 'border-rose-600/40',
-    badge: 'bg-rose-600',
-    rule: 'text-rose-700',
+    borderL: 'border-l-[5px] border-l-orange-500',
+    sheetTop: 'border-t-[5px] border-t-orange-500',
+    borderActive: 'border-orange-500/30',
+    badge: 'bg-orange-500 text-stone-900',
+    rule: 'text-orange-700',
   },
 };
 
@@ -5769,7 +5772,7 @@ Return ONLY this JSON, no preamble, no markdown:
               <div className="flex items-center gap-3 min-w-0 flex-1">
                 <span className="font-display italic text-2xl text-stone-900 truncate" style={{ fontWeight: 700 }}>{mobileSheetData.label}</span>
                 {mobileSheetData.count > 0 && (
-                  <span className={`font-mono text-[10px] uppercase tracking-widest flex-shrink-0 tabular-nums rounded-sm px-2 py-0.5 text-stone-900 ${FAMILY_STYLES[getBlockFamily(mobileSheetData.keyId)].badge}`}>
+                  <span className={`font-mono text-[10px] uppercase tracking-widest flex-shrink-0 tabular-nums rounded-sm px-2 py-0.5 ${FAMILY_STYLES[getBlockFamily(mobileSheetData.keyId)].badge}`}>
                     {mobileSheetData.max ? `${mobileSheetData.count}/${mobileSheetData.max}` : mobileSheetData.count}
                   </span>
                 )}
@@ -5931,7 +5934,7 @@ function Block({ keyId, label, count, max, preview = [], open, onToggle, onClear
             <ChevronDown className="w-4 h-4 text-stone-500 flex-shrink-0 md:hidden -rotate-90" />
             <span className="font-display italic text-lg text-stone-900 flex-shrink-0" style={{ fontWeight: 600 }}>{label}</span>
             {count > 0 && (
-              <span className={`font-mono text-[9px] uppercase tracking-widest flex-shrink-0 tabular-nums rounded-sm px-1.5 py-0.5 text-stone-900 ${fam.badge}`}>
+              <span className={`font-mono text-[9px] uppercase tracking-widest flex-shrink-0 tabular-nums rounded-sm px-1.5 py-0.5 ${fam.badge}`}>
                 {max ? `${count}/${max}` : count}
               </span>
             )}
