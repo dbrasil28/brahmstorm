@@ -30,8 +30,24 @@ function getViewFromHash() {
   return hash === 'app' ? VIEW_APP : VIEW_LANDING;
 }
 
+// First-paint routing: respects any explicit hash, but for visitors hitting
+// the bare root URL (no hash), sends repeat visitors who've already seen the
+// landing straight to the studio. Clicking "back to landing" from inside the
+// app still works — that path explicitly calls setView(VIEW_LANDING) and
+// only persists for the current session (next reload will redirect again).
+function getInitialView() {
+  if (typeof window === 'undefined') return VIEW_LANDING;
+  const hash = (window.location.hash || '').replace(/^#\/?/, '').trim().toLowerCase();
+  if (hash === 'app') return VIEW_APP;
+  if (hash) return VIEW_LANDING; // any explicit non-empty hash → landing
+  try {
+    if (localStorage.getItem('bs:seenLanding') === '1') return VIEW_APP;
+  } catch (e) {}
+  return VIEW_LANDING;
+}
+
 export default function Brahmstorm() {
-  const [view, setView] = useState(getViewFromHash);
+  const [view, setView] = useState(getInitialView);
 
   useEffect(() => {
     const onHashChange = () => setView(getViewFromHash());
