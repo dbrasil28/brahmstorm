@@ -2455,21 +2455,49 @@ const GENEROS_CATS_KEYS = {
     { key: 'trap', refs: 'Future, Travis Scott, Metro Boomin' },
   ],
   rock_alternative: [
+    { key: 'alternative rock', refs: 'Radiohead, R.E.M., Foo Fighters' },
     { key: 'atmospheric black metal', refs: 'Wolves in the Throne Room, Agalloch, Drudkh' },
+    { key: 'classic rock', refs: 'Led Zeppelin, The Rolling Stones, The Who' },
     { key: 'doom metal', refs: 'Black Sabbath, Candlemass, Electric Wizard' },
     { key: 'dream pop', refs: 'Cocteau Twins, Beach House, Mazzy Star' },
+    { key: 'emo', refs: 'My Chemical Romance, Jimmy Eat World, Sunny Day Real Estate' },
+    { key: 'folk rock', refs: 'Bob Dylan, Neil Young, Simon & Garfunkel' },
+    { key: 'garage rock', refs: 'The White Stripes, The Stooges, The Black Keys' },
+    { key: 'grunge', refs: 'Nirvana, Pearl Jam, Soundgarden' },
+    { key: 'hard rock', refs: 'AC/DC, Guns N\' Roses, Aerosmith' },
+    { key: 'heavy metal', refs: 'Iron Maiden, Judas Priest, Motörhead' },
+    { key: 'indie rock', refs: 'The Strokes, Arctic Monkeys, Modest Mouse' },
     { key: 'math rock', refs: 'Don Caballero, American Football, toe' },
     { key: 'new wave', refs: 'Talking Heads, Blondie, Devo' },
+    { key: 'pop punk', refs: 'Green Day, Blink-182, Sum 41' },
     { key: 'post-punk', refs: 'Joy Division, The Cure, Interpol' },
     { key: 'post-rock', refs: 'Explosions in the Sky, Mogwai, Godspeed You! Black Emperor' },
+    { key: 'progressive rock', refs: 'Pink Floyd, Yes, King Crimson' },
+    { key: 'psychedelic rock', refs: 'Jefferson Airplane, The Doors, 13th Floor Elevators' },
+    { key: 'punk rock', refs: 'Ramones, The Clash, Sex Pistols' },
     { key: 'shoegaze', refs: 'My Bloody Valentine, Slowdive, Ride' },
     { key: 'sludge', refs: 'Eyehategod, Crowbar, Melvins' },
     { key: 'surf rock', refs: 'Dick Dale, The Ventures, The Surfaris' },
+    { key: 'thrash metal', refs: 'Metallica, Slayer, Megadeth' },
   ],
   pop_indie: [
+    { key: 'alternative pop', refs: 'Lana Del Rey, Lorde, Billie Eilish' },
+    { key: 'art pop', refs: 'Björk, Kate Bush, FKA twigs' },
+    { key: 'bedroom pop', refs: 'Clairo, Rex Orange County, Steve Lacy' },
+    { key: 'britpop', refs: 'Oasis, Blur, Pulp' },
+    { key: 'bubblegum pop', refs: 'Britney Spears, *NSYNC, S Club 7' },
+    { key: 'chamber pop', refs: 'Belle and Sebastian, The Decemberists, Sufjan Stevens' },
+    { key: 'chillwave', refs: 'Toro y Moi, Washed Out, Neon Indian' },
     { key: 'city pop', refs: 'Tatsuro Yamashita, Mariya Takeuchi, Anri' },
     { key: 'disco', refs: 'Chic, Donna Summer, Bee Gees' },
+    { key: 'electropop', refs: 'Robyn, Charli XCX, Lady Gaga' },
+    { key: 'hyperpop', refs: '100 gecs, SOPHIE, A. G. Cook' },
     { key: 'indie folk', refs: 'Fleet Foxes, Bon Iver, Sufjan Stevens' },
+    { key: 'indie pop', refs: 'Vampire Weekend, Foster the People, Phoenix' },
+    { key: 'jangle pop', refs: 'Mac DeMarco, Real Estate, The Smiths' },
+    { key: 'pop', refs: 'Taylor Swift, Ariana Grande, Dua Lipa' },
+    { key: 'pop rock', refs: 'Maroon 5, Imagine Dragons, OneRepublic' },
+    { key: 'synth-pop', refs: 'Depeche Mode, CHVRCHES, Tegan and Sara' },
   ],
   soul_rnb_jazz: [
     { key: 'gospel soul', refs: 'Aretha Franklin, Mahalia Jackson, Sam Cooke' },
@@ -2907,6 +2935,21 @@ const METR_LABELS = {
 // Quick-start presets — combinations of selections that work well together.
 // Organized by category so we can render a categorized picker.
 // Each preset is curated to use only vocab keys that exist in the app.
+// Mono-line icons (lucide) by preset category. Replaces the per-preset emoji
+// so the quick-start strip matches the rest of the app's iconography
+// (stone / orange line glyphs) instead of multi-colour emoji clipart.
+const PRESET_CATEGORY_ICONS = {
+  cinematic: Disc3,
+  brazilian: Flame,
+  electronic: Zap,
+  acoustic: Feather,
+  urban: Radio,
+};
+
+function getPresetIcon(p) {
+  return PRESET_CATEGORY_ICONS[p && p.category] || Sparkles;
+}
+
 const PRESETS = [
   // ─── CINEMATIC & ATMOSPHERIC ───
   { id: 'lofi-sunset', label: 'Lo-fi Sunset', icon: '🌅', category: 'cinematic',
@@ -5104,13 +5147,16 @@ Return ONLY JSON, no preamble:
                   <div className="font-mono text-[10px] uppercase tracking-[0.15em] text-stone-400 italic">· {t.presets_sub}</div>
                 </div>
                 <div className="flex flex-wrap gap-2">
-                  {PRESETS.filter(p => FEATURED_PRESET_IDS.includes(p.id)).map(p => (
-                    <button key={p.id} onClick={() => applyPreset(p)}
-                      className="font-mono text-[11px] uppercase tracking-[0.15em] px-3 py-2 rounded-lg border border-stone-300 text-stone-700 btn-fill-orange transition-all active:scale-[0.97] flex items-center gap-2">
-                      <span className="text-base leading-none">{p.icon}</span>
-                      <span>{p.label}</span>
-                    </button>
-                  ))}
+                  {PRESETS.filter(p => FEATURED_PRESET_IDS.includes(p.id)).map(p => {
+                    const Icon = getPresetIcon(p);
+                    return (
+                      <button key={p.id} onClick={() => applyPreset(p)}
+                        className="font-mono text-[11px] uppercase tracking-[0.15em] px-3 py-2 rounded-lg border border-stone-300 text-stone-700 btn-fill-orange transition-all active:scale-[0.97] flex items-center gap-2">
+                        <Icon className="w-3.5 h-3.5 text-orange-600 flex-shrink-0" />
+                        <span>{p.label}</span>
+                      </button>
+                    );
+                  })}
                   <button onClick={() => setPresetsModalOpen(true)}
                     className="font-mono text-[11px] uppercase tracking-[0.15em] px-3 py-2 rounded-lg border border-orange-500/40 bg-orange-500/5 text-orange-700 btn-fill-orange transition-all active:scale-[0.97] flex items-center gap-2">
                     <span>{t.presets_browse_all || 'browse all'} ({PRESETS.length}) →</span>
@@ -6158,13 +6204,16 @@ Return ONLY JSON, no preamble:
                       {catLabels[lang] || catLabels.en}
                     </div>
                     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2">
-                      {catPresets.map(p => (
-                        <button key={p.id} onClick={() => { applyPreset(p); setPresetsModalOpen(false); }}
-                          className="font-mono text-[11px] uppercase tracking-[0.15em] px-3 py-3 rounded-lg border border-stone-300 bg-white text-stone-700 btn-fill-orange transition-all active:scale-[0.97] flex items-center gap-2 text-left">
-                          <span className="text-lg leading-none flex-shrink-0">{p.icon}</span>
-                          <span className="truncate">{p.label}</span>
-                        </button>
-                      ))}
+                      {catPresets.map(p => {
+                        const Icon = getPresetIcon(p);
+                        return (
+                          <button key={p.id} onClick={() => { applyPreset(p); setPresetsModalOpen(false); }}
+                            className="font-mono text-[11px] uppercase tracking-[0.15em] px-3 py-3 rounded-lg border border-stone-300 bg-white text-stone-700 btn-fill-orange transition-all active:scale-[0.97] flex items-center gap-2 text-left">
+                            <Icon className="w-4 h-4 text-orange-600 flex-shrink-0" />
+                            <span className="truncate">{p.label}</span>
+                          </button>
+                        );
+                      })}
                     </div>
                   </div>
                 );
@@ -6243,7 +6292,7 @@ function Block({ keyId, label, count, max, preview = [], open, onToggle, onClear
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [mobileSheetKey, keyId, count, max, label, tClear, previewSig]);
   return (
-    <div data-section={keyId} className={`scroll-mt-24 rounded-xl border transition-colors min-w-0 overflow-hidden ${count > 0 ? fam.borderActive : 'border-stone-400/50'} ${fam.borderL} ${className}`}>
+    <div data-section={keyId} className={`scroll-mt-24 rounded-xl border bg-white transition-colors min-w-0 overflow-hidden ${count > 0 ? fam.borderActive : 'border-stone-400/50'} ${fam.borderL} ${className}`}>
       <div className="flex items-stretch">
         <button
           onClick={() => {
