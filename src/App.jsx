@@ -4930,6 +4930,19 @@ Return ONLY JSON, no preamble:
         }
         .scale-in { animation: scaleIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1); }
         @keyframes scaleIn { from { transform: scale(0.96); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+        /* Shimmer loading: keeps previous content visible at low opacity with a moving orange reflection on top */
+        .shimmer-loading { position: relative; isolation: isolate; }
+        .shimmer-loading > * { opacity: 0.35; transition: opacity 0.2s; }
+        .shimmer-loading::after {
+          content: ''; position: absolute; inset: 0; pointer-events: none; z-index: 1;
+          background: linear-gradient(110deg, transparent 25%, rgba(249, 115, 22, 0.10) 40%, rgba(249, 115, 22, 0.22) 50%, rgba(249, 115, 22, 0.10) 60%, transparent 75%);
+          background-size: 220% 100%;
+          animation: shimmerSweep 1.8s ease-in-out infinite;
+        }
+        @keyframes shimmerSweep {
+          0% { background-position: 220% 0; }
+          100% { background-position: -120% 0; }
+        }
         /* Default: hide both, then show in correct media query */
         [data-desktop-only="true"] { display: none !important; }
         [data-mobile-only="true"] { display: none !important; }
@@ -5771,7 +5784,7 @@ Return ONLY JSON, no preamble:
                                                 {linhas} · {cl.letra.length}c
                                               </span>
                                             </div>
-                                            <div className="p-3 max-h-[300px] overflow-y-auto scrollbar-thin">
+                                            <div className={`p-3 max-h-[300px] overflow-y-auto scrollbar-thin ${loadingCross[itemKey] === 'lyric' ? 'shimmer-loading' : ''}`}>
                                               <pre className="font-display text-[13px] leading-relaxed text-stone-900 whitespace-pre-wrap wrap-any" style={{ fontFamily: "'Fraunces', Georgia, serif" }}>{cl.letra}</pre>
                                             </div>
                                             {/* Regenerate-in language pills */}
