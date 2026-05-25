@@ -1227,6 +1227,17 @@ const LANG_NAMES = {
   fr: 'French',
 };
 
+// UI language → matching value inside IDIOMAS_KEYS. Used as the default
+// lyrics language when generating from a prompt and the Lyrics tab's
+// idiomas state is empty (the previous fallback was a hardcoded
+// "Brazilian Portuguese" which ignored the UI locale entirely).
+const UI_LANG_TO_LYRIC_LANG = {
+  en: 'English',
+  pt: 'Brazilian Portuguese',
+  es: 'Spanish',
+  fr: 'French',
+};
+
 // Landing-page translations. Auto-detected from browser locale on first
 // visit, then persisted to bs:lang (shared with the studio app).
 // Strings are added incrementally — sections still in en are placeholders.
@@ -2015,6 +2026,7 @@ const UI = {
     out_generate_prompt: 'generate 3 AI variations', out_generate_letra: 'generate lyrics with AI',
     out_to_lyrics: 'turn into lyrics', out_to_prompt: 'turn into prompt',
     out_cross_lyric_label: 'lyric from this prompt', out_cross_prompt_label: 'prompt from this lyric',
+    out_regenerate_in: 'regenerate in',
     search_placeholder: 'search…',
     out_forging: 'forging…', out_writing: 'writing lyrics…', out_composing: 'composing verses…',
     phases_prompt: ["reading your context…", "drafting angles…", "polishing the strongest…"], phases_album: ["mapping the sonic universe…", "weaving track 1, 2, 3…", "calibrating coherence…"], phases_letra: ["interpreting the theme…", "finding the voice…", "shaping verses…", "polishing the chorus…"], phases_letras_album: ["building the narrative arc…", "writing track 1…", "writing track 2…", "writing track 3…", "writing track 4…", "writing track 5…", "weaving echoes between tracks…"], phases_ref: ["recognizing the reference…", "extracting patterns…", "mapping to vocabulary…"],
@@ -2137,6 +2149,7 @@ const UI = {
     out_generate_prompt: 'gerar 3 variações com IA', out_generate_letra: 'gerar letra com IA',
     out_to_lyrics: 'transformar em letra', out_to_prompt: 'transformar em prompt',
     out_cross_lyric_label: 'letra deste prompt', out_cross_prompt_label: 'prompt desta letra',
+    out_regenerate_in: 'gerar em',
     search_placeholder: 'buscar…',
     out_forging: 'forjando…', out_writing: 'escrevendo letra…', out_composing: 'compondo versos…',
     phases_prompt: ["lendo seu contexto…", "rascunhando ângulos…", "polindo o mais forte…"], phases_album: ["mapeando o universo sonoro…", "tecendo faixa 1, 2, 3…", "calibrando coerência…"], phases_letra: ["interpretando o tema…", "encontrando a voz…", "moldando versos…", "polindo o refrão…"], phases_letras_album: ["construindo o arco narrativo…", "escrevendo faixa 1…", "escrevendo faixa 2…", "escrevendo faixa 3…", "escrevendo faixa 4…", "escrevendo faixa 5…", "tecendo ecos entre as faixas…"], phases_ref: ["reconhecendo a referência…", "extraindo padrões…", "mapeando pro vocabulário…"],
@@ -2259,6 +2272,7 @@ const UI = {
     out_generate_prompt: 'generar 3 variaciones con IA', out_generate_letra: 'generar letra con IA',
     out_to_lyrics: 'convertir en letra', out_to_prompt: 'convertir en prompt',
     out_cross_lyric_label: 'letra de este prompt', out_cross_prompt_label: 'prompt de esta letra',
+    out_regenerate_in: 'regenerar en',
     search_placeholder: 'buscar…',
     out_forging: 'forjando…', out_writing: 'escribiendo…', out_composing: 'componiendo…',
     phases_prompt: ["leyendo el contexto…", "esbozando ángulos…", "puliendo el más fuerte…"], phases_album: ["mapeando el universo sonoro…", "tejiendo pista 1, 2, 3…", "calibrando coherencia…"], phases_letra: ["interpretando el tema…", "encontrando la voz…", "modelando versos…", "puliendo el estribillo…"], phases_letras_album: ["construyendo el arco narrativo…", "escribiendo pista 1…", "escribiendo pista 2…", "escribiendo pista 3…", "escribiendo pista 4…", "escribiendo pista 5…", "tejiendo ecos entre pistas…"], phases_ref: ["reconociendo la referencia…", "extrayendo patrones…", "mapeando al vocabulario…"],
@@ -2380,6 +2394,7 @@ const UI = {
     out_generate_prompt: 'générer 3 variantes avec l\'IA', out_generate_letra: 'générer les paroles',
     out_to_lyrics: 'transformer en paroles', out_to_prompt: 'transformer en prompt',
     out_cross_lyric_label: 'paroles de ce prompt', out_cross_prompt_label: 'prompt de ces paroles',
+    out_regenerate_in: 'régénérer en',
     search_placeholder: 'rechercher…',
     out_forging: 'forgeage…', out_writing: 'rédaction…', out_composing: 'composition…',
     phases_prompt: ["lecture du contexte…", "esquisse des angles…", "polissage du plus fort…"], phases_album: ["cartographie de l'univers sonore…", "tissage des titres 1, 2, 3…", "calibrage de la cohérence…"], phases_letra: ["interprétation du thème…", "recherche de la voix…", "modelage des couplets…", "polissage du refrain…"], phases_letras_album: ["construction de l'arc narratif…", "écriture du titre 1…", "écriture du titre 2…", "écriture du titre 3…", "écriture du titre 4…", "écriture du titre 5…", "tissage d'échos entre les titres…"], phases_ref: ["reconnaissance de la référence…", "extraction de patterns…", "mapping au vocabulaire…"],
@@ -4532,7 +4547,7 @@ Return ONLY JSON:
     const tc = TAMANHOS_LETRA.find(x => x.id === tamanhoLetra) || TAMANHOS_LETRA[2];
     const targetVersos = numVersos > 0 ? numVersos : tc.versos;
     const targetRefroes = numRefroes > 0 ? numRefroes : tc.refroes;
-    const targetIdiomas = idiomas.length ? idiomas.join(' / ') : 'Brazilian Portuguese';
+    const targetIdiomas = idiomas.length ? idiomas.join(' / ') : (UI_LANG_TO_LYRIC_LANG[lang] || 'English');
     try {
       const brief = `You are an experienced songwriter. Write ONE original evocative song with these specs.
 
@@ -4612,7 +4627,7 @@ The TITLE line is for our app to display the song name — it will not be sent t
     setLoadingLetra(true); setLoadingKind('letrasAlbum'); setErrorMsg('');
     const stopPhases = startPhaseCycle(t.phases_letras_album);
     const tc = TAMANHOS_LETRA.find(x => x.id === tamanhoLetra) || TAMANHOS_LETRA[2];
-    const targetIdiomas = idiomas.length ? idiomas.join(' / ') : 'Brazilian Portuguese';
+    const targetIdiomas = idiomas.length ? idiomas.join(' / ') : (UI_LANG_TO_LYRIC_LANG[lang] || 'English');
     // Collect titles from past EP-lyric generations so the AI doesn't repeat
     // them when the user re-rolls with the same brief.
     const previousAlbumTitles = lyricsGenerations
@@ -4725,12 +4740,15 @@ Return ONLY this JSON, no preamble, no markdown:
   // itemKey) AND also pushes a one-track entry into the opposite tab's
   // generations list so the user can interact with it like a normal output.
 
-  const gerarLetraDePrompt = async (promptText, promptTitle, itemKey) => {
+  const gerarLetraDePrompt = async (promptText, promptTitle, itemKey, forceLang) => {
     if (loadingCross[itemKey]) return;
     setLoadingCross(prev => ({ ...prev, [itemKey]: 'lyric' }));
     setErrorMsg('');
     try {
-      const targetIdiomas = idiomas.length ? idiomas.join(' / ') : 'Brazilian Portuguese';
+      // Priority: explicit forceLang (per-call override from the regenerate pills)
+      // > Lyrics-tab idiomas selection
+      // > UI language fallback.
+      const targetIdiomas = forceLang || (idiomas.length ? idiomas.join(' / ') : (UI_LANG_TO_LYRIC_LANG[lang] || 'English'));
       const tc = TAMANHOS_LETRA.find(x => x.id === tamanhoLetra) || TAMANHOS_LETRA[2];
       const brief = `You are an experienced songwriter. Write ONE original evocative song based on the supplied Suno prompt context.
 
@@ -4775,8 +4793,9 @@ Return ONLY this JSON, no preamble, no markdown:
       };
       if (!result.letra) throw new Error('empty_letra');
 
-      // Inline display below the prompt card.
-      setCrossLyrics(prev => ({ ...prev, [itemKey]: { ...result, ts: Date.now() } }));
+      // Inline display below the prompt card. Track the language used so the
+      // regenerate-in pills can highlight the active option.
+      setCrossLyrics(prev => ({ ...prev, [itemKey]: { ...result, idiomas: targetIdiomas, ts: Date.now() } }));
 
       // Also surface it in the Lyrics tab so the user can act on it there too.
       setLyricsGenerations(prev => [
@@ -5754,6 +5773,23 @@ Return ONLY JSON, no preamble:
                                             </div>
                                             <div className="p-3 max-h-[300px] overflow-y-auto scrollbar-thin">
                                               <pre className="font-display text-[13px] leading-relaxed text-stone-900 whitespace-pre-wrap wrap-any" style={{ fontFamily: "'Fraunces', Georgia, serif" }}>{cl.letra}</pre>
+                                            </div>
+                                            {/* Regenerate-in language pills */}
+                                            <div className="border-t border-stone-300 px-2 py-1.5 flex items-center gap-1.5 flex-wrap bg-stone-100/40">
+                                              <span className="font-mono text-[9px] uppercase tracking-widest text-stone-500 mr-1">{t.out_regenerate_in}:</span>
+                                              {LANGUAGES.map(l => {
+                                                const lyricLang = UI_LANG_TO_LYRIC_LANG[l.id];
+                                                const isActive = cl.idiomas === lyricLang;
+                                                const isLoading = loadingCross[itemKey] === 'lyric';
+                                                return (
+                                                  <button key={l.id}
+                                                    onClick={() => gerarLetraDePrompt(v.prompt, v.titulo, itemKey, lyricLang)}
+                                                    disabled={isLoading || isActive}
+                                                    className={`font-mono text-[9px] uppercase tracking-widest px-2 py-0.5 rounded border transition-all active:scale-95 disabled:cursor-default ${isActive ? 'border-orange-500 bg-orange-500/15 text-orange-700' : 'border-stone-300 text-stone-600 hover:border-orange-500 hover:text-orange-700 hover:bg-orange-500/5'} ${isLoading && !isActive ? 'opacity-40' : ''}`}>
+                                                    {l.label}
+                                                  </button>
+                                                );
+                                              })}
                                             </div>
                                             <div className="border-t border-stone-300 p-2 flex gap-2 flex-wrap">
                                               <button onClick={() => copiarEAbrirSuno(cl.letra, `${clKey}_open`, 'lyrics')}
