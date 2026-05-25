@@ -4442,6 +4442,29 @@ Return ONLY this JSON, no preamble:
   const gerarPrompts = async () => {
     setLoadingPrompt(true); setLoadingKind('variations'); setErrorMsg(''); setAiVariantsKind('variations');
     const stopPhases = startPhaseCycle(t.phases_prompt);
+    // Collect titles from past variation generations so the AI doesn't repeat
+    // them when the user re-rolls with a small tweak.
+    const previousTitles = promptGenerations
+      .filter(g => g.kind === 'variations')
+      .flatMap(g => (g.items || []).map(v => v && v.titulo).filter(Boolean))
+      .slice(0, 30);
+    const avoidBlock = previousTitles.length
+      ? `\nALREADY-GENERATED TITLES IN THIS SESSION (do NOT reuse, do NOT use close variations or rearrangements):\n${previousTitles.map(s => `- ${s}`).join('\n')}\n`
+      : '';
+    // Random creative angle so re-rolls don't converge on the same shape.
+    const angles = [
+      'lean into intimate close-mic restraint',
+      'frame this as a live take with room sound and breath',
+      'lean into nocturnal/late-night atmosphere',
+      'frame this around a single object or texture',
+      'lean into pre-dawn quiet and held space',
+      'frame this as a film score moment, image-led',
+      'lean into rhythmic momentum and forward drive',
+      'frame this around a memory surfacing in real time',
+      'lean into widescreen, cinematic production',
+      'frame this as a dusty, lived-in basement recording',
+    ];
+    const angle = angles[Math.floor(Math.random() * angles.length)];
     try {
       const brief = `You are a Suno AI prompt expert. Generate 3 CREATIVE and SPECIFIC prompt variations IN ENGLISH (Suno works best in English), each with a different angle.
 
@@ -4451,7 +4474,10 @@ STRICT RULES:
 - DO NOT mention real artists
 - DO NOT include lyrics
 - Write everything in ENGLISH
+- Titles MUST be original — never recycle generic placeholders ("Midnight Drive", "Slow Fade", "Echo Chamber")
 
+CREATIVE ANGLE FOR THIS BATCH: ${angle}
+${avoidBlock}
 User brief:
 ${promptComposto}
 
@@ -4548,8 +4574,34 @@ Return ONLY JSON:
     const targetVersos = numVersos > 0 ? numVersos : tc.versos;
     const targetRefroes = numRefroes > 0 ? numRefroes : tc.refroes;
     const targetIdiomas = idiomas.length ? idiomas.join(' / ') : (UI_LANG_TO_LYRIC_LANG[lang] || 'English');
+    // Collect titles from past single-lyric generations so the AI doesn't
+    // repeat them when the user re-rolls the same brief.
+    const previousTitles = lyricsGenerations
+      .filter(g => g.kind === 'avulsa')
+      .flatMap(g => (g.items || []).map(v => v && v.titulo).filter(Boolean))
+      .slice(0, 30);
+    const avoidBlock = previousTitles.length
+      ? `\n━━━ ALREADY-GENERATED TITLES IN THIS SESSION ━━━\nDo NOT reuse, do NOT use close variations or rearrangements:\n${previousTitles.map(s => `- ${s}`).join('\n')}\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n`
+      : '';
+    // Random angle nudge so re-rolls land on a different door into the same theme.
+    const angles = [
+      'open in media res — drop the listener into the middle of the moment',
+      'frame the song around a single object that holds the memory',
+      'lean into a quiet, almost-spoken delivery',
+      'frame this around a small, almost-mundane detail',
+      'open with a question and let the song answer it',
+      'lean into the moment AFTER the event — the aftermath',
+      'frame this around what was NOT said',
+      'set the song in a specific place at a specific hour',
+      'frame this as a letter to someone who will never read it',
+      'lean into a single repeating image that shifts meaning each verse',
+    ];
+    const angle = angles[Math.floor(Math.random() * angles.length)];
     try {
       const brief = `You are an experienced songwriter. Write ONE original evocative song with these specs.
+
+CREATIVE ANGLE FOR THIS SONG: ${angle}
+${avoidBlock}
 
 ━━━ SIZE LIMITS (STRICT) ━━━
 Target: ${tc.id}
