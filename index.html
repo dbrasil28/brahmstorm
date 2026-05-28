@@ -79,11 +79,27 @@
     <!-- Cloudflare Turnstile (anti-bot) -->
     <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
 
-    <!-- Google Analytics (GA4) -->
+    <!-- Google Analytics (GA4) with Consent Mode v2 -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-Q6VLRT20BE"></script>
     <script>
       window.dataLayer = window.dataLayer || [];
       function gtag(){ dataLayer.push(arguments); }
+
+      // Consent Mode v2 — default everything to DENIED until the user makes a choice.
+      // GA still receives cookie-less "pings" so we get basic modeled stats, but no
+      // personal identifiers are stored. The in-app banner calls gtag('consent','update',...)
+      // when the user clicks Accept. If a prior choice exists in localStorage, hydrate it
+      // immediately so returning users don't see the banner again.
+      var __bsConsent = null;
+      try { __bsConsent = localStorage.getItem('bs:gaConsent'); } catch (e) {}
+      gtag('consent', 'default', {
+        ad_storage: 'denied',
+        ad_user_data: 'denied',
+        ad_personalization: 'denied',
+        analytics_storage: __bsConsent === 'granted' ? 'granted' : 'denied',
+        wait_for_update: 500
+      });
+
       gtag('js', new Date());
       // SPA-friendly: send pageviews manually on hashchange so /#app shows as a separate page
       gtag('config', 'G-Q6VLRT20BE', { send_page_view: true });

@@ -46,6 +46,151 @@ function getInitialView() {
   return VIEW_LANDING;
 }
 
+// ─────────────────────────────────────────────────────────────────
+// trackEvent — thin wrapper around gtag('event', ...) so callers
+// don't need to defend against gtag being absent (ad-blocker, dev
+// without the snippet, SSR). Params are forwarded as event params.
+// Under Consent Mode v2 these still fire in cookieless/modeled mode
+// even when the user hasn't consented.
+// ─────────────────────────────────────────────────────────────────
+function trackEvent(name, params) {
+  if (typeof window === 'undefined') return;
+  if (typeof window.gtag !== 'function') return;
+  try {
+    window.gtag('event', name, params || {});
+  } catch (e) { /* never let analytics break the app */ }
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// ConsentBanner — LGPD/GDPR-friendly opt-in for Google Analytics.
+// Defaults in index.html start with everything DENIED. When the user
+// clicks Accept we call gtag('consent','update',...) to upgrade
+// analytics_storage to granted; on Reject we just persist the choice
+// so the banner doesn't reappear. Cookieless/modeled stats keep
+// flowing either way (GA's default behaviour under Consent Mode v2).
+// ═══════════════════════════════════════════════════════════════════
+const CONSENT_UI = {
+  en: {
+    text: "We use cookies to measure traffic with Google Analytics. Choose your preference — you can change it later in localStorage.",
+    accept: 'accept',
+    reject: 'reject',
+  },
+  pt: {
+    text: 'Usamos cookies para medir o tráfego com o Google Analytics. Escolha sua preferência — você pode mudar depois.',
+    accept: 'aceitar',
+    reject: 'recusar',
+  },
+  es: {
+    text: 'Usamos cookies para medir el tráfico con Google Analytics. Elige tu preferencia — puedes cambiarla luego.',
+    accept: 'aceptar',
+    reject: 'rechazar',
+  },
+  fr: {
+    text: 'Nous utilisons des cookies pour mesurer le trafic via Google Analytics. Faites votre choix — modifiable plus tard.',
+    accept: 'accepter',
+    reject: 'refuser',
+  },
+};
+
+function ConsentBanner() {
+  const [visible, setVisible] = useState(false);
+  const [lang, setLang] = useState('en');
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    try {
+      const choice = localStorage.getItem('bs:gaConsent');
+      if (choice === 'granted' || choice === 'denied') return; // already chose
+    } catch (e) { /* localStorage unavailable: just show banner */ }
+    setLang(detectLang());
+    // Tiny delay so the banner doesn't fight with the page paint.
+    const t = setTimeout(() => setVisible(true), 400);
+    return () => clearTimeout(t);
+  }, []);
+
+  const persistAndHide = (choice) => {
+    try { localStorage.setItem('bs:gaConsent', choice); } catch (e) {}
+    if (typeof window !== 'undefined' && typeof window.gtag === 'function') {
+      window.gtag('consent', 'update', {
+        analytics_storage: choice === 'granted' ? 'granted' : 'denied',
+      });
+    }
+    setVisible(false);
+  };
+
+  if (!visible) return null;
+  const tt = CONSENT_UI[lang] || CONSENT_UI.en;
+
+  return (
+    <div
+      role="dialog"
+      aria-label="Cookie preferences"
+      style={{
+        position: 'fixed',
+        left: '12px',
+        right: '12px',
+        bottom: '12px',
+        zIndex: 2147483646,
+        maxWidth: '720px',
+        margin: '0 auto',
+        background: 'rgba(12,10,9,0.96)',
+        color: '#e7e5e4',
+        border: '1px solid #44403c',
+        borderRadius: '10px',
+        padding: '14px 16px',
+        boxShadow: '0 10px 40px -10px rgba(0,0,0,0.6)',
+        backdropFilter: 'blur(8px)',
+        fontFamily: 'Hanken Grotesk, ui-sans-serif, system-ui, sans-serif',
+        display: 'flex',
+        flexWrap: 'wrap',
+        alignItems: 'center',
+        gap: '12px',
+      }}
+    >
+      <p style={{ flex: '1 1 280px', minWidth: 0, margin: 0, fontSize: '12.5px', lineHeight: 1.5 }}>
+        {tt.text}
+      </p>
+      <div style={{ display: 'flex', gap: '8px', flexShrink: 0 }}>
+        <button
+          onClick={() => persistAndHide('denied')}
+          style={{
+            fontFamily: 'JetBrains Mono, ui-monospace, monospace',
+            fontSize: '10px',
+            textTransform: 'uppercase',
+            letterSpacing: '0.1em',
+            padding: '8px 14px',
+            borderRadius: '6px',
+            border: '1px solid #57534e',
+            background: 'transparent',
+            color: '#d6d3d1',
+            cursor: 'pointer',
+          }}
+        >
+          {tt.reject}
+        </button>
+        <button
+          onClick={() => persistAndHide('granted')}
+          style={{
+            fontFamily: 'JetBrains Mono, ui-monospace, monospace',
+            fontSize: '10px',
+            textTransform: 'uppercase',
+            letterSpacing: '0.1em',
+            padding: '8px 14px',
+            borderRadius: '6px',
+            border: 'none',
+            background: '#f97316',
+            color: '#1c1917',
+            cursor: 'pointer',
+            fontWeight: 600,
+          }}
+        >
+          {tt.accept}
+        </button>
+      </div>
+    </div>
+  );
+}
+
 export default function Brahmstorm() {
   const [view, setView] = useState(getInitialView);
 
@@ -84,6 +229,7 @@ export default function Brahmstorm() {
   if (view === VIEW_APP) return (
     <>
       <BrahmstormApp onBack={goToLanding} />
+      <ConsentBanner />
       <Analytics />
       <SpeedInsights />
     </>
@@ -91,6 +237,7 @@ export default function Brahmstorm() {
   return (
     <>
       <BrahmstormLanding onLaunch={goToApp} />
+      <ConsentBanner />
       <Analytics />
       <SpeedInsights />
     </>
@@ -4028,6 +4175,7 @@ function BrahmstormApp({ onBack } = {}) {
     });
     if (key) { setSavedKey(key); setTimeout(() => setSavedKey(null), 1800); }
     mostrarToast(tipo === 'letra' ? t.toast_letra_saved : t.toast_prompt_saved);
+    trackEvent('save_favorite', { content_type: tipo, ui_lang: lang });
   };
 
   const removerFavorito = (idx) => {
@@ -4075,6 +4223,7 @@ function BrahmstormApp({ onBack } = {}) {
       setCopiedKey(key);
       setTimeout(() => setCopiedKey(null), 2400);
       mostrarToast(kind === 'lyrics' ? t.toast_paste_lyrics : t.toast_paste_style);
+      trackEvent('open_suno', { content_type: kind, ui_lang: lang });
       // small delay so the toast renders before tab switch
       setTimeout(() => {
         window.open('https://suno.com/create', '_blank', 'noopener,noreferrer');
@@ -4493,6 +4642,11 @@ Return ONLY JSON:
         ...prev.map(g => ({ ...g, expanded: false })),
       ]);
       variantes.forEach(v => adicionarAoHistorico(v.prompt, 'prompt', v.titulo));
+      trackEvent('generate_prompts', {
+        variant_count: variantes.length,
+        ui_lang: lang,
+        has_reference: !!(referenciaPrompt && referenciaPrompt.trim()),
+      });
     } catch (err) {
       handleAIError(err, 'err_variants');
     } finally {
@@ -4559,6 +4713,11 @@ Return ONLY JSON:
         ...prev.map(g => ({ ...g, expanded: false })),
       ]);
       variantes.forEach(v => adicionarAoHistorico(v.prompt, 'prompt', v.titulo));
+      trackEvent('generate_album', {
+        track_count: variantes.length,
+        ui_lang: lang,
+        has_reference: !!(referenciaPrompt && referenciaPrompt.trim()),
+      });
     } catch (err) {
       handleAIError(err, 'err_variants');
     } finally {
@@ -4667,6 +4826,12 @@ The TITLE line is for our app to display the song name — it will not be sent t
         { id: 'lg' + Date.now(), ts: Date.now(), kind: 'avulsa', items: [{ titulo: songTitle, letra: limpa }], expanded: true },
         ...prev.map(g => ({ ...g, expanded: false })),
       ]);
+      trackEvent('generate_lyrics', {
+        kind: 'single',
+        ui_lang: lang,
+        target_langs: targetIdiomas,
+        has_reference: !!(referenciaLetra && referenciaLetra.trim()),
+      });
     } catch (err) {
       handleAIError(err, 'err_letra');
     } finally {
@@ -4779,6 +4944,13 @@ Return ONLY this JSON, no preamble, no markdown:
         { id: 'lg' + Date.now(), ts: Date.now(), kind: 'album', items: tracks, expanded: true, trackExpanded: { 0: true } },
         ...prev.map(g => ({ ...g, expanded: false })),
       ]);
+      trackEvent('generate_lyrics', {
+        kind: 'album',
+        track_count: tracks.length,
+        ui_lang: lang,
+        target_langs: targetIdiomas,
+        has_reference: !!(referenciaLetra && referenciaLetra.trim()),
+      });
     } catch (err) {
       handleAIError(err, 'err_letra');
     } finally {
@@ -4855,6 +5027,11 @@ Return ONLY this JSON, no preamble, no markdown:
         ...prev.map(g => ({ ...g, expanded: false })),
       ]);
       adicionarAoHistorico(result.letra, 'letra', result.titulo);
+      trackEvent('cross_gen_lyric', {
+        ui_lang: lang,
+        target_langs: targetIdiomas,
+        is_regenerate: !!forceLang,
+      });
       mostrarToast(t.toast_letra_saved || '✓');
     } catch (err) {
       handleAIError(err, 'err_letra');
@@ -4914,6 +5091,7 @@ Return ONLY JSON, no preamble:
         ...prev.map(g => ({ ...g, expanded: false })),
       ]);
       adicionarAoHistorico(result.prompt, 'prompt', result.titulo);
+      trackEvent('cross_gen_prompt', { ui_lang: lang });
       mostrarToast(t.toast_prompt_saved || '✓');
     } catch (err) {
       handleAIError(err, 'err_variants');
