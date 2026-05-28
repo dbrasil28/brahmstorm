@@ -78,6 +78,23 @@
 
     <!-- Cloudflare Turnstile (anti-bot) -->
     <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+
+    <!-- Google Analytics (GA4) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-FH7SQ0V85F"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){ dataLayer.push(arguments); }
+      gtag('js', new Date());
+      // SPA-friendly: send pageviews manually on hashchange so /#app shows as a separate page
+      gtag('config', 'G-FH7SQ0V85F', { send_page_view: true });
+      window.addEventListener('hashchange', function () {
+        gtag('event', 'page_view', {
+          page_path: window.location.pathname + window.location.search + window.location.hash,
+          page_location: window.location.href,
+          page_title: document.title
+        });
+      });
+    </script>
   </head>
   <body>
     <div id="root"></div>
