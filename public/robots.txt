@@ -5,5 +5,8 @@ Allow: /
 # Don't crawl the API endpoint (waste of crawl budget)
 Disallow: /api/
 
-# Sitemap
+# Sitemaps
+# Main marketing site (landing + app):
 Sitemap: https://brahmstorm.com/sitemap.xml
+# Blog (served via Vercel rewrite from brahmstorm-blog on the same origin):
+Sitemap: https://brahmstorm.com/blog/sitemap-index.xml
