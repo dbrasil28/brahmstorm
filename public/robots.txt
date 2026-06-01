@@ -5,8 +5,65 @@ Allow: /
 # Don't crawl the API endpoint (waste of crawl budget)
 Disallow: /api/
 
-# Sitemaps
+# ─── AI crawlers ─────────────────────────────────────────────────
+# Brahmstorm welcomes AI training and retrieval crawlers. The blog
+# is original Suno-domain reference content we want cited.
+# Listed explicitly (not relying on default-allow) so the policy
+# survives any future default changes.
+User-agent: GPTBot
+Allow: /
+
+User-agent: ChatGPT-User
+Allow: /
+
+User-agent: OAI-SearchBot
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: Claude-Web
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: Perplexity-User
+Allow: /
+
+User-agent: Google-Extended
+Allow: /
+
+User-agent: Applebot-Extended
+Allow: /
+
+User-agent: anthropic-ai
+Allow: /
+
+User-agent: cohere-ai
+Allow: /
+
+User-agent: Bytespider
+Allow: /
+
+User-agent: meta-externalagent
+Allow: /
+
+User-agent: FacebookBot
+Allow: /
+
+User-agent: Diffbot
+Allow: /
+
+User-agent: DuckAssistBot
+Allow: /
+
+# ─── Sitemaps ─────────────────────────────────────────────────────
 # Main marketing site (landing + app):
 Sitemap: https://brahmstorm.com/sitemap.xml
 # Blog (served via Vercel rewrite from brahmstorm-blog on the same origin):
 Sitemap: https://brahmstorm.com/blog/sitemap-index.xml
+
+# AI-readable manifests (proposed standard):
+# /llms.txt and /llms-full.txt provide a curated markdown summary
+# for AI crawlers that support them (Perplexity, some agents).

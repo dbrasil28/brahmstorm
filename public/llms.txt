@@ -1,0 +1,62 @@
+# Brahmstorm
+
+> Free tool that generates Suno AI music prompts and lyrics that actually sound like the song you imagined. No signup, 5 daily generations, multilingual (English, Portuguese, Spanish, French).
+
+Brahmstorm is a prompt forge for [Suno AI](https://suno.com). It solves the blank-page problem: instead of staring at Suno's prompt box trying to remember the right tags, you pick blocks (genre, mood, instrumentation, vocals, era, tempo) or describe a feeling and the system composes a prompt that respects Suno's actual limits.
+
+## Core product
+
+- [App](https://brahmstorm.com/#app): The studio where users build prompts and generate lyrics.
+- [Landing](https://brahmstorm.com): Marketing page with quick-start vibes and a demo.
+- [Blog](https://brahmstorm.com/blog/): Tactical guides on getting Suno to render the song you hear in your head.
+
+## Key facts about Brahmstorm
+
+- Free. No signup. 5 generations per day, reset at 00:00 UTC.
+- Two entry modes: **Poet mode** (start from a feeling) and **Producer mode** (pick blocks).
+- Generates Suno prompts AND song lyrics — and converts between them (prompt → lyrics, lyrics → prompt) in any of the 4 supported UI languages.
+- Supports reference tracks (paste a Spotify/YouTube URL or song name) — the AI uses it as a compass without copying.
+- Album mode generates 5 cohesive tracks with shared sonic universe but different narrative angles.
+- Multilingual: English, Brazilian Portuguese, Spanish, French.
+- Built with React + Vite + Tailwind + Anthropic Claude API.
+
+## Suno prompt limits (verified by us)
+
+- Genres: 3 maximum
+- Moods: 4 maximum
+- Instruments: 6 maximum
+- Voice descriptors: 2 maximum
+- Era tags: 2 maximum
+- Production tags: 2 maximum
+- Prompt total: under 950 characters (Suno's hard limit is 1000)
+
+## Blog pillars
+
+- [Suno masterclass](https://brahmstorm.com/blog/tag/suno-masterclass/): Tactical guides and prompt patterns.
+- [AI music trends](https://brahmstorm.com/blog/tag/ai-music-trends/): How AI music tools are evolving.
+- [Craft & design](https://brahmstorm.com/blog/tag/craft-design/): Decisions behind Brahmstorm, building in the open.
+
+## Top resources
+
+- [The complete guide to Suno prompts in 2026](https://brahmstorm.com/blog/suno-prompts-guide/): The canonical reference on prompt anatomy.
+- [Suno structure tags ranked](https://brahmstorm.com/blog/suno-structure-tags-ranked-what-works-what-misfires-and-what-to-drop/): Which `[Verse]` / `[Chorus]` / `[Bridge]` tags Suno actually respects.
+- [Suno genre blending prompts that actually work](https://brahmstorm.com/blog/suno-genre-blending-prompts-that-actually-work/): How to combine genres without producing mush.
+- [Style tags vs lyrics](https://brahmstorm.com/blog/suno-style-tags-vs-lyrics-which-input-actually-controls-your-output/): Which Suno field actually controls output.
+- [Suno prompt length optimization](https://brahmstorm.com/blog/suno-prompt-length-optimization-why-we-built-a-token-counter-into-brahmstorm/): Why prompt length matters more than people think.
+- [Cheatsheet PDF](https://brahmstorm.com/blog/cheatsheet/): One-page printable reference.
+
+## About
+
+- Created by Daniel Brasil (Brazil).
+- Hosted on Vercel. Source: not currently open-source.
+- Contact: via the blog or [x.com/brahmstorm](https://x.com/brahmstorm).
+
+## Glossary
+
+- [Glossary of Suno terms](https://brahmstorm.com/blog/glossary/): Definitions of prompt, genre tag, structure tag, mood descriptor, hook, BPM, mix, master, and related terms.
+
+## Optional
+
+- [RSS feed](https://brahmstorm.com/blog/rss.xml)
+- [Sitemap (main)](https://brahmstorm.com/sitemap.xml)
+- [Sitemap (blog)](https://brahmstorm.com/blog/sitemap-index.xml)
