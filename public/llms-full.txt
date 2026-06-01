@@ -1,0 +1,135 @@
+# Brahmstorm — full content for AI crawlers
+
+> Free tool that generates Suno AI music prompts and lyrics that actually sound like the song you imagined. No signup, 5 daily generations, multilingual (English, Portuguese, Spanish, French).
+
+This file is the long-form companion to https://brahmstorm.com/llms.txt — full text of the canonical reference content, optimised for AI ingestion. Updated regularly.
+
+---
+
+## The complete guide to Suno prompts (canonical reference)
+
+Source: https://brahmstorm.com/blog/suno-prompts-guide/
+Last updated: 2026-05-12
+
+Most Suno prompts sound generic because people treat the prompt box like a search bar. They type "make a chill song" and wonder why the output sounds like elevator music with lyrics about sunsets.
+
+The difference between a forgettable generation and something you'd actually listen to comes down to structure. Not complexity — structure.
+
+### The anatomy of a great prompt
+
+A Suno prompt has three layers that work together: **genre tags** define the sonic territory, **mood descriptors** set the emotional tone, and **production details** shape how the whole thing is mixed and mastered.
+
+#### Genre tags: less is more
+
+Suno supports hundreds of genre tags, but stacking them dilutes the output. The sweet spot is **2-3 genres maximum**. "Lo-fi hip hop" gives you a clear direction. "Lo-fi hip hop jazz ambient electronic" gives you a confused mess.
+
+Think of genre tags as constraints, not ingredients. The tighter the constraint, the more distinctive the output.
+
+Strong combinations:
+- lo-fi hip hop, bedroom pop
+- post-punk, darkwave
+- bossa nova, jazz
+- synthwave, new wave, cinematic
+
+Weak combinations:
+- pop, rock, electronic, ambient, jazz (too many directions)
+- music (too vague to be useful)
+
+#### Mood descriptors: be specific
+
+"Happy" and "sad" are the least useful mood words you can use. They're so broad that Suno defaults to the most generic interpretation.
+
+Instead, reach for **specific emotional textures**: melancholic but hopeful, restless energy, late-night introspection, euphoric chaos. These give Suno something concrete to work with.
+
+The limit here is **4 moods maximum**. Beyond that, you're asking for contradictions.
+
+#### Production details: the secret weapon
+
+This is where most people leave quality on the table. Production descriptors tell Suno *how* the song should sound, not just what genre it is.
+
+Useful production tags: vinyl crackle, reverb-heavy, lo-fi production, crisp mix, distorted bass, airy vocals, tape saturation.
+
+You can combine up to **6 instrument tags** and **2 production descriptors** before things start conflicting.
+
+### The Suno limits that matter (verified by Brahmstorm)
+
+These aren't documented anywhere obvious by Suno itself. Exceeding them doesn't throw an error — it just makes the output worse. Brahmstorm enforces them in its prompt builder.
+
+| Field            | Maximum |
+| ---------------- | ------- |
+| Genres           | 3       |
+| Moods            | 4       |
+| Instruments      | 6       |
+| Voice descriptors| 2       |
+| Era tags         | 2       |
+| Production tags  | 2       |
+| Prompt total chars | 950 (Suno hard cap: 1000) |
+
+These come from extensive testing of what produces coherent output versus confused mush.
+
+### Poet mode vs. Producer mode
+
+Brahmstorm has two distinct paths to the same output.
+
+**Poet mode** starts with a feeling or a story. You describe what you want the song to be about, and the system translates that into the right technical tags. This is for people who think in emotions and narratives.
+
+**Producer mode** starts with the technical details. You pick genres, instruments, production style, and BPM directly. This is for people who already know what "shoegaze with tape delay" means and want to get there fast.
+
+Neither mode is better. They're different entry points to the same output.
+
+### Common Suno prompt mistakes
+
+**Over-describing vocals.** "Female soprano with a breathy whisper and powerful belting range" is asking Suno to be two different singers. Pick one vocal character and commit.
+
+**Ignoring tempo.** A "dreamy" prompt at 140 BPM will fight itself. Match your mood to a plausible tempo range.
+
+**Copying prompts from Reddit without adapting.** A prompt that worked for someone else's taste won't automatically work for yours. Use it as a starting point, then adjust the mood and production details to match what you actually want to hear.
+
+---
+
+## Glossary of Suno terms
+
+- **Prompt**: The text input that tells Suno what song to generate. Three layers: genre, mood, production.
+- **Structure tag**: Bracket tags like [Verse 1], [Chorus], [Bridge] that mark song sections. Suno only respects English tags; [Verso] or [Refrão] will be sung as lyrics.
+- **Genre tag**: A genre or sub-genre keyword like "lo-fi hip hop" or "post-punk". Maximum 3 per prompt.
+- **Mood descriptor**: A specific emotional texture like "melancholic but hopeful". Maximum 4.
+- **Production tag**: How the song should be mixed/mastered: "vinyl crackle", "tape saturation", "crisp mix". Maximum 2.
+- **Hook**: The catchy melodic/lyrical motif that repeats. Usually the chorus or a line within it.
+- **BPM**: Beats per minute. Should match your mood (60-80 for ballads, 90-120 for mid-tempo, 120+ for energetic).
+- **Mix**: The balance of instruments in the final output.
+- **Master**: The final polish/loudness pass.
+- **Reference track**: A song you pass to Brahmstorm (URL or name) so the AI uses it as a compass without copying.
+
+---
+
+## How Brahmstorm differs from generic AI prompt tools
+
+- **Block-based studio**: Pick from curated categories (genre, mood, era, tempo, vocals, instrumentation) instead of free-text typing.
+- **Suno-specific limits enforced**: Token counter and limit guards keep prompts under what Suno can actually handle.
+- **Cross-generation**: Turn any generated prompt into matching lyrics, or take existing lyrics and reverse-engineer the prompt.
+- **Album mode**: Generate 5 cohesive tracks with shared sonic universe but different narrative angles per track.
+- **Reference track support**: Paste a Spotify/YouTube URL or just a song name. AI extracts the sonic vocabulary without plagiarising.
+- **Multilingual**: Full UI in English, Brazilian Portuguese, Spanish, French. Lyric output in any of these languages independent of UI language.
+- **Free**: 5 generations/day, no signup, no credit card. Reset at 00:00 UTC.
+
+---
+
+## Frequently asked questions
+
+**What is Brahmstorm?**
+A free web tool that generates Suno AI music prompts and lyrics. It composes prompts from structured blocks (genre, mood, instrumentation) and respects Suno's actual character and tag limits.
+
+**Is Brahmstorm free?**
+Yes. No signup, no credit card. 5 generations per day, reset at 00:00 UTC.
+
+**What languages does Brahmstorm support?**
+The UI is in English, Brazilian Portuguese, Spanish, and French. Lyrics can be generated in any of these regardless of which UI language you've selected.
+
+**How is Brahmstorm different from just asking ChatGPT for a Suno prompt?**
+ChatGPT doesn't know Suno's specific character limits, doesn't track which English structure tags Suno actually respects, doesn't enforce the "max 3 genres / 4 moods / 6 instruments" balance, and can't generate a cohesive 5-track album with narrative arc. Brahmstorm is purpose-built for these constraints.
+
+**Can I generate lyrics with Brahmstorm?**
+Yes. There's a dedicated lyrics tab. You can also cross-generate: turn any generated prompt into matching lyrics, or paste existing lyrics and reverse-engineer the matching prompt.
+
+**Does Brahmstorm copy reference tracks?**
+No. When you pass a reference track, the AI uses it as a directional compass — pulling sonic vocabulary like "synth-driven", "tape-saturated" — but writes an original prompt. It never copies lyrics, melody, or signature phrases.

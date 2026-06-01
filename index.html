@@ -46,32 +46,116 @@
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
-      "@type": "WebApplication",
-      "name": "Brahmstorm",
-      "alternateName": "Brahmstorm — Prompt Forge for Suno AI",
-      "url": "https://brahmstorm.com/",
-      "description": "Free tool to generate Suno AI music prompts and lyrics. No signup, 5 daily generations, multilingual.",
-      "applicationCategory": "MultimediaApplication",
-      "applicationSubCategory": "AI Music Tool",
-      "operatingSystem": "Any (Web)",
-      "browserRequirements": "Requires JavaScript and a modern browser",
-      "inLanguage": ["en", "pt-BR", "es", "fr"],
-      "offers": {
-        "@type": "Offer",
-        "price": "0",
-        "priceCurrency": "USD"
-      },
-      "creator": {
-        "@type": "Person",
-        "name": "Daniel Brasil"
-      },
-      "featureList": [
-        "Generate Suno AI prompts in 4 languages",
-        "Generate song lyrics for Suno AI",
-        "24 quick-start vibes (Brazilian, Electronic, Cinematic, Acoustic, Urban)",
-        "Reference track analysis",
-        "5-track EP generation (cohesive album mode)",
-        "Multilingual support: English, Portuguese, Spanish, French"
+      "@graph": [
+        {
+          "@type": ["WebApplication", "SoftwareApplication"],
+          "@id": "https://brahmstorm.com/#app",
+          "name": "Brahmstorm",
+          "alternateName": "Brahmstorm — Prompt Forge for Suno AI",
+          "url": "https://brahmstorm.com/",
+          "description": "Free tool to generate Suno AI music prompts and lyrics. No signup, 5 daily generations, multilingual.",
+          "applicationCategory": "MultimediaApplication",
+          "applicationSubCategory": "AI Music Tool",
+          "operatingSystem": "Any (Web)",
+          "browserRequirements": "Requires JavaScript and a modern browser",
+          "inLanguage": ["en", "pt-BR", "es", "fr"],
+          "softwareVersion": "1.0",
+          "screenshot": "https://brahmstorm.com/og-image.png",
+          "offers": {
+            "@type": "Offer",
+            "price": "0",
+            "priceCurrency": "USD",
+            "availability": "https://schema.org/InStock"
+          },
+          "creator": { "@id": "https://brahmstorm.com/#person-daniel-brasil" },
+          "publisher": { "@id": "https://brahmstorm.com/#org" },
+          "featureList": [
+            "Generate Suno AI prompts in 4 languages",
+            "Generate song lyrics for Suno AI",
+            "Block-based prompt builder with Suno-specific limit enforcement",
+            "Reference track analysis (paste Spotify/YouTube URL or song name)",
+            "5-track cohesive album mode (shared sonic universe, different narrative angles)",
+            "Cross-generation: prompt-to-lyrics and lyrics-to-prompt in any language",
+            "Multilingual support: English, Portuguese, Spanish, French"
+          ],
+          "isAccessibleForFree": true
+        },
+        {
+          "@type": "Person",
+          "@id": "https://brahmstorm.com/#person-daniel-brasil",
+          "name": "Daniel Brasil",
+          "url": "https://brahmstorm.com/blog/about/",
+          "nationality": "Brazilian",
+          "knowsAbout": ["Suno AI", "AI music generation", "Prompt engineering", "Song lyrics", "Music production"],
+          "sameAs": [
+            "https://x.com/brahmstorm"
+          ]
+        },
+        {
+          "@type": "Organization",
+          "@id": "https://brahmstorm.com/#org",
+          "name": "Brahmstorm",
+          "url": "https://brahmstorm.com/",
+          "logo": "https://brahmstorm.com/favicon-512x512.png",
+          "founder": { "@id": "https://brahmstorm.com/#person-daniel-brasil" },
+          "sameAs": [
+            "https://x.com/brahmstorm"
+          ]
+        },
+        {
+          "@type": "FAQPage",
+          "@id": "https://brahmstorm.com/#faq",
+          "mainEntity": [
+            {
+              "@type": "Question",
+              "name": "What is Brahmstorm?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Brahmstorm is a free web tool that generates Suno AI music prompts and lyrics. It composes prompts from structured blocks (genre, mood, instrumentation) and enforces Suno's actual character and tag limits."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "Is Brahmstorm free?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Yes. No signup, no credit card. 5 generations per day, reset at 00:00 UTC."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "What languages does Brahmstorm support?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "The UI is available in English, Brazilian Portuguese, Spanish, and French. Lyrics can be generated in any of these languages independently of the UI language selected."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "How is Brahmstorm different from asking ChatGPT for a Suno prompt?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "ChatGPT does not enforce Suno's specific character limits, does not track which English structure tags Suno actually respects, and cannot generate a cohesive 5-track album with narrative arc. Brahmstorm is purpose-built for Suno's constraints with limit guards, a token counter, and album mode."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "Does Brahmstorm copy reference tracks?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "No. When you pass a reference track, the AI uses it as a directional compass — pulling sonic vocabulary like 'synth-driven' or 'tape-saturated' — but writes an original prompt. It never copies lyrics, melody, or signature phrases."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "Can I generate lyrics with Brahmstorm?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Yes. There is a dedicated lyrics tab. You can also cross-generate: turn any generated prompt into matching lyrics, or paste existing lyrics and reverse-engineer the matching prompt."
+              }
+            }
+          ]
+        }
       ]
     }
     </script>
