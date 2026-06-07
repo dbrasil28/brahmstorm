@@ -16,6 +16,11 @@
 
 import { Redis } from '@upstash/redis';
 
+// Web search (reference analysis) can run up to 3 searches server-side at
+// Anthropic, which pushes total response time past the default 10s function
+// limit. Give the function room. (Vercel caps this at the plan maximum.)
+export const config = { maxDuration: 60 };
+
 const redis = Redis.fromEnv();
 const DAILY_LIMIT = parseInt(process.env.DAILY_LIMIT || '5', 10);
 
@@ -61,7 +66,7 @@ export default async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
 
   try {
-    const { messages, system, max_tokens, model, ownerToken, turnstileToken } = req.body || {};
+    const { messages, system, max_tokens, model, ownerToken, turnstileToken, webSearch } = req.body || {};
 
     if (!messages || !Array.isArray(messages)) {
       return res.status(400).json({ error: 'messages array required' });
@@ -115,6 +120,23 @@ export default async function handler(req, res) {
       return res.status(500).json({ error: 'server_misconfigured' });
     }
 
+    // Build the upstream payload. The web_search tool is constructed
+    // SERVER-SIDE from a boolean flag — we never accept arbitrary `tools`
+    // configs from the client, so a malicious caller can't enable
+    // code-execution or point web fetch at internal hosts. max_uses caps
+    // the per-request search cost (web search is billed per search).
+    const upstreamBody = {
+      model: model || 'claude-sonnet-4-5',
+      max_tokens: max_tokens || 1024,
+      system,
+      messages,
+    };
+    if (webSearch === true) {
+      upstreamBody.tools = [
+        { type: 'web_search_20250305', name: 'web_search', max_uses: 3 },
+      ];
+    }
+
     const anthropicRes = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
       headers: {
@@ -122,12 +144,7 @@ export default async function handler(req, res) {
         'x-api-key': anthropicKey,
         'anthropic-version': '2023-06-01',
       },
-      body: JSON.stringify({
-        model: model || 'claude-sonnet-4-5',
-        max_tokens: max_tokens || 1024,
-        system,
-        messages,
-      }),
+      body: JSON.stringify(upstreamBody),
     });
 
     if (!anthropicRes.ok) {
