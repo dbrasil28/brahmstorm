@@ -2185,6 +2185,7 @@ const UI = {
     need_letra: 'fill in subject, mood, hook or imagery',
     err_variants: "couldn't generate variations. try again.",
     err_letra: "couldn't generate lyrics. try again.",
+    err_ref: "couldn't analyze the reference. try again.",
     err_interpret: "couldn't interpret. try rephrasing or being more specific.",
     err_daily_limit: "daily limit reached. resets in",
     daily_limit_label: "daily limit reached",
@@ -2308,6 +2309,7 @@ const UI = {
     need_letra: 'preencha assunto, mood, refrão ou imagens',
     err_variants: 'Não consegui gerar variações. Tenta de novo.',
     err_letra: 'Não consegui gerar a letra. Tenta de novo.',
+    err_ref: 'Não consegui analisar a referência. Tenta de novo.',
     err_interpret: 'Não consegui interpretar. Tenta reformular.',
     err_daily_limit: 'Limite diário atingido. Reseta em',
     daily_limit_label: 'limite diário atingido',
@@ -2430,6 +2432,7 @@ const UI = {
     need_prompt: 'elige género, mood o tema primero',
     need_letra: 'rellena asunto, mood, estribillo o imágenes',
     err_variants: 'No pude generar variaciones.', err_letra: 'No pude generar la letra.',
+    err_ref: 'No pude analizar la referencia. Inténtalo de nuevo.',
     err_interpret: 'No pude interpretar. Reformula.',
     err_daily_limit: 'Límite diario alcanzado. Se reinicia en',
     daily_limit_label: 'límite diario alcanzado',
@@ -2552,6 +2555,7 @@ const UI = {
     need_prompt: 'choisissez genre, mood ou thème',
     need_letra: 'remplissez sujet, mood, refrain ou images',
     err_variants: 'Impossible de générer.', err_letra: 'Impossible de générer.',
+    err_ref: 'Impossible d\'analyser la référence. Réessayez.',
     err_interpret: 'Impossible d\'interpréter.',
     err_daily_limit: 'Limite quotidienne atteinte. Réinitialisation dans',
     daily_limit_label: 'limite quotidienne atteinte',
@@ -2881,6 +2885,31 @@ function migrateVozesArray(arr) {
     if (!seen.has(mapped) && VOZES_KEYS.includes(mapped)) {
       seen.add(mapped);
       out.push(mapped);
+    }
+  }
+  return out;
+}
+
+// matchVocab — reconcile AI-returned strings against a fixed vocabulary.
+// The AI is told to echo exact vocabulary strings, but it sometimes returns
+// near-misses (different casing, stray whitespace, "lo-fi hip-hop" vs
+// "lo-fi hip hop"). An exact `.includes()` filter silently drops those,
+// which makes reference analysis look like it "recognized nothing." This
+// recovers them to the CANONICAL vocab string. Exact match wins first;
+// then case/whitespace/punctuation-insensitive; returns canonical values,
+// de-duplicated, preserving order.
+function matchVocab(arr, vocab) {
+  if (!Array.isArray(arr)) return [];
+  const norm = (s) => String(s).toLowerCase().replace(/[\s\-_/]+/g, ' ').replace(/[^\w ]/g, '').trim();
+  const byNorm = new Map();
+  for (const v of vocab) byNorm.set(norm(v), v);
+  const seen = new Set();
+  const out = [];
+  for (const raw of arr) {
+    let canonical = vocab.includes(raw) ? raw : byNorm.get(norm(raw));
+    if (canonical && !seen.has(canonical)) {
+      seen.add(canonical);
+      out.push(canonical);
     }
   }
   return out;
@@ -4553,33 +4582,56 @@ Return ONLY this JSON, no preamble:
 }`;
 
     try {
-      const data = await chamarAI({ messages: [{ role: 'user', content: systemPrompt }], max_tokens: 1500 });
+      const data = await chamarAI({ messages: [{ role: 'user', content: systemPrompt }], max_tokens: 2000 });
       const txt = (data.content || []).filter(b => b.type === 'text').map(b => b.text).join('\n');
-      const parsed = JSON.parse(txt.replace(/```json|```/g, '').trim());
+      // Tolerant JSON extraction: the model is told to return only JSON, but
+      // occasionally wraps it in prose or a code fence. Slice from the first
+      // "{" to the last "}" so a stray preamble doesn't break JSON.parse
+      // (which previously fell through to the catch and showed "unknown ref").
+      const cleaned = txt.replace(/```json|```/g, '').trim();
+      const start = cleaned.indexOf('{');
+      const end = cleaned.lastIndexOf('}');
+      if (start === -1 || end === -1 || end < start) throw new Error('no_json_in_response');
+      const parsed = JSON.parse(cleaned.slice(start, end + 1));
       const f = parsed.fields || {};
       const conf = parsed.confidence || 'low';
 
-      if (Array.isArray(f.generos))      setGeneros(f.generos.filter(x => GENEROS_FLAT.includes(x)));
-      if (Array.isArray(f.moods))        setMoods(f.moods.filter(x => MOODS_KEYS.includes(x)));
-      if (Array.isArray(f.instrumentos)) setInstrumentos(f.instrumentos.filter(x => INSTRUMENTOS_FLAT.includes(x)));
+      // matchVocab reconciles near-misses (casing/whitespace/punctuation) to
+      // the canonical vocab string so legit recognitions aren't silently
+      // dropped by an exact-match filter.
+      if (Array.isArray(f.generos))      setGeneros(matchVocab(f.generos, GENEROS_FLAT));
+      if (Array.isArray(f.moods))        setMoods(matchVocab(f.moods, MOODS_KEYS));
+      if (Array.isArray(f.instrumentos)) setInstrumentos(matchVocab(f.instrumentos, INSTRUMENTOS_FLAT));
       if (Array.isArray(f.vozes))        setVozes(migrateVozesArray(f.vozes));
-      if (Array.isArray(f.eras))         setEras(f.eras.filter(x => ERAS_KEYS.includes(x)));
-      if (Array.isArray(f.producoes))    setProducoes(f.producoes.filter(x => PRODUCOES_KEYS.includes(x)));
-      if (Array.isArray(f.tempos))       setTempos(f.tempos.filter(x => TEMPO_KEYS_FLAT.includes(x)).slice(0, 1));
-      if (isLyricsTab && Array.isArray(f.duracoes))  setDuracoes(f.duracoes.filter(x => DURACOES_KEYS.includes(x)));
-      if (isLyricsTab && Array.isArray(f.idiomas))   setIdiomas(f.idiomas.filter(x => IDIOMAS_KEYS.includes(x)).slice(0, 1));
+      if (Array.isArray(f.eras))         setEras(matchVocab(f.eras, ERAS_KEYS));
+      if (Array.isArray(f.producoes))    setProducoes(matchVocab(f.producoes, PRODUCOES_KEYS));
+      if (Array.isArray(f.tempos))       setTempos(matchVocab(f.tempos, TEMPO_KEYS_FLAT).slice(0, 1));
+      if (isLyricsTab && Array.isArray(f.duracoes))  setDuracoes(matchVocab(f.duracoes, DURACOES_KEYS));
+      if (isLyricsTab && Array.isArray(f.idiomas))   setIdiomas(matchVocab(f.idiomas, IDIOMAS_KEYS).slice(0, 1));
       if (isLyricsTab) {
-        if (Array.isArray(f.perspectivas)) setPerspectivas(f.perspectivas.filter(x => PERSP_KEYS.includes(x)).slice(0, 1));
-        if (Array.isArray(f.estruturas))   setEstruturas(f.estruturas.filter(x => ESTRUTURAS_KEYS.includes(x)).slice(0, 1));
-        if (Array.isArray(f.rimas))        setRimas(f.rimas.filter(x => RIMAS_KEYS.includes(x)).slice(0, 1));
-        if (Array.isArray(f.metricas))     setMetricas(f.metricas.filter(x => METRICAS_KEYS.includes(x)).slice(0, 1));
+        if (Array.isArray(f.perspectivas)) setPerspectivas(matchVocab(f.perspectivas, PERSP_KEYS).slice(0, 1));
+        if (Array.isArray(f.estruturas))   setEstruturas(matchVocab(f.estruturas, ESTRUTURAS_KEYS).slice(0, 1));
+        if (Array.isArray(f.rimas))        setRimas(matchVocab(f.rimas, RIMAS_KEYS).slice(0, 1));
+        if (Array.isArray(f.metricas))     setMetricas(matchVocab(f.metricas, METRICAS_KEYS).slice(0, 1));
       }
 
       setRefResult({ confidence: conf, kind: tipo, message: parsed.message || '' });
       setProducerTab('producer');
       mostrarToast(t.toast_filled);
-    } catch (_) {
-      setRefResult({ confidence: 'low', kind: tipo, message: t.ref_unknown });
+    } catch (err) {
+      // IMPORTANT: distinguish a genuine "AI doesn't know this reference"
+      // (handled on the success path above via low confidence) from an
+      // actual failure (quota, network, malformed JSON, upstream error).
+      // The old `catch (_)` swallowed every failure and showed the
+      // "I don't recognize this reference" message, making any outage look
+      // like the feature simply recognizes nothing.
+      console.error('reference analysis failed:', err);
+      if (err && err.code === 'daily_limit') {
+        handleAIError(err, 'err_ref');     // surfaces the daily-limit banner
+        mostrarToast(t.err_daily_limit);
+      } else {
+        mostrarToast(t.err_ref);
+      }
     } finally {
       stopPhases();
       setLoadingRef(false); setLoadingKind(null);
