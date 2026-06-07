@@ -2176,7 +2176,7 @@ const UI = {
     out_regenerate_in: 'regenerate in',
     search_placeholder: 'search…',
     out_forging: 'forging…', out_writing: 'writing lyrics…', out_composing: 'composing verses…',
-    phases_prompt: ["reading your context…", "drafting angles…", "polishing the strongest…"], phases_album: ["mapping the sonic universe…", "weaving track 1, 2, 3…", "calibrating coherence…"], phases_letra: ["interpreting the theme…", "finding the voice…", "shaping verses…", "polishing the chorus…"], phases_letras_album: ["building the narrative arc…", "writing track 1…", "writing track 2…", "writing track 3…", "writing track 4…", "writing track 5…", "weaving echoes between tracks…"], phases_ref: ["recognizing the reference…", "extracting patterns…", "mapping to vocabulary…"],
+    phases_prompt: ["reading your context…", "drafting angles…", "polishing the strongest…"], phases_album: ["mapping the sonic universe…", "weaving track 1, 2, 3…", "calibrating coherence…"], phases_letra: ["interpreting the theme…", "finding the voice…", "shaping verses…", "polishing the chorus…"], phases_letras_album: ["building the narrative arc…", "writing track 1…", "writing track 2…", "writing track 3…", "writing track 4…", "writing track 5…", "weaving echoes between tracks…"], phases_ref: ["searching the web…", "recognizing the reference…", "extracting patterns…", "mapping to vocabulary…"],
     out_3_variants: '3 variations generated', out_album_generated: '5-track EP generated', out_lines: 'lines',
     out_generate_album: 'generate 5-track EP', out_album_sub: 'cohesive album · same universe, varied tracks',
     out_generate_album_letras: 'generate 5-track EP lyrics', out_album_letras_sub: 'a narrative arc across 5 songs', out_album_letras_generated: '5-track EP lyrics generated',
@@ -2300,7 +2300,7 @@ const UI = {
     out_regenerate_in: 'gerar em',
     search_placeholder: 'buscar…',
     out_forging: 'forjando…', out_writing: 'escrevendo letra…', out_composing: 'compondo versos…',
-    phases_prompt: ["lendo seu contexto…", "rascunhando ângulos…", "polindo o mais forte…"], phases_album: ["mapeando o universo sonoro…", "tecendo faixa 1, 2, 3…", "calibrando coerência…"], phases_letra: ["interpretando o tema…", "encontrando a voz…", "moldando versos…", "polindo o refrão…"], phases_letras_album: ["construindo o arco narrativo…", "escrevendo faixa 1…", "escrevendo faixa 2…", "escrevendo faixa 3…", "escrevendo faixa 4…", "escrevendo faixa 5…", "tecendo ecos entre as faixas…"], phases_ref: ["reconhecendo a referência…", "extraindo padrões…", "mapeando pro vocabulário…"],
+    phases_prompt: ["lendo seu contexto…", "rascunhando ângulos…", "polindo o mais forte…"], phases_album: ["mapeando o universo sonoro…", "tecendo faixa 1, 2, 3…", "calibrando coerência…"], phases_letra: ["interpretando o tema…", "encontrando a voz…", "moldando versos…", "polindo o refrão…"], phases_letras_album: ["construindo o arco narrativo…", "escrevendo faixa 1…", "escrevendo faixa 2…", "escrevendo faixa 3…", "escrevendo faixa 4…", "escrevendo faixa 5…", "tecendo ecos entre as faixas…"], phases_ref: ["buscando na web…", "reconhecendo a referência…", "extraindo padrões…", "mapeando pro vocabulário…"],
     out_3_variants: '3 variações geradas', out_album_generated: 'EP de 5 faixas gerado', out_lines: 'linhas',
     out_generate_album: 'gerar EP de 5 faixas', out_album_sub: 'álbum coeso · mesmo universo, faixas variadas',
     out_generate_album_letras: 'gerar letras do EP (5 faixas)', out_album_letras_sub: 'arco narrativo entre as 5 músicas', out_album_letras_generated: 'letras do EP geradas',
@@ -2424,7 +2424,7 @@ const UI = {
     out_regenerate_in: 'regenerar en',
     search_placeholder: 'buscar…',
     out_forging: 'forjando…', out_writing: 'escribiendo…', out_composing: 'componiendo…',
-    phases_prompt: ["leyendo el contexto…", "esbozando ángulos…", "puliendo el más fuerte…"], phases_album: ["mapeando el universo sonoro…", "tejiendo pista 1, 2, 3…", "calibrando coherencia…"], phases_letra: ["interpretando el tema…", "encontrando la voz…", "modelando versos…", "puliendo el estribillo…"], phases_letras_album: ["construyendo el arco narrativo…", "escribiendo pista 1…", "escribiendo pista 2…", "escribiendo pista 3…", "escribiendo pista 4…", "escribiendo pista 5…", "tejiendo ecos entre pistas…"], phases_ref: ["reconociendo la referencia…", "extrayendo patrones…", "mapeando al vocabulario…"],
+    phases_prompt: ["leyendo el contexto…", "esbozando ángulos…", "puliendo el más fuerte…"], phases_album: ["mapeando el universo sonoro…", "tejiendo pista 1, 2, 3…", "calibrando coherencia…"], phases_letra: ["interpretando el tema…", "encontrando la voz…", "modelando versos…", "puliendo el estribillo…"], phases_letras_album: ["construyendo el arco narrativo…", "escribiendo pista 1…", "escribiendo pista 2…", "escribiendo pista 3…", "escribiendo pista 4…", "escribiendo pista 5…", "tejiendo ecos entre pistas…"], phases_ref: ["buscando en la web…", "reconociendo la referencia…", "extrayendo patrones…", "mapeando al vocabulario…"],
     out_3_variants: '3 variaciones generadas', out_album_generated: 'EP de 5 pistas generado', out_lines: 'líneas',
     out_generate_album: 'generar EP de 5 pistas', out_album_sub: 'álbum coherente · mismo universo, pistas variadas',
     out_generate_album_letras: 'generar letras del EP (5 pistas)', out_album_letras_sub: 'arco narrativo entre las 5 canciones', out_album_letras_generated: 'letras del EP generadas',
@@ -2547,7 +2547,7 @@ const UI = {
     out_regenerate_in: 'régénérer en',
     search_placeholder: 'rechercher…',
     out_forging: 'forgeage…', out_writing: 'rédaction…', out_composing: 'composition…',
-    phases_prompt: ["lecture du contexte…", "esquisse des angles…", "polissage du plus fort…"], phases_album: ["cartographie de l'univers sonore…", "tissage des titres 1, 2, 3…", "calibrage de la cohérence…"], phases_letra: ["interprétation du thème…", "recherche de la voix…", "modelage des couplets…", "polissage du refrain…"], phases_letras_album: ["construction de l'arc narratif…", "écriture du titre 1…", "écriture du titre 2…", "écriture du titre 3…", "écriture du titre 4…", "écriture du titre 5…", "tissage d'échos entre les titres…"], phases_ref: ["reconnaissance de la référence…", "extraction de patterns…", "mapping au vocabulaire…"],
+    phases_prompt: ["lecture du contexte…", "esquisse des angles…", "polissage du plus fort…"], phases_album: ["cartographie de l'univers sonore…", "tissage des titres 1, 2, 3…", "calibrage de la cohérence…"], phases_letra: ["interprétation du thème…", "recherche de la voix…", "modelage des couplets…", "polissage du refrain…"], phases_letras_album: ["construction de l'arc narratif…", "écriture du titre 1…", "écriture du titre 2…", "écriture du titre 3…", "écriture du titre 4…", "écriture du titre 5…", "tissage d'échos entre les titres…"], phases_ref: ["recherche sur le web…", "reconnaissance de la référence…", "extraction de patterns…", "mapping au vocabulaire…"],
     out_3_variants: '3 variantes générées', out_album_generated: 'EP de 5 titres généré', out_lines: 'lignes',
     out_generate_album: 'générer EP de 5 titres', out_album_sub: 'album cohérent · même univers, titres variés',
     out_generate_album_letras: 'générer paroles du EP (5 titres)', out_album_letras_sub: 'arc narratif sur les 5 chansons', out_album_letras_generated: 'paroles du EP générées',
@@ -4296,7 +4296,7 @@ function BrahmstormApp({ onBack } = {}) {
   // In dev (no /api/generate available), falls back to direct Anthropic API.
   // In production, calls our serverless proxy with Turnstile + fingerprint.
   // ─────────────────────────────────────────────────────────────────
-  const chamarAI = async ({ system, messages, max_tokens = 1500 }) => {
+  const chamarAI = async ({ system, messages, max_tokens = 1500, webSearch = false }) => {
     const useProxy = typeof window !== 'undefined' && window.location.hostname !== 'localhost';
 
     if (useProxy) {
@@ -4339,7 +4339,7 @@ function BrahmstormApp({ onBack } = {}) {
       const res = await fetch('/api/generate', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ system, messages, max_tokens, turnstileToken, fingerprint, ownerToken }),
+        body: JSON.stringify({ system, messages, max_tokens, turnstileToken, fingerprint, ownerToken, webSearch }),
       });
 
       // 429 = daily limit hit. Update quota state and throw a recognizable error.
@@ -4368,7 +4368,10 @@ function BrahmstormApp({ onBack } = {}) {
     const res = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ model: 'claude-sonnet-4-5', max_tokens, system, messages }),
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-5', max_tokens, system, messages,
+        ...(webSearch ? { tools: [{ type: 'web_search_20250305', name: 'web_search', max_uses: 3 }] } : {}),
+      }),
     });
     if (!res.ok) throw new Error(`anthropic_${res.status}`);
     return await res.json();
@@ -4530,9 +4533,12 @@ Return ONLY JSON:
     let payload = limparRef(referencia.trim());
     if (tipo === 'url') {
       const label = extrairLabelDeURL(payload);
-      payload = `URL: ${payload}\nDetected: ${label}\n\nNote: I cannot fetch the audio. Use only what you know from this URL/title and your training data about the song or channel.`;
+      payload = `URL: ${payload}\nDetected: ${label}`;
     }
     const isLyricsTab = tab === 'letra';
+    // Web search only helps when the user gave a song/artist NAME or a URL —
+    // for pasted lyrics the text is self-contained, no lookup needed.
+    const useWebSearch = tipo === 'track' || tipo === 'url';
 
     const systemPrompt = `You are a music director. The user provided a REFERENCE (a song name, artist, or full lyrics) to use as a sound/style compass — NOT to copy. Your job is to extract the underlying patterns and translate them into our fixed Suno vocabulary.
 
@@ -4544,13 +4550,21 @@ REFERENCE CONTENT:
 ---
 ${payload}
 ---
-
+${useWebSearch ? `
+RESEARCH STEP (do this FIRST):
+You have a web_search tool. Use it to identify this reference before describing it.
+- Search the artist + song title (e.g. "Nightcrawl Lost Highway band genre").
+- If a URL was given, search for the title/channel to learn what the track is.
+- Run up to 3 searches. Read what genre, era, instrumentation, vocal style and production the song/artist is associated with.
+- You CANNOT listen to audio — infer sonic traits from reviews, descriptions, genre tags, and discography you find.
+- After searching, base your answer on what you found. If search returns nothing useful, fall back to a best-effort inference from the TITLE words and any context, and mark confidence "low".
+` : ''}
 CRITICAL RULES:
 1. NEVER copy lyrics or specific phrases from the reference. Output is descriptive only.
 2. Be HONEST about confidence:
-   - "high" — you know this song/artist well, confident in your description
-   - "medium" — you have partial knowledge or are inferring from genre/era cues
-   - "low" — you don't recognize the reference; admit it openly
+   - "high" — you identified the song/artist (from knowledge or search) and are confident
+   - "medium" — partial knowledge, or inferring from genre/era cues or thin search results
+   - "low" — you could not identify it; you are inferring purely from the title/words
 3. Use ONLY exact strings from these vocabularies:
 
 generos: ${GENEROS_FLAT.join(' | ')}
@@ -4567,14 +4581,14 @@ estruturas: ${ESTRUTURAS_KEYS.join(' | ')}
 rimas: ${RIMAS_KEYS.join(' | ')}
 metricas: ${METRICAS_KEYS.join(' | ')}` : ''}
 
-4. Select 1-3 items per field (never more), only those that you can defend from the reference.
-5. If confidence is "low", return mostly empty arrays and set message to explain you don't know it.
+4. Select 1-3 items per field (never more), only those you can defend from the reference or your research.
+5. ALWAYS make a best effort — even at "low" confidence, fill at least generos + moods (1-2 each) inferred from the title/words rather than returning everything empty. Only leave a field empty if you genuinely have no basis for it.
 6. ${isLyricsTab ? 'If lyrics were pasted, you may extract patterns (perspective, structure, meter, rhyme) with confidence. NEVER copy lines.' : 'NEVER mention real artist names in fields — only patterns.'}
 
-Return ONLY this JSON, no preamble:
+Return ONLY this JSON as your FINAL message, no preamble, no markdown:
 {
   "confidence": "high" | "medium" | "low",
-  "message": "1-2 sentence honest summary of what you recognized — write in ${LANG_NAMES[lang] || 'English'}",
+  "message": "1-2 sentence honest summary of what you found and how (recognized / searched / inferred from title) — write in ${LANG_NAMES[lang] || 'English'}",
   "fields": {
     "generos": [], "moods": [], "instrumentos": [], "vozes": [], "eras": [],
     "producoes": [], "tempos": [], "duracoes": [], "idiomas": []${isLyricsTab ? ',\n    "perspectivas": [], "estruturas": [], "rimas": [], "metricas": []' : ''}
@@ -4582,8 +4596,13 @@ Return ONLY this JSON, no preamble:
 }`;
 
     try {
-      const data = await chamarAI({ messages: [{ role: 'user', content: systemPrompt }], max_tokens: 2000 });
-      const txt = (data.content || []).filter(b => b.type === 'text').map(b => b.text).join('\n');
+      const data = await chamarAI({ messages: [{ role: 'user', content: systemPrompt }], max_tokens: 2000, webSearch: useWebSearch });
+      // With web search the content array interleaves intermediate commentary
+      // text blocks with the final answer. The JSON is the FINAL message, so
+      // prefer the last text block that contains a "{" rather than joining
+      // everything (a stray brace in commentary would break the slice below).
+      const textBlocks = (data.content || []).filter(b => b.type === 'text').map(b => b.text);
+      const txt = [...textBlocks].reverse().find(b => b.includes('{')) || textBlocks.join('\n');
       // Tolerant JSON extraction: the model is told to return only JSON, but
       // occasionally wraps it in prose or a code fence. Slice from the first
       // "{" to the last "}" so a stray preamble doesn't break JSON.parse
