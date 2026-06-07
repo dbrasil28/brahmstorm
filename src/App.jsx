@@ -4300,31 +4300,6 @@ function BrahmstormApp({ onBack } = {}) {
     const useProxy = typeof window !== 'undefined' && window.location.hostname !== 'localhost';
 
     if (useProxy) {
-      // Get a fresh Turnstile token from the persistent widget rendered on mount.
-      // Each token is one-time-use, so we reset() before every call to refresh.
-      let turnstileToken = '';
-      if (window.turnstile && turnstileWidgetIdRef.current && import.meta.env.VITE_TURNSTILE_SITE_KEY) {
-        turnstileToken = await new Promise((resolve) => {
-          turnstileTokenResolverRef.current = resolve;
-          try {
-            window.turnstile.reset(turnstileWidgetIdRef.current);
-          } catch (e) {
-            turnstileTokenResolverRef.current = null;
-            resolve('');
-            return;
-          }
-          // Safety timeout — if Turnstile doesn't fire callback within 8s,
-          // proceed with empty token (server will reject with verification_failed
-          // if turnstile is required, surfacing the issue rather than hanging).
-          setTimeout(() => {
-            if (turnstileTokenResolverRef.current === resolve) {
-              turnstileTokenResolverRef.current = null;
-              resolve('');
-            }
-          }, 8000);
-        });
-      }
-
       const fingerprint = btoa(
         [navigator.userAgent, navigator.language, screen.width, screen.height, new Date().getTimezoneOffset()].join('|')
       ).slice(0, 32);
@@ -4336,11 +4311,57 @@ function BrahmstormApp({ onBack } = {}) {
       let ownerToken = '';
       try { ownerToken = localStorage.getItem('bs:ownerToken') || ''; } catch (e) {}
 
-      const res = await fetch('/api/generate', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ system, messages, max_tokens, turnstileToken, fingerprint, ownerToken, webSearch }),
-      });
+      // Get a fresh Turnstile token from the persistent widget rendered on mount.
+      // Each token is one-time-use, so we reset() before every call to refresh.
+      const getTurnstileToken = () => {
+        if (!(window.turnstile && turnstileWidgetIdRef.current && import.meta.env.VITE_TURNSTILE_SITE_KEY)) {
+          return Promise.resolve('');
+        }
+        return new Promise((resolve) => {
+          turnstileTokenResolverRef.current = resolve;
+          try {
+            window.turnstile.reset(turnstileWidgetIdRef.current);
+          } catch (e) {
+            turnstileTokenResolverRef.current = null;
+            resolve('');
+            return;
+          }
+          // Safety timeout — if Turnstile doesn't fire callback within 8s,
+          // proceed with empty token (server rejects with verification_failed
+          // if turnstile is required, surfacing the issue rather than hanging).
+          setTimeout(() => {
+            if (turnstileTokenResolverRef.current === resolve) {
+              turnstileTokenResolverRef.current = null;
+              resolve('');
+            }
+          }, 8000);
+        });
+      };
+
+      const postOnce = async () => {
+        const turnstileToken = await getTurnstileToken();
+        return fetch('/api/generate', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ system, messages, max_tokens, turnstileToken, fingerprint, ownerToken, webSearch }),
+        });
+      };
+
+      let res = await postOnce();
+
+      // Transient Turnstile failure: right after page load the widget often
+      // hasn't minted a usable token yet (Cloudflare PAT challenge falls back),
+      // so the first call comes back 403 verification_failed and the feature
+      // looks broken until the user manually retries. Auto-retry ONCE with a
+      // fresh token. Safe for quota: the proxy validates Turnstile BEFORE it
+      // increments the daily counter, so a 403 never consumed a generation.
+      if (res.status === 403) {
+        const errBody = await res.clone().json().catch(() => ({}));
+        if (errBody.error === 'verification_failed') {
+          await new Promise(r => setTimeout(r, 1200)); // let the widget settle
+          res = await postOnce();
+        }
+      }
 
       // 429 = daily limit hit. Update quota state and throw a recognizable error.
       if (res.status === 429) {
