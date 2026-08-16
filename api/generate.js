@@ -15,6 +15,7 @@
 //   TURNSTILE_SECRET_KEY     — Cloudflare Turnstile secret key
 
 import { Redis } from '@upstash/redis';
+import { timingSafeEqual } from 'node:crypto';
 
 // Web search (reference analysis) can run up to 3 searches server-side at
 // Anthropic, which pushes total response time past the default 10s function
@@ -23,6 +24,54 @@ export const config = { maxDuration: 60 };
 
 const redis = Redis.fromEnv();
 const DAILY_LIMIT = parseInt(process.env.DAILY_LIMIT || '5', 10);
+
+// ── Cost-abuse guards ────────────────────────────────────────────────────────
+// This endpoint is CORS-open and callable from any origin (Turnstile + per-IP
+// rate limit are the gates). Both `model` and `max_tokens` arrive from the
+// client, so without caps a caller inside their daily quota could force the
+// most expensive model with a huge max_tokens and amplify cost per call.
+//
+// Model allowlist: anything not listed falls back to the default rather than
+// erroring, so a future frontend model bump degrades gracefully — but a caller
+// can't force a pricier tier than the app actually uses.
+const ALLOWED_MODELS = new Set([
+  'claude-sonnet-4-5',
+  'claude-sonnet-4-6',
+  'claude-haiku-4-5-20251001',
+]);
+const DEFAULT_MODEL = 'claude-sonnet-4-5';
+// Hard ceiling on output tokens. Real prompts need ~1k; 4k is generous
+// headroom while capping worst-case spend per call.
+const MAX_TOKENS_CEILING = 4096;
+const DEFAULT_MAX_TOKENS = 1024;
+
+function resolveModel(requested) {
+  return typeof requested === 'string' && ALLOWED_MODELS.has(requested)
+    ? requested
+    : DEFAULT_MODEL;
+}
+
+function resolveMaxTokens(requested) {
+  const n = Number(requested);
+  if (!Number.isInteger(n) || n <= 0) return DEFAULT_MAX_TOKENS;
+  return Math.min(n, MAX_TOKENS_CEILING);
+}
+
+// Constant-time comparison for the owner token. A plain `===` (and the prior
+// length-guard + ===) can leak the secret byte-by-byte via response timing.
+function tokensMatch(candidate, expected) {
+  if (typeof candidate !== 'string' || typeof expected !== 'string' || !expected) {
+    return false;
+  }
+  const a = Buffer.from(candidate);
+  const b = Buffer.from(expected);
+  if (a.length !== b.length) {
+    // Keep timing uniform on the length-mismatch path, then fail.
+    timingSafeEqual(a, a);
+    return false;
+  }
+  return timingSafeEqual(a, b);
+}
 
 function getClientIP(req) {
   return (
@@ -72,10 +121,7 @@ export default async function handler(req, res) {
       return res.status(400).json({ error: 'messages array required' });
     }
 
-    const expectedOwnerToken = process.env.OWNER_TOKEN;
-    const isOwner = expectedOwnerToken && ownerToken &&
-      ownerToken.length === expectedOwnerToken.length &&
-      ownerToken === expectedOwnerToken;
+    const isOwner = tokensMatch(ownerToken, process.env.OWNER_TOKEN);
 
     const ip = getClientIP(req);
 
@@ -126,8 +172,8 @@ export default async function handler(req, res) {
     // code-execution or point web fetch at internal hosts. max_uses caps
     // the per-request search cost (web search is billed per search).
     const upstreamBody = {
-      model: model || 'claude-sonnet-4-5',
-      max_tokens: max_tokens || 1024,
+      model: resolveModel(model),
+      max_tokens: resolveMaxTokens(max_tokens),
       system,
       messages,
     };
